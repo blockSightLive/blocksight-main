@@ -11,32 +11,32 @@ This System Context Diagram shows BlockSight.live as the central system and its 
 │                                    EXTERNAL ENTITIES                            │
 ├─────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                 │
-│  ┌─────────────────┐    ┌─────────────────┐    ┌──────────────────────────────┐  │
-│  │   Bitcoin Core  │    │   Price Feeds   │    │  BlockInsight Consumers      │  │
-│  │   (Full Node)   │    │    (APIs)       │    │  (CDN Widgets / Premium App) │  │
-│  │                 │    │                 │    │                              │  │
-│  │ • RPC, .blk     │    │ • CoinGecko     │    │ • Uses public HTTP/WS        │  │
-│  │ • P2P, chain    │    │ • Others        │    │ • Higher SLAs via plan       │  │
-│  └─────────────────┘    └─────────────────┘    └──────────────────────────────┘  │
-│           │                       │                       ▲                      │
-│           │                       │                       │                      │
-│           ▼                       ▼                       │                      │
+│  ┌─────────────────┐    ┌─────────────────┐    ┌──────────────────────────────┐ │
+│  │   Bitcoin Core  │    │   Price Feeds   │    │  BlockInsight Consumers      │ │
+│  │   (Full Node)   │    │    (APIs)       │    │  (CDN Widgets / Premium App) │ │
+│  │                 │    │                 │    │                              │ │
+│  │ • RPC, .blk     │    │ • CoinGecko     │    │ • Uses public HTTP/WS        │ │
+│  │ • P2P, chain    │    │ • Others        │    │ • Higher SLAs via plan       │ │
+│  └─────────────────┘    └─────────────────┘    └──────────────────────────────┘ │
+│           │                       │                       ▲                     │
+│           │                       │                       │                     │
+│           ▼                       ▼                       │                     │
 │  ┌────────────────────────────────────────────────────────────────────────────┐ │
 │  │                              BLOCKSIGHT.LIVE                               │ │
 │  │                                                                            │ │
 │  │  ┌───────────────────────────────────────────────────────────────────────┐ │ │
 │  │  │                        CORE SYSTEM BOUNDARY                           │ │ │
 │  │  │                                                                       │ │ │
-│  │  │  ┌─────────────────┐    ┌──────────────────────────────┐             │ │ │
-│  │  │  │    electrs      │    │   Node.js Backend            │             │ │ │
-│  │  │  │ (Open Source)   │    │  (Our Implementation)        │             │ │ │
-│  │  │  │                 │    │                              │             │ │ │
-│  │  │  │ • Electrum TCP  │    │ • Electrum Client Adapter    │             │ │ │
-│  │  │  │   (50001/50002) │    │   (TCP → HTTP/JSON + WS)     │             │ │ │
-│  │  │  │ • RocksDB       │    │ • REST API + WebSocket Hub   │             │ │ │
-│  │  │  │   (Internal)    │    │ • Multi‑tier Caching         │             │ │ │
-│  │  │  │ • Indexing      │    │ • Analytics ETL → PostgreSQL │             │ │ │
-│  │  │  └─────────────────┘    └──────────────────────────────┘             │ │ │
+│  │  │   ┌─────────────────┐    ┌──────────────────────────────┐             │ │ │
+│  │  │   │    electrs      │    │   Node.js Backend            │             │ │ │
+│  │  │   │ (Open Source)   │    │  (Our Implementation)        │             │ │ │
+│  │  │   │                 │    │                              │             │ │ │
+│  │  │   │ • Electrum TCP  │    │ • Electrum Client Adapter    │             │ │ │
+│  │  │   │   (50001/50002) │    │   (TCP → HTTP/JSON + WS)     │             │ │ │
+│  │  │   │ • RocksDB       │    │ • REST API + WebSocket Hub   │             │ │ │
+│  │  │   │   (Internal)    │    │ • Multi‑tier Caching         │             │ │ │
+│  │  │   │ • Indexing      │    │ • Analytics ETL → PostgreSQL │             │ │ │
+│  │  │   └─────────────────┘    └──────────────────────────────┘             │ │ │
 │  │  │           │                           │                               │ │ │
 │  │  │           └──────────────┬────────────┘                               │ │ │
 │  │  │                          │                                            │ │ │
@@ -64,12 +64,12 @@ This System Context Diagram shows BlockSight.live as the central system and its 
 │  │  └───────────────────────────────────────────────────────────────────────┘ │ │
 │  └────────────────────────────────────────────────────────────────────────────┘ │
 │                                                                                 │
-│  ┌─────────────────┐    ┌─────────────────┐    ┌──────────────────────────────┐  │
-│  │ Monitoring &    │    │ External APIs   │    │  Dev Tooling                 │  │
-│  │ Observability   │    │ (Price, etc.)   │    │  (Git, CI/CD, Testing)       │  │
-│  │ • Prom/Grafana  │    │ • Rate limiting │    │ • Pipelines, checks          │  │
-│  │ • Alerts/Logs   │    │ • Backoff       │    │ • ADRs/Runbooks              │  │
-│  └─────────────────┘    └─────────────────┘    └──────────────────────────────┘  │
+│  ┌─────────────────┐    ┌─────────────────┐    ┌──────────────────────────────┐ │
+│  │ Monitoring &    │    │ External APIs   │    │  Dev Tooling                 │ │
+│  │ Observability   │    │ (Price, etc.)   │    │  (Git, CI/CD, Testing)       │ │
+│  │ • Prom/Grafana  │    │ • Rate limiting │    │ • Pipelines, checks          │ │
+│  │ • Alerts/Logs   │    │ • Backoff       │    │ • ADRs/Runbooks              │ │
+│  └─────────────────┘    └─────────────────┘    └──────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────────────────┘
 ```
 

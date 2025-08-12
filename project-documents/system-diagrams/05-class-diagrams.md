@@ -492,8 +492,8 @@ This document contains Class Diagrams showing the core data structures and relat
 │  │  │  + new(config: MonitoringConfig) -> MonitoringManager                  │ │ │
 │  │  │  + record_metric(name:String,value:f64,labels:HashMap<String, String>) │ │ │
 │  │  │  + increment_counter(name: String, labels: HashMap<String, String>)    │ │ │
-│  │  │  + record_histogram(name:String,value:f64,labels:HashMap<String,String>)│ │ │
-│  │  │  + record_http_request(latency: Duration, status: u16)                  │ │ │
+│  │  │ + record_histogram(name:String,value:f64,labels:HashMap<String,String>)│ │ │
+│  │  │  + record_http_request(latency: Duration, status: u16)                 │ │ │
 │  │  │  + record_cache_hit(tier: CacheTier, key: String)                      │ │ │
 │  │  │  + record_cache_miss(tier: CacheTier, key: String)                     │ │ │
 │  │  │  + create_alert(alert: Alert) -> Result<(), Error>                     │ │ │

@@ -15,9 +15,9 @@ Physical deployment and traffic flow aligned with Electrum TCP (50001/50002), a 
 │  │                              EDGE & LOAD BALANCING                         │ │
 │  │                                                                            │ │
 │  │  ┌─────────────────┐    ┌─────────────────┐    ┌────────────────────────┐  │ │
-│  │  │   CDN/Edge      │    │   Load Balancer │    │   HTTP Cache (L3)     │  │ │
-│  │  │   (Cloudflare)  │    │   (HAProxy/NLB) │    │   (Adapter Responses) │  │ │
-│  │  │ • Global CDN    │    │ • SSL/TLS       │    │ • 1s–24h TTL          │  │ │
+│  │  │   CDN/Edge      │    │   Load Balancer │    │   HTTP Cache (L3)      │  │ │
+│  │  │   (Cloudflare)  │    │   (HAProxy/NLB) │    │   (Adapter Responses)  │  │ │
+│  │  │ • Global CDN    │    │ • SSL/TLS       │    │ • 1s–24h TTL           │  │ │
 │  │  │ • DDoS          │    │   Termination   │    │ • ~5–20ms              │  │ │
 │  │  │   Protection    │    │ • Health Checks │    │ • Public HTTP only     │  │ │
 │  │  └─────────────────┘    └─────────────────┘    └────────────────────────┘  │ │
@@ -76,7 +76,7 @@ Physical deployment and traffic flow aligned with Electrum TCP (50001/50002), a 
 │                                    ▼                                            │
 │  ┌────────────────────────────────────────────────────────────────────────────┐ │
 │  │                        MULTI‑TIER CACHE & STORAGE                          │ │
-│  │  • Redis L1 (hot, 1–2s)  • Memory‑mapped L2 (warm)  • PostgreSQL (analytics)│ │
+│  │  • Redis L1 (hot, 1–2s)  • Memory‑mapped L2 (warm) • PostgreSQL (analytics)│ │
 │  └────────────────────────────────────────────────────────────────────────────┘ │
 │                                    │                                            │
 │                                    ▼                                            │

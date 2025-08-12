@@ -17,9 +17,9 @@ This Component Architecture Diagram shows the major system components of BlockSi
 │  │  ┌─────────────────┐                    ┌─────────────────┐                │ │
 │  │  │   Bitcoin Core  │◄──────────────────►│     electrs     │                │ │
 │  │  │   (Full Node)   │   RPC/.blk + P2P   │ (Open Source)   │                │ │
-│  │  │                 │                    │ • Electrum TCP   │                │ │
-│  │  │ • RPC, .blk     │                    │   (50001/50002)  │                │ │
-│  │  │ • P2P, chain    │                    │ • RocksDB (int.) │                │ │
+│  │  │                 │                    │ • Electrum TCP  │                │ │
+│  │  │ • RPC, .blk     │                    │   (50001/50002) │                │ │
+│  │  │ • P2P, chain    │                    │ • RocksDB (int.)│                │ │
 │  │  └─────────────────┘                    └─────────────────┘                │ │
 │  └────────────────────────────────────────────────────────────────────────────┘ │
 │                                    │                                            │
@@ -53,8 +53,8 @@ This Component Architecture Diagram shows the major system components of BlockSi
 │  ┌────────────────────────────────────────────────────────────────────────────┐ │
 │  │                        POSTGRESQL ANALYTICS MIRROR                         │ │
 │  │                          (Read‑Only, Views/MVs)                            │ │
-│  │  • Minimal subset mirrored via adapter ETL                                │ │
-│  │  • Human‑friendly SQL, long/complex queries                               │ │
+│  │   • Minimal subset mirrored via adapter ETL                                │ │
+│  │   • Human‑friendly SQL, long/complex queries                               │ │
 │  └────────────────────────────────────────────────────────────────────────────┘ │
 │                                    │                                            │
 │                                    ▼                                            │
@@ -64,9 +64,9 @@ This Component Architecture Diagram shows the major system components of BlockSi
 │  │                                                                            │ │
 │  │  ┌─────────────────┐    ┌─────────────────┐    ┌────────────────────────┐  │ │
 │  │  │   REST API      │    │   WebSocket     │    │   Search & Aggregates  │  │ │
-│  │  │ • Blocks/Txs    │    │ • Headers/mempool│   │ • Address summary      │  │ │
-│  │  │ • Address sum   │    │ • Fee bands      │   │ • Fee/Load analytics   │  │ │
-│  │  │ • Health/metrics│    │ • Tip updates    │   │ • ETL control          │  │ │
+│  │  │ • Blocks/Txs    │    │• Headers/mempool│    │ • Address summary      │  │ │
+│  │  │ • Address sum   │    │• Fee bands      │    │ • Fee/Load analytics   │  │ │
+│  │  │ • Health/metrics│    │• Tip updates    │    │ • ETL control          │  │ │
 │  │  └─────────────────┘    └─────────────────┘    └────────────────────────┘  │ │
 │  └────────────────────────────────────────────────────────────────────────────┘ │
 │                                    │                                            │

@@ -70,14 +70,14 @@ This document contains key sequence diagrams showing the interaction flows betwe
        │─────────────────▶│                    │                      │                     │
        │                  │ 2. headers.sub     │                      │                     │
        │                  │    notification    │                      │                     │
-       │                  │──────────────────▶│                      │                     │
+       │                  │───────────────────▶│                      │                     │
        │                  │                    │ 3. Update L1/L2      │                     │
        │                  │                    │    caches            │                     │
-       │                  │                    │────────────────────▶│                     │
+       │                  │                    │─────────────────────▶│                     │
        │                  │                    │ 4. Broadcast WS tip  │                     │
-       │                  │                    │────────────────────▶│                     │
+       │                  │                    │─────────────────────▶│                     │
        │                  │                    │                      │ 5. UI updates       │
-       │                  │                    │                      │──────────────────▶│
+       │                  │                    │                      │────────────────────▶│
 ```
 
 ## 2. Address Search and Transaction Lookup (Scripthash)
@@ -92,24 +92,24 @@ This document contains key sequence diagrams showing the interaction flows betwe
        │─────────────────▶│                    │                      │                     │
        │                  │ 2. HTTP GET        │                      │                     │
        │                  │   /address/{addr}  │                      │                     │
-       │                  │──────────────────▶│                      │                     │
+       │                  │───────────────────▶│                      │                     │
        │                  │                    │ 3. Check L1/L2/HTTP  │                     │
        │                  │                    │    cache (hit?)      │                     │
        │                  │                    │──────────────────────│                     │
        │                  │                    │ 4. Derive scripthash │                     │
        │                  │                    │    from scriptPubKey │                     │
-       │                  │                    │────────────────────▶│                      │
-       │                  │                    │ 5. get_history /     │                      │
-       │                  │                    │    get_balance       │                      │
-       │                  │                    │────────────────────▶│                      │
+       │                  │                    │─────────────────────▶│                     │
+       │                  │                    │ 5. get_history /     │                     │
+       │                  │                    │    get_balance       │                     │
+       │                  │                    │─────────────────────▶│                     │
        │                  │                    │                      │ 6. Response         │
-       │                  │                    │                      │◀───────────────────│
+       │                  │                    │                      │◀────────────────────│
        │                  │                    │ 7. Cache + paginate  │                     │
        │                  │                    │──────────────────────│                     │
        │                  │ 8. HTTP response   │                      │                     │
-       │                  │◀──────────────────│                      │                     │
-       │ 9. Render results │                   │                      │                     │
-       │◀──────────────────│                   │                      │                     │
+       │                  │◀───────────────────│                      │                     │
+       │ 9. Render results│                    │                      │                     │
+       │◀─────────────────│                    │                      │                     │
 ```
 
 ## 3. Fee Analysis and Network Load Calculation Flow
@@ -448,7 +448,7 @@ This document contains key sequence diagrams showing the interaction flows betwe
        │ 6. Cache results   │                    │                      │                     │
        │───────────────────────────────────────────────────────────────▶│                     │
        │ 7. WS broadcast    │                    │                      │ 8. UI updates       │
-       │───────────────────────────────────────────────────────────────▶│──────────────────▶│
+       │───────────────────────────────────────────────────────────────▶│────────────────────▶│
 ```
 
 ## 4. Error Handling: Circuit Breaker on Electrum Calls
@@ -459,22 +459,22 @@ This document contains key sequence diagrams showing the interaction flows betwe
 │ (Node)         │    │ (Closed/Open/Half)   │    │ (Electrum)  │
 └────────────────┘    └──────────────────────┘    └─────────────┘
        │                      │                         │
-       │ 1. Request          │                         │
-       │────────────────────▶│                         │
-       │                      │ 2. Closed → pass       │
-       │                      │───────────────────────▶│
+       │ 1. Request           │                         │
+       │─────────────────────▶│                         │
+       │                      │ 2. Closed → pass        │
+       │                      │────────────────────────▶│
        │                      │                         │ 3. Error/timeout
        │                      │                         │◀──────────────────
        │                      │ 4. Record failure, open │
        │                      │    if over threshold    │
        │                      │◀────────────────────────│
-       │ 5. Serve from cache │                         │
-       │    or degrade       │                         │
-       │◀────────────────────│                         │
-       │                      │ 6. Half‑open probe     │
-       │                      │    after timeout       │
-       │                      │───────────────────────▶│
-       │                      │ 7. Close on success    │
+       │ 5. Serve from cache  │                         │
+       │    or degrade        │                         │
+       │◀─────────────────────│                         │
+       │                      │ 6. Half‑open probe      │
+       │                      │    after timeout        │
+       │                      │────────────────────────▶│
+       │                      │ 7. Close on success     │
 ```
 
 ## Key Interaction Patterns
