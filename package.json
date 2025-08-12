@@ -1,0 +1,26 @@
+{
+  "name": "blocksight",
+  "private": true,
+  "version": "1.0.0",
+  "description": "BlockSight.live monorepo",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently -n backend,frontend -c blue,magenta \"npm:dev:backend\" \"npm:dev:frontend\"",
+    "dev:backend": "npm run dev -w backend",
+    "dev:frontend": "npm run dev -w frontend",
+    "build": "npm run build -w backend && npm run build -w frontend",
+    "typecheck": "npm run typecheck -w backend && npm run typecheck -w frontend",
+    "lint": "npm run lint -w backend && npm run lint -w frontend",
+    "test": "npm run test -w backend && npm run test -w frontend",
+    "docs:diagrams": "pwsh project-documents/system-diagrams/exports/export-diagrams.ps1",
+    "services:redis:start": "docker run -d --name blocksight-redis -p 6379:6379 redis:7-alpine",
+    "services:redis:stop": "docker rm -f blocksight-redis"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=9.0.0"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "name": "@blocksight/frontend",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Frontend (planned: Vite + React + TypeScript)",
+  "dependencies": {
+    "react": "*",
+    "react-dom": "*",
+    "i18next": "*",
+    "react-i18next": "*"
+  },
+  "devDependencies": {
+    "@types/react": "*",
+    "@types/react-dom": "*",
+    "@vitejs/plugin-react": "*",
+    "eslint": "*",
+    "eslint-config-prettier": "*",
+    "@typescript-eslint/eslint-plugin": "*",
+    "@typescript-eslint/parser": "*",
+    "jest": "*",
+    "prettier": "*",
+    "typescript": "*",
+    "vite": "*"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "test": "jest --runInBand"
+  }
+}

@@ -1,0 +1,67 @@
+# Root .gitignore (monorepo)
+
+# Node dependencies and debug logs
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Environment files (keep examples tracked)
+.env
+.env.*
+!.env.example
+
+# Build outputs and caches
+dist/
+build/
+out/
+lib/
+esm/
+coverage/
+.nyc_output/
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+
+# Framework-specific (safe blanket)
+.next/
+.svelte-kit/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# OS-specific cruft
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+Desktop.ini
+
+# Editor/IDE
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.swo
+
+# Diagram exports (source of truth is Mermaid in Markdown)
+project-documents/system-diagrams/exports/*.png
+project-documents/system-diagrams/exports/*.svg
+
+# Cursor rules (local policy, not required in repo)
+.cursorrules
+
+

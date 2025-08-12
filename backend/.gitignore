@@ -1,0 +1,10 @@
+# Backend-specific ignore
+node_modules/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+.eslintcache
+
+

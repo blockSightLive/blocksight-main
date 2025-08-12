@@ -1,0 +1,15 @@
+# CODEOWNERS maps file patterns to owners (GitHub teams/users)
+# Adjust to your org's teams/users
+
+# Docs
+/docs/ @maintainers
+/project-documents/ @maintainers
+
+# Backend
+/backend/ @backend-team
+
+# Frontend
+/frontend/ @frontend-team
+
+# CI/CD
+/.github/ @devops-team

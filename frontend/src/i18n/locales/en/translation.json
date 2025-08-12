@@ -1,0 +1,11 @@
+{
+  "nav": {
+    "home": "Home",
+    "search": "Search"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong"
+  }
+}
+

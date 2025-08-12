@@ -1,0 +1,11 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "search": "Buscar"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Algo salió mal"
+  }
+}
+

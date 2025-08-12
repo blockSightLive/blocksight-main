@@ -1,0 +1,45 @@
+{
+  "name": "@blocksight/backend",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Express + ws backend for BlockSight.live",
+  "dependencies": {
+    "cors": "*",
+    "dotenv": "*",
+    "electrum-client": "*",
+    "express": "*",
+    "express-rate-limit": "*",
+    "helmet": "*",
+    "ioredis": "*",
+    "pino": "*",
+    "ws": "*",
+    "zod": "*"
+  },
+  "devDependencies": {
+    "@types/cors": "*",
+    "@types/express": "*",
+    "@types/jest": "*",
+    "@types/node": "*",
+    "@types/supertest": "*",
+    "@types/ws": "*",
+    "eslint": "*",
+    "eslint-config-prettier": "*",
+    "@typescript-eslint/eslint-plugin": "*",
+    "@typescript-eslint/parser": "*",
+    "jest": "*",
+    "prettier": "*",
+    "supertest": "*",
+    "ts-jest": "*",
+    "ts-node": "*",
+    "tsconfig-paths": "*",
+    "typescript": "*"
+  },
+  "scripts": {
+    "dev": "nodemon --exec ts-node --transpile-only src/server.ts",
+    "start": "node dist/src/server.js",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint \"src/**/*.ts\"",
+    "test": "jest --runInBand"
+  }
+}

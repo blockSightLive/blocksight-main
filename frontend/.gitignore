@@ -1,0 +1,14 @@
+# Frontend-specific ignore
+node_modules/
+dist/
+build/
+coverage/
+.env
+.env.*
+!.env.example
+.eslintcache
+.parcel-cache/
+.cache/
+.next/
+
+
