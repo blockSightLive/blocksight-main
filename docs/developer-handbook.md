@@ -324,6 +324,7 @@ Implications:
 - Integration: HTTP routes with supertest; ws events with ws client
 - Contract: validate responses via zod schemas
 - Optional: golden samples vs Bitcoin Core RPC for parity on selected flows
+ - Tooling: Jest + ts-jest as the test runner; supertest for HTTP assertions. CI runs tests after lint/build.
 
 ### Server-side procedures: placement & conventions
 - Where logic lives

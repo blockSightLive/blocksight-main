@@ -21,7 +21,7 @@
   - Typecheck (TypeScript `--noEmit`)
   - Formatting check (Prettier)
 - Tests
-  - Unit and integration (Jest, supertest for backend; later React tests)
+  - Unit and integration (Jest + ts-jest, supertest for backend; later React tests)
   - Snapshot tests for i18n locales (later)
   - SQL function/view tests (snapshot/pgTAP) and Migration checks
   - Redis function tests (integration with timeouts)

@@ -357,6 +357,7 @@ npm run test       # Detect test errors
 1. **Mixed Chart Types:** Use generic Chart component or separate specific components
 2. **Readonly Arrays:** Remove `as const` or use type assertion
 3. **Union Types:** Transform types before use
+4. **No `any`:** Never introduce `any`. Prefer precise types or `unknown` narrowed with guards. Tests must reference concrete framework types (e.g., Express) rather than `any`.
 
 ### Systematic Resolution Flow
 1. Run `npm run typecheck`

@@ -15,7 +15,7 @@ Add dependencies (runtime + dev):
 npm --workspace backend install cors dotenv electrum-client express express-rate-limit helmet ioredis pino ws zod
 
 # Dev deps
-npm --workspace backend install -D @types/cors @types/express @types/jest @types/node @types/supertest @types/ws eslint eslint-config-prettier @typescript-eslint/eslint-plugin @typescript-eslint/parser jest prettier supertest ts-jest ts-node tsconfig-paths typescript
+npm --workspace backend install -D @types/cors @types/express @types/jest @types/node @types/supertest @types/ws eslint @eslint/js @eslint/eslintrc eslint-config-prettier @typescript-eslint/eslint-plugin @typescript-eslint/parser jest ts-jest prettier supertest ts-node tsconfig-paths typescript
 ```
 
 Post-install (backend):
@@ -23,6 +23,7 @@ Post-install (backend):
 - Remove `// @ts-nocheck` from `backend/src/server.ts`
 - Tighten ESLint root overrides to use `parserOptions.project` for backend
 - Run: `npm run typecheck -w backend && npm run lint -w backend && npm run build -w backend && npm test -w backend`
+ - ESLint: backend uses flat config at `backend/eslint.config.mjs`
 
 ### ESLint strict project references (paste into .eslintrc.json)
 

@@ -6,9 +6,9 @@
  * @state In Development
  */
 
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response, NextFunction, Express } from 'express';
 
-export function createApp() {
+export function createApp(): Express {
   const app = express();
 
   app.get('/health', (_req: Request, res: Response) => {
