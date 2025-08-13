@@ -35,7 +35,7 @@
   - DoR: Branch strategy approved; CODEOWNERS set; PR template with legend gates
   - Artifacts: branch protections; CODEOWNERS; PR template; commitlint config
   - DoD: Protected `main`; required reviews; status checks enforced
-- [ ] CI fast path (<2m build) **🚀 #**
+- [x] CI fast path (<2m build) **🚀 #**
   - DoR: Cache strategy decided; node/rust matrix defined
   - Artifacts: CI workflows (build, test, lint, typecheck)
   - DoD: Green CI; build < 2 minutes; flaky tests <1%
@@ -89,7 +89,7 @@
   - DoR: Docker installed; .env examples present
   - Artifacts: `Dockerfile` builds backend artifacts; image tagged `blocksight/app:dev`
   - DoD: Image builds successfully with `docker build -t blocksight/app:dev .`
-- [ ] Compose orchestration **$ 🚀**
+- [x] Compose orchestration **$ 🚀**
   - DoR: Compose files reviewed (`docker-compose.dev.yml`, `docker-compose.stack.yml`)
   - Artifacts: Services start via compose; backend reachable on http://localhost:8000
   - DoD: Backend logs healthy; Redis healthcheck passing; URLs use service DNS inside compose

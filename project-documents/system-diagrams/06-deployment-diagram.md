@@ -130,9 +130,10 @@ graph TD
 - Public subnets for API/WS behind gateway/LB; TLS termination at edge.
 - Strict SG/ACL rules; no public electrs/Core.
 
-### Monitoring & Alerts
+### Monitoring, CI, & Alerts
 - Metrics: electrum_call_latency_ms{method}, electrum_errors_total{type}, tip_lag_blocks, subscriptions_active, reconnects_total, cache_hit_rate.
 - Alerts: Core/electrs divergence, persistent tip lag, reconnect storms, error‑rate spikes.
+ - CI: container builds; backend checks (typecheck, ESLint v9 flat config lint, build, Jest tests).
 
 ### Deployment & Rollback
 - Blue‑green / canary on API tier; feature flags for risky paths.

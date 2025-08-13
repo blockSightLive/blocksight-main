@@ -161,8 +161,8 @@ Deployment Notes (Dev → Prod)
 
 #### GitHub Actions Workflows
 1. **CI Pipeline** (`ci.yml`)
-   - Code quality checks (ESLint, Prettier, TypeScript)
-   - Unit and integration testing
+   - Code quality checks (ESLint v9 flat config, Prettier, TypeScript `--noEmit`)
+   - Unit and integration testing (Jest + ts-jest; supertest for HTTP routes)
    - Security vulnerability scanning
    - Performance benchmarking
    - Blockchain data integrity validation
