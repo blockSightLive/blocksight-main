@@ -9,6 +9,9 @@
     "prettier"
   ],
   "ignorePatterns": ["dist/", "node_modules/"],
-  "rules": {}
+  "rules": {
+    "@typescript-eslint/ban-ts-comment": ["error", { "ts-nocheck": false }],
+    "no-undef": "off"
+  }
 }
 

@@ -63,6 +63,8 @@
   - pre-commit: lint-staged for changed files
   - commit-msg: conventional commits enforcement
 
+Note: Backend uses ESLint v9 flat config (`backend/eslint.config.mjs`). Run `npm run lint -w backend` which resolves the flat config automatically.
+
 ## Git hygiene (.gitignore strategy)
 - Root `.gitignore` excludes node_modules, build artifacts (`dist/`, `build/`, `coverage/`), caches, logs, and local env files (`.env*`, except `.env.example`).
 - Each workspace (`backend`, `frontend`) has its own `.gitignore` tuned to its build system.

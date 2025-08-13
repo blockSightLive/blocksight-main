@@ -22,7 +22,11 @@ export default [
     },
     rules: {
       ...js.configs.recommended.rules,
-      ...tsPlugin.configs.recommended.rules
+      ...tsPlugin.configs.recommended.rules,
+      // Allow bootstrap directive until local types are installed
+      '@typescript-eslint/ban-ts-comment': ['error', { 'ts-nocheck': false }],
+      // Node globals in backend runtime
+      'no-undef': 'off'
     }
   },
   eslintConfigPrettier

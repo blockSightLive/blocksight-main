@@ -29,9 +29,9 @@
     "@typescript-eslint/eslint-plugin": "*",
     "@typescript-eslint/parser": "*",
     "jest": "*",
+    "ts-jest": "*",
     "prettier": "*",
     "supertest": "*",
-    "ts-jest": "*",
     "ts-node": "*",
     "tsconfig-paths": "*",
     "typescript": "*"
@@ -42,6 +42,6 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
-    "test": "jest --runInBand"
+    "test": "jest --runInBand --config ./jest.config.ts"
   }
 }
