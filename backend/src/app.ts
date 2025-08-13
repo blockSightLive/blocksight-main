@@ -7,6 +7,8 @@
  */
 
 import express, { Request, Response, NextFunction, Express } from 'express';
+import { FakeElectrumAdapter } from './adapters/electrum/fake.adapter';
+import { createElectrumRouter } from './routes/electrum.routes';
 
 export function createApp(): Express {
   const app = express();
@@ -14,6 +16,10 @@ export function createApp(): Express {
   app.get('/health', (_req: Request, res: Response) => {
     res.json({ ok: true, ts: Date.now() });
   });
+
+  // Electrum routes (using fake adapter by default; real adapter wired later)
+  const electrumAdapter = new FakeElectrumAdapter();
+  app.use('/v1', createElectrumRouter(electrumAdapter));
 
   // Basic error handler placeholder
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
