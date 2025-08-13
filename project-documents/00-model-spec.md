@@ -31,6 +31,7 @@ Bitcoin Core → electrs (Indexer) → HTTP REST API → NodeJS Backend → Mult
 
 Deployment Notes (Dev → Prod)
 - Single-machine development: Windows host runs backend/frontend/electrs; Bitcoin Core full node runs inside a Linux VM. Connectivity over the host-only/bridge network with authenticated RPC; electrs points to the VM’s Core. Ensure clock sync and stable disk I/O.
+- Containerized development (preferred): Use Docker with compose. Backend and Redis run as containers; electrs can be reached via `host.docker.internal` or as a compose service. Service DNS names (e.g., `redis`, `backend`) are used within the compose network; external access uses mapped host ports.
 - Production (AWS): mixed private/public subnets. Private: Bitcoin Core and electrs; Public: API and CDN edges. Use security groups/VPC endpoints; pin electrs to private interfaces; expose public read APIs via gateway/ingress. HA via multiple AZs and active/standby electrs.
 
 ### Core Components
@@ -65,6 +66,7 @@ Deployment Notes (Dev → Prod)
 - **L2**: Memory-mapped files (10-30s TTL, ~1-5ms)
 - **L3**: Nginx HTTP cache (2min-24h TTL, ~5-20ms)
 - **Analytics**: PostgreSQL read-only replica (~100-500ms)
+ - **Procedures**: SQL functions/views used for heavy, reusable analytics; Redis functions for atomic cache behaviors; electrs remains unmodified.
 
 ##### Analytics Data Model Principles (BlockSci insight)
 - Treat blockchain data as append-only; prefer immutable facts + materialized rollups.

@@ -187,8 +187,8 @@ Each symbol in the legend represents a mandatory gate with Definition of Ready (
 
 - 🚀 DevOps Automation
   - DoR: Pipeline gaps identified; automation tasks sized.
-  - Artifacts: CI workflows, IaC diffs.
-  - DoD: Manual steps removed; pipelines reproducible and fast (<2m build).
+  - Artifacts: CI workflows, IaC diffs; container build jobs for unified Dockerfile.
+  - DoD: Manual steps removed; pipelines reproducible and fast (<2m build); container images built in CI.
 
 - 🔒 Security & Compliance
   - DoR: SBOM and policy checks planned.
@@ -426,7 +426,7 @@ This roadmap consolidates all architectural analysis into actionable objectives 
 - **GitHub Actions Workflows**: Automated CI, staging deployment, production deployment, security scanning
 - **Quality Gates**: Code coverage ≥85%, security scans, performance benchmarks, Bitcoin consensus validation
 - **Automated Testing**: Unit → Integration → Bitcoin Network → Consensus validation at every commit
-- **Infrastructure as Code**: Terraform, Kubernetes, Helm Charts, ArgoCD for GitOps deployment
+- **Infrastructure as Code**: Terraform, Kubernetes, Helm Charts, ArgoCD for GitOps deployment; Containers First with a unified multi-stage Dockerfile and compose files (`docker-compose.dev.yml`, `docker-compose.stack.yml`) for local orchestration. URLs inside compose use service DNS (e.g., `redis`, `backend`, `electrs`).
 
 #### **electrs Submodule Integration Strategy**
 - **Git Submodule Management**: Clean dependency tracking, version control, easy security updates

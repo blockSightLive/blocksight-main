@@ -1,0 +1,64 @@
+version: "3.9"
+
+networks:
+  blocksight-net:
+    driver: bridge
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: blocksight-redis
+    networks: [blocksight-net]
+    ports: ["6379:6379"]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    container_name: blocksight-backend
+    networks: [blocksight-net]
+    environment:
+      - NODE_ENV=development
+      - PORT=8000
+      - LOG_LEVEL=info
+      - ELECTRUM_HOST=electrs
+      - ELECTRUM_PORT=50001
+      - ELECTRUM_TLS=false
+      - REDIS_URL=redis://redis:6379
+      - CORS_ORIGIN=http://localhost:3000
+    depends_on:
+      redis:
+        condition: service_healthy
+    ports: ["8000:8000"]
+    command: ["node", "backend/dist/src/server.js"]
+
+  # frontend:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #     target: runtime
+  #   container_name: blocksight-frontend
+  #   networks: [blocksight-net]
+  #   ports: ["3000:3000"]
+  #   command: ["serve", "-s", "frontend/dist", "-l", "3000"]
+
+  # electrs:
+  #   image: getuxi/electrs:latest # Example image. Replace with your preferred electrs image
+  #   container_name: blocksight-electrs
+  #   networks: [blocksight-net]
+  #   environment:
+  #     - ELECTRS_NETWORK=bitcoin
+  #     - ELECTRS_DAEMON_RPC_ADDR=bitcoin-core:8332
+  #     - ELECTRS_DAEMON_RPC_USER=bitcoin
+  #     - ELECTRS_DAEMON_RPC_PASS=replace-me
+  #   ports: ["50001:50001"]
+  #   restart: unless-stopped
+
+

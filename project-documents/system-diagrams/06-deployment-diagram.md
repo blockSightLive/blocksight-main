@@ -4,7 +4,7 @@
 
 Physical deployment and traffic flow aligned with Electrum TCP (50001/50002), a Node.js Electrum adapter exposing HTTP/JSON + WebSocket, multi‑tier caching in front of our adapter, and private electrs/Core networking.
 
-## Deployment Diagram
+## Deployment Diagram (Production)
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
@@ -85,6 +85,26 @@ Physical deployment and traffic flow aligned with Electrum TCP (50001/50002), a 
 │  │  • Prometheus/Grafana • Alerts • Tracing (OTel) • Tip‑lag/Errors/Reconn    │ │
 │  └────────────────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────────────────┘
+```
+
+## Deployment Diagram (Dev - Containerized)
+
+```mermaid
+graph TD
+  subgraph Dev[Docker Compose Network]
+    Backend[Backend Container]
+    Redis[(Redis Container)]
+    UI[Frontend Container]
+    Electrs[electrs (container or host service)]
+  end
+  VM[Linux VM: Bitcoin Core]
+
+  Backend --> Redis
+  Backend --> Electrs
+  UI --> Backend
+
+  classDef dim fill:#f7f7f7,stroke:#ccc,color:#333;
+  class Dev dim;
 ```
 
 ## Architecture Notes

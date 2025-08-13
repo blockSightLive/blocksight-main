@@ -23,12 +23,17 @@
 - Tests
   - Unit and integration (Jest, supertest for backend; later React tests)
   - Snapshot tests for i18n locales (later)
+  - SQL function/view tests (snapshot/pgTAP) and Migration checks
+  - Redis function tests (integration with timeouts)
 - Security and Compliance
   - Dependency vulnerability scanning (e.g., npm audit or dedicated tools in CI)
   - SBOM generation (CycloneDX/SPDX) and license checks (later)
 - Build
   - Compile backend/frontend
   - Artifact packaging (later phases)
+  - Container image builds for unified Dockerfile
+  - SQL migrations build/check (lint, dry-run)
+  - Redis functions load/verify job (SHA/version)
 - Documentation
   - Diagram exports (Mermaid CLI) for changed files (optional job)
 - Deployment (later phases)
@@ -87,3 +92,4 @@
 - CI fails on tests: run `npm test -w <workspace>`; update fixtures or adjust tests
 - Formatting errors: run `npm run format`
 - Diagram export errors: ensure Mermaid blocks are valid; run `docs:diagrams`
+ - Container build errors: verify Dockerfile stages, ensure workspace builds locally before image build

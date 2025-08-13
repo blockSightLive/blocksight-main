@@ -37,7 +37,7 @@ flowchart LR
 
   subgraph External
     ELEC[electrs (Electrum TCP 50001/50002)]
-    UI[Frontend Clients]
+    UI[Frontend Clients or Container]
     PSQL[PostgreSQL (Views/MVs)]
   end
 

@@ -216,6 +216,12 @@ My methodology:
 - Keep diagrams and documentation references up to date whenever files move.
 - Root should remain lean (e.g., `README.md` as entry point). Consolidate developer guides under `docs/`.
 
+### Runtime Standardization (Containers First)
+- Prefer Docker images as the authoritative runtime specification (OS, Node, tools).
+- `.nvmrc` is advisory only; Dockerfile/compose define the canonical versions.
+- Provide a single, multi-stage Dockerfile at repo root building backend and frontend artifacts.
+- Use `docker-compose.dev.yml` to orchestrate dev services (e.g., Redis) and run the backend.
+
 ---
 
 ## 🏗️ Architecture & Patterns
@@ -299,8 +305,9 @@ I implement:
 2. Update file header
 3. Run complete tests
 4. **README Alignment Check** - Reason whether changes affect README.md and update if necessary
-5. Mandatory code review
-6. Architecture Alignment Gate:
+5. **Checklist Alignment** - Mark corresponding items complete in `project-documents/01-execution-checklists.md` and adjust future tasks if scope shifted
+6. Mandatory code review
+7. Architecture Alignment Gate:
    - Compare implementation against `project-documents/system-diagrams/*` and `00-model-spec.md`
    - If behavior or boundaries changed, update diagrams and specs in the same PR
    - Confirm no regression to previously documented features; explicitly note any de-scoped items

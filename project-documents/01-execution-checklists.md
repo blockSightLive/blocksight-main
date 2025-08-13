@@ -84,6 +84,16 @@
   - Artifacts: Root npm scripts to start/stop a local Redis container; `REDIS_URL` documented
   - DoD: Local cache reachable when enabled; app degrades gracefully if disabled
 
+### Containerized Dev Stack
+- [ ] Unified image build **$ 🚀**
+  - DoR: Docker installed; .env examples present
+  - Artifacts: `Dockerfile` builds backend artifacts; image tagged `blocksight/app:dev`
+  - DoD: Image builds successfully with `docker build -t blocksight/app:dev .`
+- [ ] Compose orchestration **$ 🚀**
+  - DoR: Compose files reviewed (`docker-compose.dev.yml`, `docker-compose.stack.yml`)
+  - Artifacts: Services start via compose; backend reachable on http://localhost:8000
+  - DoD: Backend logs healthy; Redis healthcheck passing; URLs use service DNS inside compose
+
 ---
 
 ## Phase 1: Core Bitcoin Modules (Weeks 3-6)
@@ -145,6 +155,16 @@
   - Artifacts: Jobs; tests; dashboards
   - DoD: Accuracy within ±1% of baseline
 
+### Server-side Procedures (SQL & Redis)
+- [ ] PostgreSQL analytics functions/views **# * 📊**
+  - DoR: Data model and compute hot spots identified; view vs function decided
+  - Artifacts: Versioned migrations (analytics.fn_*, mv_*); tests; explain plans
+  - DoD: Functions/views pass tests; perf budgets respected
+- [ ] Redis atomic cache functions **# * 📊**
+  - DoR: Hot cache paths identified; need for atomicity established
+  - Artifacts: Versioned Redis functions (function:<name>:v1); loader with SHA validation; tests
+  - DoD: Functions executed within time budget; fallbacks verified
+
 ### CDN Widgets (Public Embeds)
 - [ ] Edge caching and budgets **# * 📊**
   - DoR: TTLs, refresh budgets, themes
@@ -169,6 +189,10 @@
   - DoR: Targets locked; datasets
   - Artifacts: Benchmarks; traces
   - DoD: All SLIs within budgets
+ - [ ] Container images validated **# * 📊**
+   - DoR: Docker images and compose files finalized
+   - Artifacts: Container smoke tests; startup time within budget
+   - DoD: Green runs in CI with container builds
 
 ---
 

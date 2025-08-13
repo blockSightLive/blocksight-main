@@ -325,6 +325,21 @@ Implications:
 - Contract: validate responses via zod schemas
 - Optional: golden samples vs Bitcoin Core RPC for parity on selected flows
 
+### Server-side procedures: placement & conventions
+- Where logic lives
+  - Backend services: orchestrations across Electrum + cache (our primary "procedures").
+  - PostgreSQL: analytics views/materialized views and fn_* functions for heavy, reusable computations close to data. Prefer views/MVs; use PL/pgSQL only for compute reuse.
+  - Redis: Lua/Redis Functions for atomic cache operations (stampede protection, counters), time-bounded and side‑effect limited to cache.
+  - electrs/RocksDB: never modified; no procedures here.
+- Naming/versioning
+  - SQL: schema `analytics`, prefix fn_* for functions and mv_* for materialized views; version via migrations.
+  - Redis: function:<name>:v1 (or script:<name>:v1), SHA/version checked at app startup.
+  - Backend services: suffix Procedure for multi‑call orchestrations (e.g., AddressSummaryProcedure), zod-typed IO.
+- Testing
+  - SQL: snapshot tests or pgTAP; explain plans reviewed; runtime metrics observed.
+  - Redis: integration tests invoking functions; timeouts ≤ 50ms; fallback path covered.
+  - Backend: unit tests with fakes; integration with supertest; contract validation via zod.
+
 ### Proposed npm Scripts (to be added after `package.json` is created)
 ```json
 {
@@ -366,6 +381,29 @@ How to use:
 - Use root scripts for day-to-day multi-project development
 - Use workspace scripts with `-w backend` or `-w frontend` when focusing on a single surface
  - After installs, CI will run `typecheck`, `lint`, `build`, and `test` for all workspaces; keep diffs small to speed feedback
+
+Containers First
+- Prefer `docker compose -f docker-compose.dev.yml up -d --build` for local stack and service DNS routing
+- Use service names (e.g., `redis`, `backend`) when one container talks to another; use `host.docker.internal` to reach host-only services
+- See `docs/infrastructure/docker.md` for commands and notes
+
+### ESLint strict overrides (paste and adapt after installs)
+```json
+{
+  "overrides": [
+    {
+      "files": ["backend/**/*.ts"],
+      "parserOptions": { "project": ["./backend/tsconfig.json"], "tsconfigRootDir": "__dirname" },
+      "env": { "node": true }
+    },
+    {
+      "files": ["frontend/**/*.ts", "frontend/**/*.tsx"],
+      "parserOptions": { "project": ["./frontend/tsconfig.json"], "tsconfigRootDir": "__dirname", "ecmaFeatures": { "jsx": true } },
+      "env": { "browser": true }
+    }
+  ]
+}
+```
 
 ---
 
