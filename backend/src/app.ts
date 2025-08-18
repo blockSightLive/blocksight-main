@@ -8,6 +8,7 @@
 
 import express, { Request, Response, NextFunction, Express } from 'express';
 import { FakeElectrumAdapter } from './adapters/electrum/fake.adapter';
+import { RealElectrumAdapter } from './adapters/electrum/electrum.adapter';
 import { createElectrumRouter } from './routes/electrum.routes';
 
 export function createApp(): Express {
@@ -17,8 +18,15 @@ export function createApp(): Express {
     res.json({ ok: true, ts: Date.now() });
   });
 
-  // Electrum routes (using fake adapter by default; real adapter wired later)
-  const electrumAdapter = new FakeElectrumAdapter();
+  // Electrum routes - env-driven switch
+  const useReal = process.env.ELECTRUM_ENABLED === 'true';
+  const electrumAdapter = useReal
+    ? new RealElectrumAdapter({
+        host: process.env.ELECTRUM_HOST ?? 'host.docker.internal',
+        port: parseInt(process.env.ELECTRUM_PORT ?? '50001', 10),
+        tls: (process.env.ELECTRUM_TLS ?? 'false') === 'true'
+      })
+    : new FakeElectrumAdapter();
   app.use('/v1', createElectrumRouter(electrumAdapter));
 
   // Basic error handler placeholder

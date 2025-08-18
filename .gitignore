@@ -64,4 +64,5 @@ project-documents/system-diagrams/exports/*.svg
 # Cursor rules (local policy, not required in repo)
 .cursorrules
 
-
+# Secrets
+btCore/

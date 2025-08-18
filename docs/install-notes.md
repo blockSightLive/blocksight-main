@@ -85,3 +85,110 @@ npm install -w backend -w frontend
 - Dev stack (backend + Redis): `docker compose -f docker-compose.dev.yml up -d --build`
 - Full stack (when frontend/electrs are wired): `docker compose -f docker-compose.stack.yml up -d --build`
 - Inside compose, use service DNS (e.g., `redis`, `backend`) for URLs; from host use mapped ports (`http://localhost:8000`)
+
+## Electrs on VM (WSL2 or Linux) – Runbook
+
+Prereqs (VM)
+- Bitcoin Core (bitcoind) synced or syncing
+- External SSD/NVMe mounted (recommended)
+- Packages: `clang cmake build-essential git cargo`
+
+Install/build electrs (on the VM)
+```bash
+git clone https://github.com/romanz/electrs.git
+cd electrs
+cargo build --locked --release
+```
+
+Config (create `~/.electrs/config.toml`)
+```toml
+cookie_file = "/path/to/bitcoin/.cookie"         # e.g., /mnt/b/bitcoin-data/.cookie
+daemon_rpc_addr = "127.0.0.1:8332"
+daemon_p2p_addr = "127.0.0.1:8333"
+network = "bitcoin"
+electrum_rpc_addr = "0.0.0.0:50001"               # reachable by host/container
+
+# Throttle for stability during initial indexing
+db_parallelism = 1
+ignore_mempool = true
+wait_duration = "15s"
+jsonrpc_timeout = "30s"
+
+# Place index on fast external disk
+# db_dir = "/mnt/b/electrs-db"
+```
+
+Run (throttled)
+```bash
+nice -n 10 ionice -c2 -n7 ./target/release/electrs --conf ~/.electrs/config.toml
+```
+
+Backend connectivity (compose on Windows host)
+- Option A (direct VM IP): set `ELECTRUM_HOST=<VM_IP>` (e.g., `172.x.x.x`)
+- Option B (port-proxy → `host.docker.internal`):
+  - Admin PowerShell:
+    - `netsh interface portproxy add v4tov4 listenaddress=127.0.0.1 listenport=50001 connectaddress=<VM_IP> connectport=50001`
+    - `netsh advfirewall firewall add rule name="Electrs 50001 inbound" dir=in action=allow protocol=TCP localport=50001`
+  - Compose: `ELECTRUM_HOST=host.docker.internal`, `ELECTRUM_PORT=50001`, `ELECTRUM_TLS=false`
+
+WSL2 resource limits (Windows host)
+- Create `%UserProfile%/.wslconfig` and set for stability:
+```ini
+[wsl2]
+memory=12GB
+processors=8
+swap=16GB
+localhostForwarding=true
+```
+- Apply with: `wsl --shutdown` (PowerShell), then restart your distro.
+
+### Troubleshooting electrs stability on WSL2 (heavy indexing)
+
+Symptoms
+- WSL distro exits unexpectedly during heavy ranges; indexing restarts.
+
+Likely causes
+- NTFS I/O bottlenecks and USB power saving on external drives
+- Memory pressure (WSL OOM) or file descriptor limits
+- Slow Core RPC during initial sync causing timeouts/retries
+
+Mitigations (apply in order)
+1) Use ext4 for the electrs DB
+   - Prefer a path inside the WSL ext4 filesystem (e.g., `~/.electrs/db`) rather than `/mnt/<drive>`.
+   - Or reformat/mount an external disk as ext4 via `wsl --mount` and point `db_dir` there.
+   - Use an absolute `db_dir` in config to avoid accidental resets.
+2) Increase file descriptor limit before launching electrs
+   ```bash
+   ulimit -n 8192
+   ```
+3) Keep throttling and timeouts conservative
+   - `db_parallelism = 1`
+   - `ignore_mempool = true` (until fully synced)
+   - `jsonrpc_timeout = "60s"`
+   - If supported by your electrs version: `index_batch_size = 500`–`1000`
+   - `reindex_last_blocks = 1000`
+4) Power/USB stability on Windows host
+   - Disable “USB selective suspend” and device power saving.
+   - Set Windows Power Plan to High performance; prevent external drive sleep.
+   - Exclude the electrs DB directory from antivirus scanning.
+5) Controlled “pause” to let system breathe and ensure checkpoints
+   - Use `timeout` to send SIGINT after N seconds so electrs flushes state and exits cleanly, then restart later:
+     ```bash
+     ulimit -n 8192 && nice -n 10 ionice -c2 -n7 timeout --signal=INT 1500 \
+       ./target/release/electrs --conf ~/.electrs/config.toml
+     ```
+
+Resumability
+- electrs persists index progress in RocksDB; on restart it resumes from the last indexed height.
+- If it always restarts from block 1, verify `db_dir` is stable, absolute, and not on a volatile mount; check logs for corruption and consider `auto_reindex = true` with `reindex_last_blocks` set.
+
+Diagnostics
+```bash
+# In the VM
+dmesg -T | tail -n 200 | grep -i -E 'oom|killed|out of memory'
+grep -i electrs /var/log/syslog 2>/dev/null | tail -n 200
+ulimit -n
+vmstat 1
+iotop -oPa   # may require sudo; shows per-process I/O pressure
+```
+

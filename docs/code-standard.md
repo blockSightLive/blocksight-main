@@ -211,7 +211,9 @@ My methodology:
 **Critical Rule**: I must reason about batching edits before touching any file. If I can't complete everything in 1-2 edits maximum, I save the remaining work in memory for the next response rather than making multiple small edits.
 
 ### File Placement and Responsibility Grouping (CRITICAL)
-- Every new file must be placed alongside files with similar responsibility.
+- **ALWAYS place new files alongside files with similar responsibility** - never create files randomly throughout the codebase
+- **Use folder names as guidance** - if you need to find where similar files are located, use `grep` to search folder names and existing file patterns
+- **Group by responsibility, not by type** - e.g., all Bitcoin Core setup docs go together, all electrs docs go together, all system diagrams go together
 - If a new location is chosen (e.g., `docs/` for developer guides), move older files to align and update all references.
 - Keep diagrams and documentation references up to date whenever files move.
 - Root should remain lean (e.g., `README.md` as entry point). Consolidate developer guides under `docs/`.
@@ -392,6 +394,14 @@ After completing any coding task, I must:
 2. **Check README relevance** - Are there new npm scripts, environment variables, or procedures?
 3. **Update if necessary** - Keep README.md as the single source of truth
 4. **Maintain consistency** - Ensure all documentation reflects current state
+
+### Documentation Style Rules (CRITICAL)
+- **`project-documents/01-development-roadmap.md` and `project-documents/01-execution-checklists.md` are MINIMAL task representations**
+- **NO unnecessary completion texts or huge explanatory blocks for done items**
+- **Done items are marked with `[x]` or `✅` - that's it**
+- **Steps to take are NOT marked with `[x]` - this follows common sense**
+- **Keep these files lean and focused on current actionable tasks**
+- **If you need to explain what was done, do it in the specific documentation files, not in these task lists**
 
 ### Version Management - CRITICAL RULE
 **I NEVER increment version numbers unless explicitly requested or required by development phases.**
