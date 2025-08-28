@@ -510,7 +510,7 @@ describe('Bitcoin Validation Utilities', () => {
     })
 
     it('should not leak memory on repeated validation', () => {
-      const initialMemory = (performance as any).memory?.usedJSHeapSize || 0
+      const initialMemory = (performance as Performance & { memory?: { usedJSHeapSize: number } }).memory?.usedJSHeapSize || 0
       
       for (let i = 0; i < 1000; i++) {
         validateBlock(validBlock)
@@ -518,7 +518,7 @@ describe('Bitcoin Validation Utilities', () => {
         validateAddress(validAddress)
       }
       
-      const finalMemory = (performance as any).memory?.usedJSHeapSize || 0
+      const finalMemory = (performance as Performance & { memory?: { usedJSHeapSize: number } }).memory?.usedJSHeapSize || 0
       const memoryIncrease = finalMemory - initialMemory
       
       // Memory increase should be reasonable (less than 1MB)

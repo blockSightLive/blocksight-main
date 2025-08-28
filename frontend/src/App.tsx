@@ -46,22 +46,16 @@
  * - No external dependencies
  */
 
-import React, { useState, useEffect } from 'react';
-import { useTheme } from './contexts/ThemeContext';
-import { useBitcoin } from './contexts/BitcoinContext';
-import { Dashboard } from './pages/Dashboard';
+import React, { useState, useEffect } from 'react'
+import { Dashboard } from './pages/Dashboard'
+import LoadingBlocks from './components/shared/LoadingBlocks'
+import './App.css'
 import { Header } from './components/Header';
-import LoadingBlocks from './components/shared/LoadingBlocks';
-import './App.css';
 
 const App: React.FC = () => {
-  const { theme, toggleTheme } = useTheme();
-  const { state } = useBitcoin();
-  const { networkStatus, blocks } = state;
-  
   // Loading state for splash screen
-  const [isLoading, setIsLoading] = useState(true);
-  const [isFading, setIsFading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true)
+  const [isFading, setIsFading] = useState(false)
 
   // Timer effect for splash screen
   useEffect(() => {

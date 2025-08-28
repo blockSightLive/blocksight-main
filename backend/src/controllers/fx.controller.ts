@@ -19,7 +19,7 @@ async function fetchFxUSD(symbols: string[]): Promise<{ rates: Record<string, nu
   try {
     const res = await fetch(url)
     if (!res.ok) return null
-    const json = (await res.json()) as any
+    const json = (await res.json()) as { rates?: Record<string, number> }
     const rates = json?.rates ?? {}
     const out: Record<string, number> = {}
     for (const sym of symbols) {
@@ -43,7 +43,7 @@ export function makeFxController(l1?: L1Cache) {
         const symbols = symbolsParam.split(',').map(s => s.trim().toUpperCase()).filter(Boolean)
         const cacheKey = keys.fxRates(base)
         if (l1) {
-          const cached = l1.get<any>(cacheKey)
+          const cached = l1.get<{ base: string; rates: Record<string, number>; asOfMs: number; provider: string }>(cacheKey)
           if (cached) {
             recordCacheHit('fx.rates', cacheKey)
             recordLatency('fx.rates', Date.now() - started)

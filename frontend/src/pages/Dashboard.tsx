@@ -46,15 +46,10 @@
  */
 
 import React from 'react'
-import './Dashboard.css'
-import { useTranslation } from 'react-i18next'
-import { BlockchainVisualizer } from '../components/dashboard-columns/BlockchainVisualizer'
-import { SearchResults } from '../components/dashboard-columns/SearchResults'
 import { DashboardData } from '../components/dashboard-columns/DashboardData'
+import './Dashboard.css'
 
 export const Dashboard: React.FC = () => {
-  const { t } = useTranslation()
-  
   return (
     <div className="dashboard">
       {/* Left Column - Search Results */}

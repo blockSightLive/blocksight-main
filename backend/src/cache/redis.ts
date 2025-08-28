@@ -26,7 +26,7 @@ export class RedisL1Cache implements L1Cache {
     this.client.connect().catch(() => undefined);
   }
 
-  get<T>(key: string): T | null {
+  get<T>(): T | null {
     // Use sync-like wrapper via deasync is not desired; expose get as sync-like by returning null if not ready
     // For controller use, prefer getAsync instead. Keeping interface parity use a quick blocking approach with Atomics wait? Not ideal.
     // Simpler: return null from sync get and rely on getAsync in future expansion. For now controllers will not call this method.

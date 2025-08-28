@@ -5,7 +5,7 @@
  * @version 1.0.0
  * @author Development Team
  * @since 2025-08-11
- * @lastModified 2025-08-11
+ * @lastModified 2025-08-28
  * 
  * @description
  * This document consolidates all technical implementation details, architecture design, and code examples
@@ -1674,6 +1674,165 @@ class BalanceHistoryTracker {
   }
 }
 ```
+
+## **Frontend Implementation Architecture**
+
+### **Frontend Technology Stack (Updated - 2025-08-28)**
+
+#### **Core Framework**
+- **React 18+**: Latest React features with concurrent rendering
+- **TypeScript**: Strict mode with comprehensive type safety
+- **Vite**: Fast development server and optimized production builds
+- **State Management**: React Context + Reducer pattern for global state
+
+#### **Styling Architecture**
+**Three-Tier CSS Architecture for Optimal Performance and Maintainability**
+
+**CSS Modules Layer**:
+- **Purpose**: Component isolation and layout management
+- **File Extension**: `.module.css`
+- **Use Cases**: Static layouts, grid systems, Three.js containers, dashboard panels
+- **Benefits**: Scoped styling, no CSS conflicts, predictable specificity
+- **Implementation**: Co-located with components for optimal maintainability
+
+**CSS Custom Properties Layer**:
+- **Purpose**: Dynamic theming and global design tokens
+- **File Location**: `frontend/src/styles/design-tokens/`
+- **Use Cases**: Theme switching, responsive breakpoints, global values, animation timing
+- **Benefits**: Runtime theme changes, consistent design tokens, easy customization
+- **Implementation**: Centralized in design tokens with component-level overrides
+
+**Styled Components Layer**:
+- **Purpose**: Interactive elements and state-based styling
+- **File Extension**: `.styled.ts` or inline in components
+- **Use Cases**: Buttons, inputs, toggles, dynamic animations, complex conditional styling
+- **Benefits**: JavaScript-powered styling, theme integration, dynamic state management
+- **Implementation**: Used alongside CSS Modules for optimal component architecture
+
+#### **Styles Directory Structure**
+```
+frontend/src/styles/
+├── design-tokens/
+│   ├── colors.css          # Centralized color palette
+│   ├── spacing.css         # Global spacing system
+│   ├── typography.css      # Font management and sizing
+│   ├── breakpoints.css     # Responsive design breakpoints
+│   └── animations.css      # Animation timing and easing
+├── base/
+│   ├── reset.css           # CSS reset and base styles
+│   ├── global.css          # Global styles and utilities
+│   └── theme.css           # Theme switching logic
+└── components/
+    ├── common/             # Shared component styles
+    ├── layout/             # Layout and grid styles
+    └── themes/             # Theme-specific style overrides
+```
+
+### **Theme System Implementation**
+
+#### **Color Management Strategy**
+- **Base Colors**: Hardcoded values in `@colors.css` for consistency
+- **Theme Overrides**: Light/dark specific colors in `light.css` and `dark.css`
+- **No Circular References**: Clean inheritance without variable dependencies
+- **Color Palette**: Blockchain-themed colors (orange, red, light purple, dark purple)
+
+#### **Theme Switching Mechanism**
+- **Context-Based**: React Context for theme state management
+- **Attribute-Based**: `data-theme` attribute for CSS variable overrides
+- **Instant Updates**: Real-time theme changes without page refresh
+- **Persistent Storage**: User preferences saved in localStorage
+
+#### **CSS Variable Architecture**
+```css
+/* Base colors (hardcoded) */
+:root {
+  --color-orange: #F9D8A2;
+  --color-red: #FC7A99;
+  --color-purple-light: #7B2F;
+  --color-purple-dark: #4A1F;
+}
+
+/* Theme-specific overrides */
+[data-theme="light"] {
+  --color-surface: #f8f9fa;
+  --color-text: #212529;
+}
+
+[data-theme="dark"] {
+  --color-surface: #212529;
+  --color-text: #f8f9fa;
+}
+```
+
+### **Advanced UI Features Architecture**
+
+#### **3D Design System**
+- **Transform System**: Complete 3D transforms with `transform-style: preserve-3d`
+- **Perspective Management**: CSS perspective for depth perception
+- **Performance Optimization**: Hardware acceleration with `will-change` and `transform3d`
+- **ThreeJS Integration**: Planning for blockchain visualization in center column
+
+#### **LoadingBlocks Component**
+- **3D Cube Animation**: Hardware-accelerated 3D transforms
+- **Blockchain Colors**: Orange, red, light purple, dark purple theme
+- **Smooth Animations**: CSS keyframes with cubic-bezier easing
+- **Performance**: 60fps animations with optimized rendering
+
+#### **Splash Screen System**
+- **Timing Control**: 2s display + 2s fade-out with smooth transitions
+- **Animation Integration**: LoadingBlocks component with fade effects
+- **State Management**: React state for timing and animation control
+- **Performance**: Optimized animations with minimal re-renders
+
+### **Responsive Design System**
+
+#### **Breakpoint Strategy**
+- **Mobile First**: Base styles for mobile devices
+- **Progressive Enhancement**: Additional styles for larger screens
+- **CSS Grid**: Flexible layouts that adapt to screen size
+- **Touch Optimization**: Touch-friendly interactions for mobile devices
+
+#### **Zoom Optimization**
+- **100% Zoom Target**: Components sized for optimal viewing at 100% zoom
+- **Flexible Sizing**: CSS units that scale appropriately
+- **Typography Scaling**: Font sizes optimized for readability
+- **Spacing Consistency**: Consistent spacing across all zoom levels
+
+### **Component Architecture**
+
+#### **Dashboard Layout**
+- **Three-Column Design**: Left (Results), Center (Visualizer), Right (Dashboard)
+- **Responsive Grid**: CSS Grid with flexible column sizing
+- **Component Isolation**: Each column as independent component with CSS Modules
+- **State Management**: Centralized state for cross-column communication
+
+#### **Real-Time Integration**
+- **WebSocket Events**: Real-time blockchain updates via WebSocket
+- **State Synchronization**: React Context for global state management
+- **Performance Optimization**: Debounced updates and memoized components
+- **Error Handling**: Graceful degradation when WebSocket unavailable
+
+#### **Internationalization (i18n)**
+- **Framework**: i18next with react-i18next bindings
+- **Languages**: English, Spanish, Hebrew, Portuguese
+- **RTL Support**: Automatic direction switching for Hebrew
+- **Resource Management**: Lazy-loaded translation files for optimal performance
+
+### **Performance Optimization**
+
+#### **Build Optimization**
+- **Vite Configuration**: Optimized development and production builds
+- **Code Splitting**: Lazy-loaded components and routes
+- **Tree Shaking**: Unused code elimination
+- **Asset Optimization**: Compressed images and optimized fonts
+
+#### **Runtime Performance**
+- **React Optimization**: Memoization, useCallback, useMemo
+- **CSS Performance**: Hardware acceleration, efficient animations
+- **Bundle Size**: Target < 1MB for optimal loading
+- **Lighthouse Score**: Target ≥ 90 for all metrics
+
+---
 
 ## **Performance Targets and Realistic Limits**
 

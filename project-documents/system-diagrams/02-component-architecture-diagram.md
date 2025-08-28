@@ -78,6 +78,25 @@ This Component Architecture Diagram shows the major system components of BlockSi
 │  │  │   Dashboard     │    │   Search        │    │   Analytics Tools      │  │ │
 │  │  │ • Real‑time WS  │    │ • Address/Tx    │    │ • Fee/Load graphs      │  │ │
 │  │  │ • Tip/blocks    │    │ • Block lookup  │    │ • Timeline, calculator │  │ │
+│  │  │ • 3D Design     │    │ • Advanced      │    │ • Advanced             │  │ │
+│  │  │   System        │    │   UI Components │    │   Styling              │  │ │
+│  │  │ • LoadingBlocks │    │ • Theme System  │    │ • CSS Modules          │  │ │
+│  │  │ • Splash Screen │    │ • Responsive    │    │ • Custom Props         │  │ │
+│  │  └─────────────────┘    └─────────────────┘    └────────────────────────┘  │ │
+│  └────────────────────────────────────────────────────────────────────────────┘ │
+│                                    │                                            │
+│                                    ▼                                            │
+│  ┌────────────────────────────────────────────────────────────────────────────┐ │
+│  │                            STYLES SYSTEM LAYER                             │ │
+│  │                           (CSS Architecture)                               │ │
+│  │                                                                            │ │
+│  │  ┌─────────────────┐    ┌─────────────────┐    ┌────────────────────────┐  │ │
+│  │  │   CSS Modules   │    │ CSS Custom      │    │ Styled                 │  │ │
+│  │  │   (Layout)      │    │ Properties      │    │ Components             │  │ │
+│  │  │ • Component     │    │ (Theming)       │    │ (Interactive)          │  │ │
+│  │  │   isolation     │    │ • Theme         │    │ • Dynamic              │  │ │
+│  │  │ • Grid systems  │    │   switching     │    │   styling              │  │ │
+│  │  │ • 3D containers │    │ • Global tokens │    │ • Animations           │  │ │
 │  │  └─────────────────┘    └─────────────────┘    └────────────────────────┘  │ │
 │  └────────────────────────────────────────────────────────────────────────────┘ │
 │                                                                                 │
@@ -118,6 +137,12 @@ This Component Architecture Diagram shows the major system components of BlockSi
 - Real‑time dashboard with WS updates (1‑2s)
 - Search/navigation for blocks/txs/addresses
 - Analytics tools: fee gauge, network load, timelines, calculator
+- Advanced UI components: 3D design system, LoadingBlocks, splash screen, responsive optimization
+
+### Styles System Layer (CSS Architecture)
+- **CSS Modules**: Component isolation, grid systems, 3D containers, layout management
+- **CSS Custom Properties**: Dynamic theming, global design tokens, responsive breakpoints
+- **Styled Components**: Interactive elements, dynamic styling, animations, theme integration
 
 ### Monitoring & Observability
 - Metrics: electrum_call_latency, errors_total, tip_lag_blocks, cache_hit

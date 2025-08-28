@@ -171,7 +171,7 @@ export const SiteSettings: React.FC<SiteSettingsProps> = ({
         <button className="setting-button" onClick={() => {
           try {
             localStorage.removeItem('blocksight.bitcoin.network')
-          } catch {}
+          } catch { /* Ignore localStorage errors */ }
           window.location.reload()
         }}>{t('settingsPage.resetNetworkState', { defaultValue: 'Reset persisted network state' })}</button>
       </div>

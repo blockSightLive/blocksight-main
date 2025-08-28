@@ -96,7 +96,7 @@ const API_ENDPOINTS = {
 
 // Request tracking for deduplication
 interface PendingRequest {
-  promise: Promise<BitcoinAPIResponse<any>>
+  promise: Promise<BitcoinAPIResponse<unknown>>
   timestamp: number
 }
 
@@ -171,8 +171,8 @@ const createApiRequest = () => {
           // Avoid setting Content-Type on simple GETs to prevent unnecessary CORS preflights
           const isGet = (options.method || 'GET').toUpperCase() === 'GET'
           const headers: Record<string, string> = isGet
-            ? { 'Accept': 'application/json', ...(options.headers as any) }
-            : { 'Content-Type': 'application/json', 'Accept': 'application/json', ...(options.headers as any) }
+            ? { 'Accept': 'application/json', ...(options.headers as Record<string, string>) }
+            : { 'Content-Type': 'application/json', 'Accept': 'application/json', ...(options.headers as Record<string, string>) }
 
           const response = await fetch(url, {
             headers,
@@ -240,7 +240,7 @@ const createApiRequest = () => {
 }
 
 // Helper function to determine if a request should be retried
-const shouldRetry = (error: any): boolean => {
+const shouldRetry = (error: unknown): boolean => {
   if (!(error instanceof Error)) return false
   
   const retryableErrors = [
@@ -475,12 +475,12 @@ export const useBitcoinAPI = () => {
     healthy: boolean
     responseTime: number
     timestamp: number
-    details?: any
+    details?: { electrum?: string; core?: string }
   }> => {
     const startTime = Date.now()
     
     try {
-      const response = await apiRequest<{ ok?: boolean; status?: string; details?: any }>(API_ENDPOINTS.HEALTH)
+      const response = await apiRequest<{ ok?: boolean; status?: string; details?: { electrum?: string; core?: string } }>(API_ENDPOINTS.HEALTH)
       const responseTime = Date.now() - startTime
       
       updateStats(true, responseTime)

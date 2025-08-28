@@ -57,8 +57,8 @@ export const BitcoinPriceDashboard: React.FC = () => {
 	const { state } = useBitcoin()
 	const { preferredFiat } = useFiatPreference()
 
-	const price = (state as any).priceUSD
-	const fx = (state as any).fx
+	const price = (state as { priceUSD?: { value: number; asOfMs: number; provider: string } }).priceUSD
+	const fx = (state as { fx?: { base: string; rates: Record<string, number>; asOfMs: number; provider: string } }).fx
 
 	// Check if we have valid data
 	const hasValidData = price && fx && typeof price.value === 'number' && price.value > 0

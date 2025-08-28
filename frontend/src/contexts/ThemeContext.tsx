@@ -158,9 +158,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   //   THEME VALIDATION
   // ========================================
 
-  const validateTheme = (themeToValidate: string): themeToValidate is Theme => {
-    return ['light', 'dark'].includes(themeToValidate);
-  };
+
 
   // ========================================
   //   CONTEXT VALUE
@@ -232,7 +230,7 @@ export const getThemeGradient = (theme: Theme): string => {
 export const withTheme = <P extends object>(
   Component: React.ComponentType<P & { theme: Theme }>
 ) => {
-  return React.forwardRef<any, P>((props, ref) => {
+  return React.forwardRef<unknown, P>((props, ref) => {
     const { theme } = useTheme();
     const componentProps = { ...props, theme } as P & { theme: Theme };
     return <Component {...componentProps} ref={ref} />;

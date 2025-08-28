@@ -114,8 +114,11 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
   // Get memory usage if available
   const getMemoryUsage = useCallback(() => {
     if ('memory' in performance) {
-      const memory = (performance as any).memory;
-      return Math.round(memory.usedJSHeapSize / 1024 / 1024); // MB
+      const memory = (performance as { memory?: { usedJSHeapSize: number } }).memory;
+      if (memory && memory.usedJSHeapSize) {
+        return Math.round(memory.usedJSHeapSize / 1024 / 1024); // MB
+      }
+      return 0;
     }
     return undefined;
   }, []);

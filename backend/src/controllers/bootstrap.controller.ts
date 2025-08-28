@@ -20,7 +20,7 @@ export function makeBootstrapController(params: { adapter: ElectrumAdapter; core
       try {
         const cacheKey = keys.bootstrap()
         if (l1) {
-          const cached = l1.get<any>(cacheKey)
+          const cached = l1.get<{ height: number; coreHeight?: number; mempoolPending: number | null; mempoolVsize?: number; priceUSD?: { value: number; asOfMs: number; provider: string }; fx?: { base: string; rates: Record<string, number>; asOfMs: number; provider: string }; asOfMs: number; source: string }>(cacheKey)
           if (cached) {
             recordCacheHit('bootstrap', cacheKey)
             recordLatency('bootstrap', Date.now() - started)
@@ -35,16 +35,16 @@ export function makeBootstrapController(params: { adapter: ElectrumAdapter; core
         ])
 
         // Optionally include latest cached price and FX (non-blocking)
-        let priceUSD: any = null
-        let fxUSD: any = null
-        try { priceUSD = l1 ? l1.get<any>(keys.priceCurrent('USD')) : null } catch {}
-        try { fxUSD = l1 ? l1.get<any>(keys.fxRates('USD')) : null } catch {}
+        let priceUSD: { value: number; asOfMs: number; provider: string } | null = null
+        let fxUSD: { base: string; rates: Record<string, number>; asOfMs: number; provider: string } | null = null
+        try { priceUSD = l1 ? l1.get<{ value: number; asOfMs: number; provider: string }>(keys.priceCurrent('USD')) : null } catch { /* Ignore cache errors */ }
+        try { fxUSD = l1 ? l1.get<{ base: string; rates: Record<string, number>; asOfMs: number; provider: string }>(keys.fxRates('USD')) : null } catch { /* Ignore cache errors */ }
 
         const payload = {
           height: electrumHeight,
           coreHeight,
           mempoolPending: typeof mempool?.pendingTransactions === 'number' ? mempool.pendingTransactions : null,
-          mempoolVsize: typeof (mempool as any)?.vsize === 'number' ? (mempool as any).vsize : undefined,
+          mempoolVsize: typeof (mempool as { vsize?: number })?.vsize === 'number' ? (mempool as { vsize: number }).vsize : undefined,
           priceUSD: priceUSD ? { value: priceUSD.value, asOfMs: priceUSD.asOfMs, provider: priceUSD.provider } : undefined,
           fx: fxUSD ? { base: 'USD', rates: fxUSD.rates, asOfMs: fxUSD.asOfMs, provider: fxUSD.provider } : undefined,
           asOfMs: Date.now(),

@@ -16,7 +16,7 @@ async function fetchCoindeskUSD(): Promise<number | null> {
   try {
     const res = await fetch('https://api.coindesk.com/v1/bpi/currentprice/USD.json', { method: 'GET' })
     if (!res.ok) return null
-    const json = (await res.json()) as any
+    const json = (await res.json()) as { bpi?: { USD?: { rate_float?: number; rate?: string } } }
     const n = Number(json?.bpi?.USD?.rate_float ?? json?.bpi?.USD?.rate)
     return Number.isFinite(n) ? n : null
   } catch {
@@ -28,7 +28,7 @@ async function fetchCoingeckoUSD(): Promise<number | null> {
   try {
     const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd', { method: 'GET' })
     if (!res.ok) return null
-    const json = (await res.json()) as any
+    const json = (await res.json()) as { bitcoin?: { usd?: number } }
     const n = Number(json?.bitcoin?.usd)
     return Number.isFinite(n) ? n : null
   } catch {
@@ -48,7 +48,7 @@ export function makePriceController(l1?: L1Cache) {
         }
         const cacheKey = keys.priceCurrent(fiat)
         if (l1) {
-          const cached = l1.get<any>(cacheKey)
+          const cached = l1.get<{ currency: string; fiat: string; value: number; asOfMs: number; provider: string }>(cacheKey)
           if (cached) {
             recordCacheHit('price.current', cacheKey)
             recordLatency('price.current', Date.now() - started)

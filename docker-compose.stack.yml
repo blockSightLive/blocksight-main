@@ -37,7 +37,7 @@ services:
       redis:
         condition: service_healthy
     ports: ["8000:8000"]
-    command: ["node", "backend/dist/src/server.js"]
+    command: ["node", "backend/dist/server.js"]
 
   # frontend:
   #   build:

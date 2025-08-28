@@ -67,7 +67,7 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
     <div className={`${styles.root} ${className}`}>
       <div className={styles.icon}>⚠️</div>
       <h3 className={styles.title}>{t('errors.title', { defaultValue: 'Error' })}</h3>
-      <p className={styles.message}>{error.startsWith('errors.') ? t(error as any) : error}</p>
+      <p className={styles.message}>{error.startsWith('errors.') ? t(error as string) : error}</p>
       
       {onRetry && (
         <button 

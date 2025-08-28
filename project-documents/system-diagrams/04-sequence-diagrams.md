@@ -199,31 +199,117 @@ This document contains key sequence diagrams showing the interaction flows betwe
        │                   │                   │                   │                   │
        │                   │ 5. WebSocket      │                   │                   │
        │                   │    Update         │                   │                   │
-       │                   │    (If Changed)   │                   │                   │
+       │                   │    (Price)        │                   │                   │
        │                   │──────────────────▶│                   │                   │
        │                   │                   │                   │                   │
-       │                   │                   │                   │ 6. Price Update   │
-       │                   │                   │                   │    Received       │
-       │                   │                   │                   │    (Hourly)       │
+       │                   │                   │                   │ 6. Update Price   │
+       │                   │                   │                   │     Display       │
+       │                   │                   │                   │     (Real-time)   │
        │                   │                   │                   │◀──────────────────│
-       │                   │                   │                   │                   │
-       │                   │                   │                   │ 7. Update Price   │
-       │                   │                   │                   │    Display        │
-       │                   │                   │                   │◀──────────────────│
-       │                   │                   │                   │                   │
-       │                   │                   │                   │ 8. Calculator     │
-       │                   │                   │                   │    Request        │
-       │                   │                   │                   │    (~10-20ms      │
-       │                   │                   │                   │     cached)       │
-       │                   │                   │                   │◀──────────────────│
-       │                   │                   │                   │                   │
-       │                   │                   │                   │ 9. Real-time      │
-       │                   │                   │                   │    Conversion     │
-       │                   │                   │                   │◀──────────────────│
-       │                   │                   │                   │                   │
-       │                   │                   │                   │ 10. Display       │
-       │                   │                   │                   │     Results       │
-       │                   │                   │                   │◀──────────────────│
+```
+
+## 6. Styles System and Theme Switching Flow (CSS Architecture)
+
+```
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│ User        │    │ Frontend    │    │ React       │    │ CSS Custom  │    │ UI          │
+│ Browser     │    │ Theme Toggle│    │ Context     │    │ Properties  │    │ Components  │
+└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
+       │                  │                    │                    │                   │
+       │ 1. Click Theme   │                    │                    │                   │
+       │    Toggle        │                    │                    │                   │
+       │─────────────────▶│                    │                    │                   │
+       │                  │ 2. Update Theme    │                    │                   │
+       │                  │    State           │                    │                   │
+       │                  │───────────────────▶│                    │                   │
+       │                  │                    │ 3. Update Context  │                   │
+       │                  │                    │    (Light/Dark)    │                   │
+       │                  │                    │───────────────────▶│                   │
+       │                  │                    │ 4. Context         │                   │
+       │                  │                    │    Updated         │                   │
+       │                  │                    │◀───────────────────│                   │
+       │                  │                    │ 5. Update CSS      │                   │
+       │                  │                    │    Variables       │                   │
+       │                  │                    │    (data-theme)    │                   │
+       │                  │                    │───────────────────▶│                   │
+       │                  │                    │ 6. CSS Variables   │                   │
+       │                  │                    │    Updated         │                   │
+       │                  │                    │◀───────────────────│                   │
+       │                  │                    │ 7. Broadcast Theme │                   │
+       │                  │                    │    Change          │                   │
+       │                  │                    │───────────────────▶│                   │
+       │                  │                    │                    │ 8. Re-render      │
+       │                  │                    │                    │     Components    │
+       │                  │                    │                    │     (Theme-aware) │
+       │                  │                    │                    │◀──────────────────│
+       │                  │ 9. Theme Applied   │                    │                   │
+       │                  │    (Instant)       │                    │                   │
+       │◀─────────────────│                    │                    │                   │
+```
+
+## 7. 3D Design System and LoadingBlocks Flow (Advanced UI)
+
+```
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│ User        │    │ Frontend    │    │ CSS Modules │    │ CSS Custom  │    │ 3D          │
+│ Browser     │    │ App Load    │    │ (Layout)    │    │ Properties  │    │ Components  │
+└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
+       │                  │                    │                    │                   │
+       │ 1. App Load      │                    │                    │                   │
+       │    (Splash)      │                    │                    │                   │
+       │─────────────────▶│                    │                    │                   │
+       │                  │ 2. Initialize      │                    │                   │
+       │                  │    LoadingBlocks   │                    │                   │
+       │                  │───────────────────▶│                    │                   │
+       │                  │                    │ 3. Load CSS        │                   │
+       │                  │                    │    Modules         │                   │
+       │                  │                    │    (Layout)        │                   │
+       │                  │                    │───────────────────▶│                   │
+       │                  │                    │ 4. Layout Ready    │                   │
+       │                  │                    │◀───────────────────│                   │
+       │                  │                    │ 5. Load CSS Custom │                   │
+       │                  │                    │    Properties      │                   │
+       │                  │                    │    (3D Transforms) │                   │
+       │                  │                    │───────────────────▶│                   │
+       │                  │                    │ 6. 3D Properties   │                   │
+       │                  │                    │    Ready           │                   │
+       │                  │                    │◀───────────────────│                   │
+       │                  │                    │ 7. Initialize 3D   │                   │
+       │                  │                    │    Components      │                   │
+       │                  │                    │───────────────────▶│                   │
+       │                  │                    │                    │ 8. 3D System      │
+       │                  │                    │                    │     Ready         │
+       │                  │                    │                    │◀──────────────────│
+       │                  │ 9. LoadingBlocks   │                    │                   │
+       │                  │    Animation       │                    │                   │
+       │                  │    (60fps)         │                    │                   │
+       │◀─────────────────│                    │                    │                   │ │                  │                    │                    │                   │
+       │                  │    Update          │                    │                   │
+       │                  │    (If Changed)    │                    │                   │
+       │                  │───────────────────▶│                    │                   │
+       │                  │                    │                    │                   │
+       │                  │                    │                    │ 6. Price Update   │
+       │                  │                    │                    │    Received       │
+       │                  │                    │                    │    (Hourly)       │
+       │                  │                    │                    │◀──────────────────│
+       │                  │                    │                    │                   │
+       │                  │                    │                    │ 7. Update Price   │
+       │                  │                    │                    │    Display        │
+       │                  │                    │                    │◀──────────────────│
+       │                  │                    │                    │                   │
+       │                  │                    │                    │ 8. Calculator     │
+       │                  │                    │                    │    Request        │
+       │                  │                    │                    │    (~10-20ms      │
+       │                  │                    │                    │     cached)       │
+       │                  │                    │                    │◀──────────────────│
+       │                  │                    │                    │                   │
+       │                  │                    │                    │ 9. Real-time      │
+       │                  │                    │                    │    Conversion     │
+       │                  │                    │                    │◀──────────────────│
+       │                  │                    │                    │                   │
+       │                  │                    │                    │ 10. Display       │
+       │                  │                    │                    │     Results       │
+       │                  │                    │                    │◀──────────────────│
 ```
 
 ## 5. System Health Monitoring and Alerting Flow

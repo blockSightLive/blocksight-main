@@ -12,11 +12,10 @@ type ChipColor = 'green' | 'amber' | 'red'
 
 export const HealthChip: React.FC = () => {
   const { t } = useTranslation()
-  const { isWebSocketConnected } = useBitcoin()
+  const { state } = useBitcoin()
   const { checkHealth } = useBitcoinAPI()
   const [apiHealthy, setApiHealthy] = useState<boolean>(false)
   const [wsLatencyMs, setWsLatencyMs] = useState<number | null>(null)
-  const [degraded, setDegraded] = useState<boolean>(false)
   const [electrumStatus, setElectrumStatus] = useState<'ok' | 'degraded' | 'disabled'>('degraded')
   const [coreStatus, setCoreStatus] = useState<'ok' | 'degraded' | 'disabled'>('disabled')
   const wsRef = useRef<WebSocket | null>(null)
@@ -28,10 +27,9 @@ export const HealthChip: React.FC = () => {
       const res = await checkHealth()
       if (!mounted) return
       setApiHealthy(res.healthy)
-      setDegraded(!res.healthy)
-      const details: any = (res as any).details || {}
-      if (details.electrum) setElectrumStatus(details.electrum)
-      if (details.core) setCoreStatus(details.core)
+      const details: { electrum?: string; core?: string } = (res as { details?: { electrum?: string; core?: string } }).details || {}
+      if (details.electrum) setElectrumStatus(details.electrum as 'ok' | 'degraded' | 'disabled')
+      if (details.core) setCoreStatus(details.core as 'ok' | 'degraded' | 'disabled')
     }
     tick()
     const id = setInterval(tick, 15000)
@@ -42,7 +40,7 @@ export const HealthChip: React.FC = () => {
   useEffect(() => {
     // Only measure if backend is reachable; avoid interfering with main context socket
     try {
-      wsRef.current = new WebSocket((import.meta as any).env?.VITE_WEBSOCKET_URL || 'ws://localhost:8000/ws')
+      wsRef.current = new WebSocket((import.meta as { env?: { VITE_WEBSOCKET_URL?: string } }).env?.VITE_WEBSOCKET_URL || 'ws://localhost:8000/ws')
       const ws = wsRef.current
       let lastPing = 0
       const ping = () => {
@@ -61,9 +59,9 @@ export const HealthChip: React.FC = () => {
           if (msg?.type === 'pong') {
             setWsLatencyMs(Date.now() - lastPing)
           }
-        } catch {}
+        } catch { /* Ignore message parsing errors */ }
       }
-      return () => { try { ws.close(1000, 'cleanup') } catch {} }
+      return () => { try { ws.close(1000, 'cleanup') } catch { /* Ignore close errors */ } }
     } catch {
       setWsLatencyMs(null)
     }
@@ -72,12 +70,12 @@ export const HealthChip: React.FC = () => {
   const color: ChipColor = useMemo(() => {
     // Only green when REST is healthy AND WS has opened at least once
     if (!apiHealthy) return 'red'
-    if (!isWebSocketConnected) return 'amber'
+    if (!state.networkStatus.isOnline) return 'amber'
     if (wsLatencyMs === null) return 'amber'
     if (wsLatencyMs < 300) return 'green'
     if (wsLatencyMs <= 1500) return 'amber'
     return 'red'
-  }, [apiHealthy, isWebSocketConnected, wsLatencyMs])
+  }, [apiHealthy, state.networkStatus.isOnline, wsLatencyMs])
 
   const style: React.CSSProperties = useMemo(() => ({
     padding: '2px 8px',

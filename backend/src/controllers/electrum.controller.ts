@@ -49,15 +49,8 @@ export function makeElectrumController(adapter: ElectrumAdapter, core?: CoreRpcA
       const started = Date.now();
       try {
         const cacheKey = keys.feesEstimates();
-        if (l1 && 'getAsync' in (l1 as any)) {
-          const cached = await (l1 as any).getAsync(cacheKey);
-          if (cached) {
-            recordCacheHit('fee.estimates', cacheKey);
-            recordLatency('fee.estimates', Date.now() - started);
-            return res.json(cached);
-          }
-        } else if (l1) {
-          const cached = l1.get<any>(cacheKey);
+        if (l1) {
+          const cached = l1.get<{ fast: number; normal: number; slow: number }>(cacheKey);
           if (cached) {
             recordCacheHit('fee.estimates', cacheKey);
             recordLatency('fee.estimates', Date.now() - started);
@@ -80,15 +73,8 @@ export function makeElectrumController(adapter: ElectrumAdapter, core?: CoreRpcA
       const started = Date.now();
       try {
         const cacheKey = keys.tipHeight();
-        if (l1 && 'getAsync' in (l1 as any)) {
-          const cached = await (l1 as any).getAsync(cacheKey);
-          if (cached) {
-            recordCacheHit('network.height', cacheKey);
-            recordLatency('network.height', Date.now() - started);
-            return res.json(cached);
-          }
-        } else if (l1) {
-          const cached = l1.get<any>(cacheKey);
+        if (l1) {
+          const cached = l1.get<{ height: number; timestamp: number }>(cacheKey);
           if (cached) {
             recordCacheHit('network.height', cacheKey);
             recordLatency('network.height', Date.now() - started);
@@ -111,15 +97,8 @@ export function makeElectrumController(adapter: ElectrumAdapter, core?: CoreRpcA
       const started = Date.now();
       try {
         const cacheKey = keys.mempoolSummary();
-        if (l1 && 'getAsync' in (l1 as any)) {
-          const cached = await (l1 as any).getAsync(cacheKey);
-          if (cached) {
-            recordCacheHit('network.mempool', cacheKey);
-            recordLatency('network.mempool', Date.now() - started);
-            return res.json(cached);
-          }
-        } else if (l1) {
-          const cached = l1.get<any>(cacheKey);
+        if (l1) {
+          const cached = l1.get<{ pendingTransactions?: number | null; vsize?: number; timestamp: number }>(cacheKey);
           if (cached) {
             recordCacheHit('network.mempool', cacheKey);
             recordLatency('network.mempool', Date.now() - started);
@@ -129,7 +108,7 @@ export function makeElectrumController(adapter: ElectrumAdapter, core?: CoreRpcA
         const useCore = !!core;
         const summary = useCore ? await core!.getMempoolSummary() : await adapter.getMempoolSummary();
         const durationMs = Date.now() - started;
-        console.log(`[mempool] source=${useCore ? 'core' : 'electrum'} count=${summary.pendingTransactions ?? 'null'} vsize=${(summary as any).vsize ?? 'n/a'} durMs=${durationMs}`);
+        console.log(`[mempool] source=${useCore ? 'core' : 'electrum'} count=${summary.pendingTransactions ?? 'null'} vsize=${(summary as { vsize?: number }).vsize ?? 'n/a'} durMs=${durationMs}`);
         const payload = { ...summary, timestamp: Date.now() };
         const ttl = ttlForEntity('mempoolSummary');
         if (l1) l1.set(cacheKey, payload, ttl);

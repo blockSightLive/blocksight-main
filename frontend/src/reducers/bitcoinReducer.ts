@@ -55,7 +55,8 @@ import {
   BitcoinTransaction, 
   BitcoinAddress, 
   BitcoinState,
-  BitcoinAction
+  BitcoinAction,
+  NetworkLoad
 } from '../types/bitcoin';
 import { 
   BLOCK_ACTIONS, 
@@ -98,7 +99,7 @@ export const initialState: BitcoinState = {
     averageBlockTime: 600000,
     lastUpdated: Date.now(),
     // Additional properties components need
-    load: 'Neutral' as any, // NetworkLoad enum
+    load: NetworkLoad.NEUTRAL, // NetworkLoad enum
     pendingTransactions: 5000,
     difficulty: 123456789.123
   },
@@ -354,7 +355,10 @@ export function bitcoinReducer(
     case NETWORK_ACTIONS.STATUS: {
       return {
         ...state,
-        networkStatus: action.payload
+        networkStatus: {
+          ...action.payload,
+          lastUpdated: Date.now()
+        }
       };
     }
     
@@ -417,15 +421,7 @@ export function bitcoinReducer(
       };
     }
     
-    case NETWORK_ACTIONS.STATUS: {
-      return {
-        ...state,
-        networkStatus: {
-          ...state.networkStatus,
-          lastUpdated: Date.now()
-        }
-      };
-    }
+
     
     // ========================================================================
     // RESET ACTION

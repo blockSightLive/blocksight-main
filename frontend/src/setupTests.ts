@@ -54,10 +54,10 @@ Object.defineProperty(window, 'matchMedia', {
 // Mock IntersectionObserver for lazy loading tests
 global.IntersectionObserver = class IntersectionObserver {
   constructor() {}
-  disconnect() {}
   observe() {}
   unobserve() {}
-} as any
+  disconnect() {}
+} as unknown as typeof IntersectionObserver
 
 // Mock ResizeObserver for responsive component tests
 global.ResizeObserver = class ResizeObserver {

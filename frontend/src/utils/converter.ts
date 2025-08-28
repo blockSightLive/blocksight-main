@@ -77,7 +77,7 @@ export const isValidFiat = (currency: string): currency is SupportedFiat => {
  * Validates if context has valid price data
  */
 export const hasValidPriceData = (state: BitcoinState): boolean => {
-  const price = (state as any).priceUSD as PriceUSD | undefined
+  const price = state.priceUSD
   return !!(price && typeof price.value === 'number' && price.value > 0)
 }
 
@@ -85,7 +85,7 @@ export const hasValidPriceData = (state: BitcoinState): boolean => {
  * Validates if context has valid FX data
  */
 export const hasValidFxData = (state: BitcoinState): boolean => {
-  const fx = (state as any).fx as FxRatesUSD | undefined
+  const fx = state.fx
   return !!(fx && fx.rates && Object.keys(fx.rates).length > 0)
 }
 
@@ -94,8 +94,8 @@ export const hasValidFxData = (state: BitcoinState): boolean => {
  */
 export const getCurrentUSDPrice = (state: BitcoinState): number | null => {
   if (!hasValidPriceData(state)) return null
-  const price = (state as any).priceUSD as PriceUSD
-  return price.value
+  const price = state.priceUSD
+  return price?.value ?? null
 }
 
 /**
@@ -103,12 +103,12 @@ export const getCurrentUSDPrice = (state: BitcoinState): number | null => {
  */
 export const getCurrentFxRate = (state: BitcoinState, targetFiat: SupportedFiat): number | null => {
   if (!hasValidFxData(state)) return null
-  const fx = (state as any).fx as FxRatesUSD
+  const fx = state.fx
   
   // USD is always 1.0 (base currency)
   if (targetFiat === 'USD') return 1.0
   
-  const rate = fx.rates[targetFiat]
+  const rate = fx?.rates[targetFiat]
   return typeof rate === 'number' && rate > 0 ? rate : null
 }
 
@@ -380,8 +380,8 @@ export const getAllCurrentRates = (state: BitcoinState): Partial<Record<Supporte
  * @returns Timestamp in milliseconds, or null if no data
  */
 export const getLastUpdateTimestamp = (state: BitcoinState): number | null => {
-  const price = (state as any).priceUSD as PriceUSD | undefined
-  const fx = (state as any).fx as FxRatesUSD | undefined
+  const price = state.priceUSD as PriceUSD | undefined
+  const fx = state.fx as FxRatesUSD | undefined
   
   if (!price && !fx) return null
   
@@ -411,8 +411,8 @@ export const isDataStale = (state: BitcoinState, thresholdMs: number = 5 * 60 * 
  * @returns Object with provider information
  */
 export const getDataProviders = (state: BitcoinState): { price?: string; fx?: string } => {
-  const price = (state as any).priceUSD as PriceUSD | undefined
-  const fx = (state as any).fx as FxRatesUSD | undefined
+  const price = state.priceUSD as PriceUSD | undefined
+  const fx = state.fx as FxRatesUSD | undefined
   
   return {
     price: price?.provider,

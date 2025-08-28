@@ -96,12 +96,12 @@ export class RealElectrumAdapter implements ElectrumAdapter {
     try {
       // Electrum protocol: blockchain.headers.subscribe returns the current tip header
       const result = (await c.request('blockchain.headers.subscribe', [])) as unknown;
-      if (result && typeof (result as any).height === 'number') {
-        return (result as any).height as number;
+      if (result && typeof (result as { height?: number }).height === 'number') {
+        return (result as { height: number }).height;
       }
       // Some servers may return an array or different structure; attempt common fallbacks
-      if (Array.isArray(result) && result.length > 0 && typeof (result as any)[0]?.height === 'number') {
-        return (result as any)[0].height as number;
+      if (Array.isArray(result) && result.length > 0 && typeof (result as Array<{ height?: number }>)[0]?.height === 'number') {
+        return (result as Array<{ height: number }>)[0].height;
       }
       return 0;
     } catch (error) {
@@ -114,14 +114,14 @@ export class RealElectrumAdapter implements ElectrumAdapter {
     const c = await this.ensureConnected();
     try {
       const result = (await c.request('blockchain.headers.subscribe', [])) as unknown;
-      if (result && typeof (result as any).height === 'number') {
-        const height = (result as any).height as number;
-        const hex = typeof (result as any).hex === 'string' ? ((result as any).hex as string) : undefined;
+      if (result && typeof (result as { height?: number; hex?: string }).height === 'number') {
+        const height = (result as { height: number; hex?: string }).height;
+        const hex = typeof (result as { height: number; hex?: string }).hex === 'string' ? (result as { height: number; hex: string }).hex : undefined;
         return { height, headerHex: hex };
       }
-      if (Array.isArray(result) && result.length > 0 && typeof (result as any)[0]?.height === 'number') {
-        const height = (result as any)[0].height as number;
-        const hex = typeof (result as any)[0]?.hex === 'string' ? ((result as any)[0].hex as string) : undefined;
+      if (Array.isArray(result) && result.length > 0 && typeof (result as Array<{ height?: number; hex?: string }>)[0]?.height === 'number') {
+        const height = (result as Array<{ height: number; hex?: string }>)[0].height;
+        const hex = typeof (result as Array<{ height: number; hex?: string }>)[0]?.hex === 'string' ? (result as Array<{ height: number; hex: string }>)[0].hex : undefined;
         return { height, headerHex: hex };
       }
       return { height: 0 };
@@ -140,7 +140,7 @@ export class RealElectrumAdapter implements ElectrumAdapter {
         // Provide null count but include an approximate virtual size sum if present
         // Histogram entries are [fee_rate, vsize] pairs in Electrum; sum vsizes if available
         let vsize = 0;
-        for (const item of hist as any[]) {
+        for (const item of hist as Array<unknown>) {
           if (Array.isArray(item) && typeof item[1] === 'number') vsize += item[1];
         }
         return { pendingTransactions: null, vsize };

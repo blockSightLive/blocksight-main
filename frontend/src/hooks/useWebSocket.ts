@@ -58,7 +58,7 @@
  * - No styling needed (pure React hook file)
  */
 
-import { useCallback, useRef, useEffect, useState, useMemo } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { BitcoinWebSocketEvent } from '../types/bitcoin'
 
 // Enhanced WebSocket configuration
@@ -107,7 +107,6 @@ export const useWebSocket = (url?: string) => {
   const processedEventsRef = useRef<Set<string>>(new Set())
   
   // Connection pooling
-  const connectionPoolRef = useRef<Map<string, WebSocket>>(new Map())
   const activeConnectionsRef = useRef(0)
   
   // Performance tracking
@@ -162,13 +161,13 @@ export const useWebSocket = (url?: string) => {
           for (const eventType of eventHandlersRef.current.keys()) {
             try {
               wsRef.current.send(JSON.stringify({ type: 'subscribe', eventType, timestamp: Date.now() }))
-            } catch {}
+            } catch { /* Ignore send errors */ }
           }
           // 2) Flush explicit pending list
           for (const eventType of pendingSubscriptionsRef.current) {
             try {
               wsRef.current.send(JSON.stringify({ type: 'subscribe', eventType, timestamp: Date.now() }))
-            } catch {}
+            } catch { /* Ignore send errors */ }
           }
           pendingSubscriptionsRef.current.clear()
         }
@@ -361,7 +360,7 @@ export const useWebSocket = (url?: string) => {
   }, [])
 
   // Send message to WebSocket
-  const sendMessage = useCallback((message: any) => {
+  const sendMessage = useCallback((message: Record<string, unknown>) => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify({
         ...message,

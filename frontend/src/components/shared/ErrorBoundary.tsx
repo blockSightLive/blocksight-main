@@ -44,7 +44,6 @@
 
 import React, { Component, ErrorInfo, ReactNode } from 'react'
 import { ErrorDisplay } from './ErrorDisplay'
-import { withTranslation } from 'react-i18next'
 
 interface Props {
   children: ReactNode

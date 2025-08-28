@@ -75,15 +75,7 @@ export const BitcoinNetworkLoadGauge: React.FC<BitcoinNetworkLoadGaugeProps> = (
     )
   }
 
-  const getLoadColor = (load: NetworkLoad) => {
-    switch (load) {
-      case NetworkLoad.BELOW_AVERAGE: return 'green'
-      case NetworkLoad.NEUTRAL: return 'blue'
-      case NetworkLoad.LOAD: return 'yellow'
-      case NetworkLoad.EXTREME_LOAD: return 'red'
-      default: return 'gray'
-    }
-  }
+
 
   return (
     <div className={styles.root}>

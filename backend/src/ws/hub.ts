@@ -10,7 +10,7 @@ import type { CoreRpcAdapter } from '../adapters/core/types';
 import type { L1Cache } from '../cache/l1';
 import { keys } from '../cache/keys';
 import type { HubEvent, TipHeightEvent, NetworkFeesEvent, NetworkMempoolEvent, ChainReorgEvent, PriceCurrentEvent, FxRatesEvent } from './types';
-import { recordWsBroadcastDuration, recordWsProduced } from '../metrics/metrics';
+import { recordWsBroadcastDuration, recordWsProduced, getRollingP95 } from '../metrics/metrics';
 
 export type WsClient = {
   send: (data: string) => void;
@@ -36,7 +36,7 @@ export function createWebSocketHub(params: { adapter: ElectrumAdapter; core?: Co
   let lastHeight: number | null = null;
   let lastHash: string | null = null;
   let lastHeightChangeAt: number | null = null;
-  let lastFees: unknown = null;
+  let lastFees: { fast: number; normal: number; slow: number } | null = null;
   let lastMempool: { pendingTransactions: number; vsize?: number } | null = null;
   let lastPriceUSD: { currency: 'BTC'; fiat: 'USD'; value: number; asOfMs: number; provider: string } | null = null;
   let lastFx: { base: 'USD'; rates: Record<string, number>; asOfMs: number; provider: string } | null = null;
@@ -62,7 +62,7 @@ export function createWebSocketHub(params: { adapter: ElectrumAdapter; core?: Co
               l1.del(keys.tipHeight());
               // Future: invalidate block/tx/address keys based on depth/lca
             }
-          } catch {}
+          } catch { /* Ignore cache invalidation errors */ }
           const reorgEvt: ChainReorgEvent = {
             type: 'chain.reorg',
             data: {
@@ -80,7 +80,7 @@ export function createWebSocketHub(params: { adapter: ElectrumAdapter; core?: Co
         // Cache invalidation hooks: tip height changes invalidate height key; reorg branch above handles deeper keys
         try {
           if (l1) l1.del(keys.tipHeight());
-        } catch {}
+        } catch { /* Ignore cache invalidation errors */ }
         const evt: TipHeightEvent = { type: 'tip.height', data: { height, lastBlockTime: lastHeightChangeAt! }, timestamp: Date.now() };
         broadcast(evt);
       }
@@ -89,8 +89,8 @@ export function createWebSocketHub(params: { adapter: ElectrumAdapter; core?: Co
       const now = Date.now();
       if (now - lastErrorLogMs >= ERROR_LOG_THROTTLE_MS) {
         lastErrorLogMs = now;
-        const message = (err as any)?.message ?? 'unknown_error';
-        const code = (err as any)?.code ?? 'ELECTRUM_ERROR';
+        const message = (err as { message?: string })?.message ?? 'unknown_error';
+        const code = (err as { code?: string })?.code ?? 'ELECTRUM_ERROR';
         console.warn(`Electrum tip poll failed [${code}]: ${message}. Retrying...`);
       }
     }
@@ -108,8 +108,8 @@ export function createWebSocketHub(params: { adapter: ElectrumAdapter; core?: Co
         const fees = await adapter.getFeeEstimates();
         const serialized = JSON.stringify(fees);
         if (serialized !== JSON.stringify(lastFees)) {
-          lastFees = JSON.parse(serialized);
-          const evt: NetworkFeesEvent = { type: 'network.fees', data: lastFees as any, timestamp: Date.now() };
+          lastFees = JSON.parse(serialized) as { fast: number; normal: number; slow: number };
+          const evt: NetworkFeesEvent = { type: 'network.fees', data: lastFees, timestamp: Date.now() };
           broadcast(evt);
         }
       } catch (err) {
@@ -126,8 +126,8 @@ export function createWebSocketHub(params: { adapter: ElectrumAdapter; core?: Co
       try {
         const memCoreOrElectrum = core ? await core.getMempoolSummary() : await adapter.getMempoolSummary();
         const normalized = {
-          pendingTransactions: (memCoreOrElectrum as any).pendingTransactions ?? 0,
-          vsize: (memCoreOrElectrum as any).vsize
+          pendingTransactions: (memCoreOrElectrum as { pendingTransactions?: number }).pendingTransactions ?? 0,
+          vsize: (memCoreOrElectrum as { vsize?: number }).vsize
         } as { pendingTransactions: number; vsize?: number };
         if (!lastMempool || normalized.pendingTransactions !== lastMempool.pendingTransactions || normalized.vsize !== lastMempool.vsize) {
           lastMempool = normalized;
@@ -147,26 +147,26 @@ export function createWebSocketHub(params: { adapter: ElectrumAdapter; core?: Co
     setInterval(async () => {
       try {
         if (!l1) return;
-        const cached = l1.get<any>(keys.priceCurrent('USD'));
+        const cached = l1.get<{ value: number; asOfMs: number; provider: string }>(keys.priceCurrent('USD'));
         if (cached && (!lastPriceUSD || cached.value !== lastPriceUSD.value || cached.asOfMs !== lastPriceUSD.asOfMs)) {
           lastPriceUSD = { currency: 'BTC', fiat: 'USD', value: cached.value, asOfMs: cached.asOfMs, provider: cached.provider };
-          const evt: PriceCurrentEvent = { type: 'price.current', data: lastPriceUSD, timestamp: Date.now() } as any;
+          const evt: PriceCurrentEvent = { type: 'price.current', data: lastPriceUSD, timestamp: Date.now() };
           broadcast(evt);
         }
-      } catch {}
+      } catch { /* Ignore price polling errors */ }
     }, 45000);
 
     // Poll FX rates hourly from cache
     setInterval(async () => {
       try {
         if (!l1) return;
-        const cached = l1.get<any>(keys.fxRates('USD'));
+        const cached = l1.get<{ rates: Record<string, number>; asOfMs: number; provider: string }>(keys.fxRates('USD'));
         if (cached && (!lastFx || JSON.stringify(cached.rates) !== JSON.stringify(lastFx.rates) || cached.asOfMs !== lastFx.asOfMs)) {
           lastFx = { base: 'USD', rates: cached.rates, asOfMs: cached.asOfMs, provider: cached.provider };
-          const evt: FxRatesEvent = { type: 'fx.rates', data: lastFx, timestamp: Date.now() } as any;
+          const evt: FxRatesEvent = { type: 'fx.rates', data: lastFx, timestamp: Date.now() };
           broadcast(evt);
         }
-      } catch {}
+      } catch { /* Ignore FX polling errors */ }
     }, 3600_000);
   };
 
@@ -185,31 +185,31 @@ export function createWebSocketHub(params: { adapter: ElectrumAdapter; core?: Co
       try {
         const evt: TipHeightEvent = { type: 'tip.height', data: { height: lastHeight, lastBlockTime: (lastHeightChangeAt ?? Date.now()) }, timestamp: Date.now() };
         client.send(JSON.stringify(evt));
-      } catch {}
+      } catch { /* Ignore client send errors */ }
     }
     if (lastFees) {
       try {
-        const evt: NetworkFeesEvent = { type: 'network.fees', data: lastFees as any, timestamp: Date.now() };
+        const evt: NetworkFeesEvent = { type: 'network.fees', data: lastFees, timestamp: Date.now() };
         client.send(JSON.stringify(evt));
-      } catch {}
+      } catch { /* Ignore client send errors */ }
     }
     if (lastMempool) {
       try {
         const evt: NetworkMempoolEvent = { type: 'network.mempool', data: lastMempool, timestamp: Date.now() };
         client.send(JSON.stringify(evt));
-      } catch {}
+      } catch { /* Ignore client send errors */ }
     }
     if (lastPriceUSD) {
       try {
-        const evt: PriceCurrentEvent = { type: 'price.current', data: lastPriceUSD, timestamp: Date.now() } as any;
+        const evt: PriceCurrentEvent = { type: 'price.current', data: lastPriceUSD, timestamp: Date.now() };
         client.send(JSON.stringify(evt));
-      } catch {}
+      } catch { /* Ignore client send errors */ }
     }
     if (lastFx) {
       try {
-        const evt: FxRatesEvent = { type: 'fx.rates', data: lastFx, timestamp: Date.now() } as any;
+        const evt: FxRatesEvent = { type: 'fx.rates', data: lastFx, timestamp: Date.now() };
         client.send(JSON.stringify(evt));
-      } catch {}
+      } catch { /* Ignore client send errors */ }
     }
   };
 
@@ -220,7 +220,7 @@ export function createWebSocketHub(params: { adapter: ElectrumAdapter; core?: Co
   const broadcast = (event: HubEvent) => {
     const started = Date.now();
     // Stamp producer-side time for latency visibility
-    const anyEvent: any = event as any;
+    const anyEvent = event as { meta?: { producedInMs?: number }; timestamp?: number };
     anyEvent.meta = anyEvent.meta || {};
     anyEvent.meta.producedInMs = Math.max(0, started - (anyEvent.timestamp || started));
     const payload = JSON.stringify(event);
@@ -239,22 +239,21 @@ export function createWebSocketHub(params: { adapter: ElectrumAdapter; core?: Co
     }
     const dur = Date.now() - started;
     // record producer + broadcast metrics
-    try {
-      const producedInMs = (event as any).meta?.producedInMs ?? 0;
-      recordWsProduced(event.type, producedInMs);
-      recordWsBroadcastDuration(event.type, dur, delivered);
-    } catch {}
+          try {
+        const producedInMs = (event as { meta?: { producedInMs?: number } }).meta?.producedInMs ?? 0;
+        recordWsProduced(event.type, producedInMs);
+        recordWsBroadcastDuration(event.type, dur, delivered);
+      } catch { /* Ignore metrics recording errors */ }
     if (dur > 50 || event.type === 'tip.height') {
       // Periodically log rolling P95 for visibility
       try {
-        const { getRollingP95 } = require('../metrics/metrics');
         const p95 = getRollingP95();
         const prodKey = `ws.produced.${event.type}`;
         const brKey = `ws.broadcast.${event.type}`;
         const producedP95 = p95[prodKey] ?? -1;
         const broadcastP95 = p95[brKey] ?? -1;
         console.log(`[ws] event=${event.type} delivered=${delivered} durMs=${dur} p95_produced=${producedP95}ms p95_broadcast=${broadcastP95}ms`);
-      } catch {
+      } catch { /* Ignore metrics logging errors */
         console.log(`[ws] event=${event.type} delivered=${delivered} durMs=${dur}`);
       }
     }

@@ -33,7 +33,7 @@ This Data Flow Diagram reflects the implemented Electrum TCP integration, our No
 │  │  ┌─────────────────┐    ┌─────────────────┐    ┌────────────────────────┐  │ │
 │  │  │ ElectrumClient  │    │ Connection Pool │    │ Circuit Breaker        │  │ │
 │  │  │ tcp/json msgs   │    │ keep‑alive TCP  │    │ backoff/half‑open      │  │ │
-│  │  │ (electrum‑client)│   │ bounded sockets │    │ node quarantine        │  │ │
+│  │  │(electrum‑client)│    │ bounded sockets │    │ node quarantine        │  │ │
 │  │  └─────────────────┘    └─────────────────┘    └────────────────────────┘  │ │
 │  └────────────────────────────────────────────────────────────────────────────┘ │
 │                                    │                                            │
@@ -55,9 +55,9 @@ This Data Flow Diagram reflects the implemented Electrum TCP integration, our No
 │  │  ┌─────────────────┐    ┌─────────────────┐    ┌────────────────────────┐  │ │
 │  │  │    REST API     │    │   WebSocket     │    │    ETL → PostgreSQL    │  │ │
 │  │  │ health/fees     │    │ events:         │    │ mirror (views/MVs)     │  │ │
-│  │  │ mempool/height  │    │ • tip.height    │    │                         │  │ │
-│  │  │ (current MVP)   │    │ • network.fees  │    │                         │  │ │
-│  │  │                 │    │ • network.mempool│   │                         │  │ │
+│  │  │ mempool/height  │    │ • tip.height    │    │                        │  │ │
+│  │  │ (current MVP)   │    │ • network.fees  │    │                        │  │ │
+│  │  │                 │    │ •network.mempool│    │                        │  │ │
 │  │  └─────────────────┘    └─────────────────┘    └────────────────────────┘  │ │
 │  └────────────────────────────────────────────────────────────────────────────┘ │
 │                                    │                      │                     │
@@ -65,6 +65,21 @@ This Data Flow Diagram reflects the implemented Electrum TCP integration, our No
 │  ┌────────────────────────────────────────────────────────────────────────────┐ │
 │  │                                 FRONTEND                                   │ │
 │  │  • Real‑time dashboard (WS)  • Search & navigation  • Analytics tools      │ │
+│  │  • 3D Design System  • LoadingBlocks  • Splash Screen  • Theme System      │ │
+│  └────────────────────────────────────────────────────────────────────────────┘ │
+│                                    │                                            │
+│                                    ▼                                            │
+│  ┌────────────────────────────────────────────────────────────────────────────┐ │
+│  │                            STYLES SYSTEM FLOW                              │ │
+│  │                                                                            │ │
+│  │  ┌─────────────────┐    ┌─────────────────┐    ┌────────────────────────┐  │ │
+│  │  │   CSS Modules   │    │ CSS Custom      │    │ Styled                 │  │ │
+│  │  │   (Layout)      │    │ Properties      │    │ Components             │  │ │
+│  │  │ • Component     │    │ (Theming)       │    │ (Interactive)          │  │ │
+│  │  │   isolation     │    │ • Theme         │    │ • Dynamic              │  │ │
+│  │  │ • Grid systems  │    │   switching     │    │   styling              │  │ │
+│  │  │ • 3D containers │    │ • Global tokens │    │ • Animations           │  │ │
+│  │  └─────────────────┘    └─────────────────┘    └────────────────────────┘  │ │
 │  └────────────────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -99,12 +114,19 @@ This Data Flow Diagram reflects the implemented Electrum TCP integration, our No
 2. Cache responses; enforce pagination and response size limits.
 3. Long histories/rollups → PostgreSQL views/MVs.
 
+### 6. Styles System Flow (CSS Architecture)
+1. **CSS Modules Flow**: Component-specific styles → isolated layouts → grid systems → 3D containers
+2. **CSS Custom Properties Flow**: Global design tokens → theme switching → responsive breakpoints → dynamic values
+3. **Styled Components Flow**: Interactive elements → dynamic styling → animations → theme integration
+4. **Theme Switching Flow**: User preference → React Context → CSS variable updates → instant UI changes
+
 ## Performance Characteristics
 
 - L1 cache hit: ~0.1‑1ms; L2: ~1‑5ms; HTTP cache: ~5‑20ms
 - Electrum call (via adapter): typically tens to hundreds of ms (bounded, pooled)
 - PostgreSQL analytics: ~100‑500ms; complex rollups 1‑5s with timeouts
 - WS freshness: 1‑2s for headers; blocks ~10min average cadence
+- Styles system: CSS Modules instant, Custom Properties ~1ms, Styled Components ~5ms, theme switching <100ms
 
 ## Error Handling & Recovery
 

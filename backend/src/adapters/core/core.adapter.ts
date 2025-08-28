@@ -46,7 +46,7 @@ export class RealCoreRpcAdapter implements CoreRpcAdapter {
 
   async getMempoolSummary(): Promise<CoreMempoolSummary> {
     // Prefer getmempoolinfo for authoritative counts and sizes
-    const info = await this.call<any>('getmempoolinfo')
+    const info = await this.call<{ size?: number; bytes?: number; usage?: number; mempoolminfee?: number }>('getmempoolinfo')
     return {
       pendingTransactions: typeof info?.size === 'number' ? info.size : 0,
       bytes: typeof info?.bytes === 'number' ? info.bytes : undefined,

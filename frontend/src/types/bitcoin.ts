@@ -361,8 +361,8 @@ export interface BitcoinSearchResult {
 export interface BitcoinContextState {
   state: BitcoinState
   dispatch: React.Dispatch<BitcoinAction>
-  actions: any // Will be properly typed when imported
-  selectors: any // Will be properly typed when imported
+  actions: Record<string, unknown> // Will be properly typed when imported
+  selectors: Record<string, unknown> // Will be properly typed when imported
 }
 
 // Bitcoin State Interface (for React context and reducer)
@@ -426,8 +426,8 @@ export interface BitcoinState {
   // Real-time Updates
   realtime: {
     lastWebSocketUpdate: number | null
-    pendingUpdates: any[]
-    updateQueue: any[]
+    pendingUpdates: unknown[]
+    updateQueue: unknown[]
     isConnected: boolean
     connectionStatus: 'connected' | 'disconnected' | 'connecting'
   }
@@ -610,11 +610,11 @@ export type BitcoinAction =
   
   // WebSocket Actions
   | { type: 'WS_CONNECT'; payload: { status: 'connected' | 'disconnected' | 'connecting' } }
-  | { type: 'WS_MESSAGE'; payload: any }
+  | { type: 'WS_MESSAGE'; payload: unknown }
   | { type: 'WS_ERROR'; payload: string }
   
   // Preference Actions
-  | { type: 'PREF_UPDATE'; payload: { key: keyof BitcoinState['preferences']; value: any } }
+  | { type: 'PREF_UPDATE'; payload: { key: keyof BitcoinState['preferences']; value: unknown } }
   | { type: 'PREFS_UPDATE'; payload: Partial<BitcoinState['preferences']> }
   
   // Metrics Actions
@@ -637,7 +637,7 @@ export interface BitcoinAPIResponse<T> {
 export interface BitcoinWebSocketEvent {
   // Event type identifiers, e.g., 'tip.height', 'block.new', 'network.status'
   type: string
-  data: any
+  data: unknown
   timestamp: number
 }
 
@@ -659,13 +659,13 @@ export interface BitcoinCacheEntry<T> {
 
 // Validation Schema Types (for runtime validation)
 export interface BitcoinValidationSchema {
-  validateBlock: (data: any) => BitcoinValidationResult
-  validateTransaction: (data: any) => BitcoinValidationResult
-  validateAddress: (data: any) => BitcoinValidationResult
-  validateUTXO: (data: any) => BitcoinValidationResult
-  validateFeeEstimates: (data: any) => BitcoinValidationResult
-  validateNetworkStatus: (data: any) => BitcoinValidationResult
-  validatePriceData: (data: any) => BitcoinValidationResult
+  validateBlock: (data: unknown) => BitcoinValidationResult
+  validateTransaction: (data: unknown) => BitcoinValidationResult
+  validateAddress: (data: unknown) => BitcoinValidationResult
+  validateUTXO: (data: unknown) => BitcoinValidationResult
+  validateFeeEstimates: (data: unknown) => BitcoinValidationResult
+  validateNetworkStatus: (data: unknown) => BitcoinValidationResult
+  validatePriceData: (data: unknown) => BitcoinValidationResult
 }
 
 // BIP Path Validation

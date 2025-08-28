@@ -89,8 +89,6 @@ import {
 } from '../utils/bitcoinValidation'
 import { 
   BLOCK_ACTIONS, 
-  TX_ACTIONS, 
-  ADDRESS_ACTIONS, 
   NETWORK_ACTIONS, 
   FEE_ACTIONS, 
   PRICE_ACTIONS,
@@ -144,8 +142,8 @@ interface BitcoinProviderProps {
 export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({ 
   children, 
   // Defaults aligned with local backend on port 8000
-  wsUrl = (import.meta as any).env?.VITE_WEBSOCKET_URL || 'ws://localhost:8000/ws',
-  apiBaseUrl = (import.meta as any).env?.VITE_API_BASE_URL || 'http://localhost:8000'
+  wsUrl = (import.meta as { env?: { VITE_WEBSOCKET_URL?: string } }).env?.VITE_WEBSOCKET_URL || 'ws://localhost:8000/ws',
+  apiBaseUrl = (import.meta as { env?: { VITE_API_BASE_URL?: string } }).env?.VITE_API_BASE_URL || 'http://localhost:8000'
 }) => {
   const [state, dispatch] = useReducer(bitcoinReducer, initialState)
   const { 
@@ -163,7 +161,7 @@ export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({
   } = useWebSocket(wsUrl)
 
   // Cache management
-  const cache = useRef(new Map<string, CacheEntry<any>>())
+  const cache = useRef(new Map<string, CacheEntry<unknown>>())
   const cacheStats = useRef({ hits: 0, misses: 0 })
   const retryTimers = useRef(new Map<string, NodeJS.Timeout>())
 
@@ -195,7 +193,7 @@ export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({
     }
 
     cacheStats.current.hits++
-    return entry.data
+    return entry.data as T
   }, [])
 
   const setCachedData = useCallback(function <T>(key: string, data: T, ttl: number = CACHE_TTL_MS): void {
@@ -494,8 +492,8 @@ export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({
             }
           }
         }
-      } catch {}
-      // Fetch bootstrap for tip + optional price and fx
+              } catch { /* Ignore persistence errors */ }
+        // Fetch bootstrap for tip + optional price and fx
       try {
         const res = await fetch(`${apiBaseUrl}/api/v1/bootstrap`)
         if (res.ok) {
@@ -512,8 +510,8 @@ export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({
             dispatch({ type: FX_ACTIONS.UPDATE, payload: fx })
           }
         }
-      } catch {}
-      await refreshNetworkStatus();
+              } catch { /* Ignore bootstrap errors */ }
+        await refreshNetworkStatus();
     }
     initialize();
   }, [refreshNetworkStatus])
@@ -534,40 +532,51 @@ export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({
 
   // Subscribe to data flow: tip height, fees, mempool, price, fx
   useEffect(() => {
-    const handler = (event: { type: string; data: any; timestamp: number }) => {
-      if (event.type === 'tip.height' && event.data && typeof event.data.height === 'number') {
-        const lastBlockTime = typeof event.data.lastBlockTime === 'number' ? event.data.lastBlockTime : Date.now()
-        const next = { ...state.networkStatus, lastBlockHeight: event.data.height, lastBlockTime, lastUpdated: Date.now() }
-        dispatch({ type: NETWORK_ACTIONS.STATUS, payload: next })
-        // Persist minimal state
-        try {
-          const persisted = localStorage.getItem(PERSIST_KEY)
-          const prev = persisted ? JSON.parse(persisted) : {}
-          localStorage.setItem(PERSIST_KEY, JSON.stringify({ ...prev, lastBlockHeight: event.data.height, lastBlockTime }))
-        } catch {}
+    const handler = (event: { type: string; data: unknown; timestamp: number }) => {
+       if (event.type === 'tip.height' && event.data && typeof event.data === 'object' && event.data !== null) {
+        const data = event.data as { height?: number; lastBlockTime?: number }
+        if (typeof data.height === 'number') {
+          const lastBlockTime = typeof data.lastBlockTime === 'number' ? data.lastBlockTime : Date.now()
+          const next = { ...state.networkStatus, lastBlockHeight: data.height, lastBlockTime, lastUpdated: Date.now() }
+          dispatch({ type: NETWORK_ACTIONS.STATUS, payload: next })
+          // Persist minimal state
+          try {
+            const persisted = localStorage.getItem(PERSIST_KEY)
+            const prev = persisted ? JSON.parse(persisted) : {}
+            localStorage.setItem(PERSIST_KEY, JSON.stringify({ ...prev, lastBlockHeight: data.height, lastBlockTime }))
+          } catch { /* Ignore persistence errors */ }
+        }
       }
-      if (event.type === 'network.fees' && event.data) {
-        const updated = { ...state.feeEstimates, ...event.data, lastUpdated: Date.now() }
+      if (event.type === 'network.fees' && event.data && typeof event.data === 'object' && event.data !== null) {
+        const data = event.data as Record<string, unknown>
+        const updated = { ...state.feeEstimates, ...data, lastUpdated: Date.now() }
         dispatch({ type: FEE_ACTIONS.UPDATE, payload: updated })
         // Persist fee estimates
         try {
           const persisted = localStorage.getItem(PERSIST_KEY)
           const prev = persisted ? JSON.parse(persisted) : {}
           localStorage.setItem(PERSIST_KEY, JSON.stringify({ ...prev, feeEstimates: updated }))
-        } catch {}
+        } catch { /* Ignore persistence errors */ }
       }
-      if (event.type === 'network.mempool' && event.data) {
-        const pending = typeof event.data.pendingTransactions === 'number' ? event.data.pendingTransactions : state.networkStatus.pendingTransactions
+      if (event.type === 'network.mempool' && event.data && typeof event.data === 'object' && event.data !== null) {
+        const data = event.data as { pendingTransactions?: number }
+        const pending = typeof data.pendingTransactions === 'number' ? data.pendingTransactions : state.networkStatus.pendingTransactions
         const next = { ...state.networkStatus, pendingTransactions: pending, lastUpdated: Date.now() }
         dispatch({ type: NETWORK_ACTIONS.STATUS, payload: next })
       }
-      if (event.type === 'price.current' && event.data && typeof event.data.value === 'number') {
-        const p: PriceUSD = event.data
-        dispatch({ type: PRICE_ACTIONS.UPDATE, payload: p })
+      if (event.type === 'price.current' && event.data && typeof event.data === 'object' && event.data !== null) {
+        const data = event.data as { value?: number }
+        if (typeof data.value === 'number') {
+          const p: PriceUSD = event.data as PriceUSD
+          dispatch({ type: PRICE_ACTIONS.UPDATE, payload: p })
+        }
       }
-      if (event.type === 'fx.rates' && event.data && event.data.rates) {
-        const fx: FxRatesUSD = event.data
-        dispatch({ type: FX_ACTIONS.UPDATE, payload: fx })
+      if (event.type === 'fx.rates' && event.data && typeof event.data === 'object' && event.data !== null) {
+        const data = event.data as { rates?: Record<string, unknown> }
+        if (data.rates) {
+          const fx: FxRatesUSD = event.data as FxRatesUSD
+          dispatch({ type: FX_ACTIONS.UPDATE, payload: fx })
+        }
       }
     }
 

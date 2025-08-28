@@ -18,7 +18,7 @@ export function makeCoreController(core: CoreRpcAdapter, l1?: L1Cache) {
       try {
         const cacheKey = keys.coreTipHeight()
         if (l1) {
-          const cached = l1.get<any>(cacheKey)
+          const cached = l1.get<{ height: number; timestamp: number }>(cacheKey)
           if (cached) {
             recordCacheHit('core.height', cacheKey)
             recordLatency('core.height', Date.now() - started)
@@ -42,7 +42,7 @@ export function makeCoreController(core: CoreRpcAdapter, l1?: L1Cache) {
       try {
         const cacheKey = keys.coreMempoolSummary()
         if (l1) {
-          const cached = l1.get<any>(cacheKey)
+          const cached = l1.get<{ pendingTransactions: number; bytes?: number; usage?: number; minFee?: number; timestamp: number }>(cacheKey)
           if (cached) {
             recordCacheHit('core.mempool', cacheKey)
             recordLatency('core.mempool', Date.now() - started)
