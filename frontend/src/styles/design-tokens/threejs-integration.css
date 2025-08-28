@@ -1,0 +1,317 @@
+/**
+ * @fileoverview ThreeJS Integration Design Tokens for BlockSight.live
+ * @version 1.0.0
+ * @author Development Team
+ * @since 2025-08-23
+ * @lastModified 2025-08-23
+ * 
+ * @description
+ * ThreeJS and WebGL integration tokens for 3D rendering, performance optimization, and spatial design
+ * 
+ * @styling
+ * - CSS Custom Properties: ThreeJS integration and WebGL optimization
+ * - Performance Tokens: FPS targets, memory management, and rendering quality
+ * - Spatial Design: 3D positioning, depth layers, and spatial relationships
+ */
+
+:root {
+  /* ========================================
+     THREEJS PERFORMANCE TOKENS
+     ======================================== */
+  
+  /* FPS Targets */
+  --fps-target-30: 30;
+  --fps-target-60: 60;
+  --fps-target-90: 90;
+  --fps-target-120: 120;
+  --fps-target-144: 144;
+  
+  /* Frame Budget (ms per frame) */
+  --frame-budget-30fps: 33.33ms;
+  --frame-budget-60fps: 16.67ms;
+  --frame-budget-90fps: 11.11ms;
+  --frame-budget-120fps: 8.33ms;
+  --frame-budget-144fps: 6.94ms;
+  
+  /* Memory Management */
+  --memory-budget-low: 64MB;
+  --memory-budget-medium: 128MB;
+  --memory-budget-high: 256MB;
+  --memory-budget-extreme: 512MB;
+  
+  /* Texture Quality */
+  --texture-quality-low: 512;
+  --texture-quality-medium: 1024;
+  --texture-quality-high: 2048;
+  --texture-quality-ultra: 4096;
+  
+  /* Geometry Detail */
+  --geometry-detail-low: 8;
+  --geometry-detail-medium: 16;
+  --geometry-detail-high: 32;
+  --geometry-detail-ultra: 64;
+  
+  /* ========================================
+     WEBGL RENDERING TOKENS
+     ======================================== */
+  
+  /* Anti-aliasing */
+  --antialiasing-none: 0;
+  --antialiasing-fxaa: 1;
+  --antialiasing-msaa-2x: 2;
+  --antialiasing-msaa-4x: 4;
+  --antialiasing-msaa-8x: 8;
+  --antialiasing-msaa-16x: 16;
+  
+  /* Shadow Quality */
+  --shadow-quality-none: 0;
+  --shadow-quality-low: 512;
+  --shadow-quality-medium: 1024;
+  --shadow-quality-high: 2048;
+  --shadow-quality-ultra: 4096;
+  
+  /* Shadow Bias */
+  --shadow-bias-low: 0.0001;
+  --shadow-bias-medium: 0.0005;
+  --shadow-bias-high: 0.001;
+  --shadow-bias-extreme: 0.005;
+  
+  /* Shadow Darkness */
+  --shadow-darkness-none: 0;
+  --shadow-darkness-subtle: 0.1;
+  --shadow-darkness-light: 0.2;
+  --shadow-darkness-medium: 0.3;
+  --shadow-darkness-dark: 0.5;
+  --shadow-darkness-extreme: 0.8;
+  
+  /* ========================================
+     3D SPATIAL POSITIONING TOKENS
+     ======================================== */
+  
+  /* Depth Layers (Z-Index for 3D) */
+  --depth-layer-background: -1000;
+  --depth-layer-far: -500;
+  --depth-layer-middle: 0;
+  --depth-layer-near: 500;
+  --depth-layer-foreground: 1000;
+  --depth-layer-overlay: 1500;
+  --depth-layer-modal: 2000;
+  --depth-layer-tooltip: 2500;
+  --depth-layer-notification: 3000;
+  
+  /* 3D Container Heights */
+  --container-3d-height-xs: 200px;
+  --container-3d-height-sm: 300px;
+  --container-3d-height-md: 400px;
+  --container-3d-height-lg: 500px;
+  --container-3d-height-xl: 600px;
+  --container-3d-height-2xl: 800px;
+  --container-3d-height-3xl: 1000px;
+  --container-3d-height-4xl: 1200px;
+  --container-3d-height-5xl: 1500px;
+  
+  /* 3D Container Widths */
+  --container-3d-width-xs: 200px;
+  --container-3d-width-sm: 300px;
+  --container-3d-width-md: 400px;
+  --container-3d-width-lg: 500px;
+  --container-3d-width-xl: 600px;
+  --container-3d-width-2xl: 800px;
+  --container-3d-width-3xl: 1000px;
+  --container-3d-width-4xl: 1200px;
+  --container-3d-width-5xl: 1500px;
+  
+  /* 3D Container Depths */
+  --container-3d-depth-xs: 50px;
+  --container-3d-depth-sm: 100px;
+  --container-3d-depth-md: 150px;
+  --container-3d-depth-lg: 200px;
+  --container-3d-depth-xl: 300px;
+  --container-3d-depth-2xl: 400px;
+  --container-3d-depth-3xl: 500px;
+  
+  /* ========================================
+     THREEJS MATERIAL TOKENS
+     ======================================== */
+  
+  /* Material Opacity */
+  --material-opacity-transparent: 0;
+  --material-opacity-ghost: 0.1;
+  --material-opacity-fade: 0.3;
+  --material-opacity-subtle: 0.5;
+  --material-opacity-visible: 0.7;
+  --material-opacity-solid: 0.9;
+  --material-opacity-opaque: 1;
+  
+  /* Material Roughness */
+  --material-roughness-mirror: 0;
+  --material-roughness-glossy: 0.1;
+  --material-roughness-smooth: 0.3;
+  --material-roughness-matte: 0.5;
+  --material-roughness-textured: 0.7;
+  --material-roughness-rough: 0.9;
+  --material-roughness-extreme: 1;
+  
+  /* Material Metalness */
+  --material-metalness-dielectric: 0;
+  --material-metalness-subtle: 0.2;
+  --material-metalness-partial: 0.4;
+  --material-metalness-metallic: 0.6;
+  --material-metalness-high: 0.8;
+  --material-metalness-pure: 1;
+  
+  /* Material Emissive */
+  --material-emissive-none: 0;
+  --material-emissive-subtle: 0.1;
+  --material-emissive-glow: 0.3;
+  --material-emissive-bright: 0.5;
+  --material-emissive-intense: 0.7;
+  --material-emissive-extreme: 1;
+  
+  /* ========================================
+     THREEJS LIGHTING TOKENS
+     ======================================== */
+  
+  /* Light Intensity */
+  --light-intensity-none: 0;
+  --light-intensity-subtle: 0.1;
+  --light-intensity-soft: 0.3;
+  --light-intensity-medium: 0.5;
+  --light-intensity-bright: 0.7;
+  --light-intensity-intense: 1;
+  --light-intensity-extreme: 2;
+  
+  /* Light Distance */
+  --light-distance-near: 10;
+  --light-distance-medium: 50;
+  --light-distance-far: 100;
+  --light-distance-extreme: 500;
+  --light-distance-infinite: 0;
+  
+  /* Light Decay */
+  --light-decay-none: 0;
+  --light-decay-subtle: 0.5;
+  --light-decay-medium: 1;
+  --light-decay-strong: 2;
+  --light-decay-extreme: 5;
+  
+  /* Ambient Light */
+  --ambient-light-none: 0;
+  --ambient-light-subtle: 0.1;
+  --ambient-light-soft: 0.2;
+  --ambient-light-medium: 0.3;
+  --ambient-light-bright: 0.5;
+  --ambient-light-intense: 0.7;
+  
+  /* ========================================
+     THREEJS CAMERA TOKENS
+     ======================================== */
+  
+  /* Field of View */
+  --fov-narrow: 30deg;
+  --fov-standard: 45deg;
+  --fov-wide: 60deg;
+  --fov-ultra-wide: 75deg;
+  --fov-fisheye: 90deg;
+  --fov-extreme: 120deg;
+  
+  /* Camera Near Plane */
+  --camera-near-close: 0.1;
+  --camera-near-standard: 0.5;
+  --camera-near-far: 1;
+  --camera-near-extreme: 5;
+  
+  /* Camera Far Plane */
+  --camera-far-near: 100;
+  --camera-far-standard: 1000;
+  --camera-far-far: 5000;
+  --camera-far-extreme: 10000;
+  --camera-far-infinite: 100000;
+  
+  /* ========================================
+     THREEJS ANIMATION TOKENS
+     ======================================== */
+  
+  /* Animation Loop */
+  --animation-loop-none: none;
+  --animation-loop-repeat: repeat;
+  --animation-loop-ping-pong: ping-pong;
+  
+  /* Animation Clamp */
+  --animation-clamp-none: none;
+  --animation-clamp-clamp: clamp;
+  
+  /* Animation Duration (seconds) */
+  --animation-duration-instant: 0;
+  --animation-duration-snap: 0.1;
+  --animation-duration-quick: 0.2;
+  --animation-duration-fast: 0.3;
+  --animation-duration-normal: 0.5;
+  --animation-duration-slow: 0.8;
+  --animation-duration-relaxed: 1.2;
+  --animation-duration-leisurely: 2;
+  --animation-duration-epic: 3;
+  --animation-duration-eternal: 5;
+  
+  /* ========================================
+     THREEJS INTERACTION TOKENS
+     ======================================== */
+  
+  /* Raycaster Threshold */
+  --raycaster-threshold-none: 0;
+  --raycaster-threshold-subtle: 0.1;
+  --raycaster-threshold-standard: 0.5;
+  --raycaster-threshold-generous: 1;
+  --raycaster-threshold-extreme: 2;
+  
+  /* Hover Distance */
+  --hover-distance-near: 5;
+  --hover-distance-standard: 10;
+  --hover-distance-far: 20;
+  --hover-distance-extreme: 50;
+  
+  /* Click Distance */
+  --click-distance-near: 2;
+  --click-distance-standard: 5;
+  --click-distance-far: 10;
+  --click-distance-extreme: 20;
+  
+  /* ========================================
+     THREEJS RESPONSIVE TOKENS
+     ======================================== */
+  
+  /* Mobile 3D Settings */
+  --mobile-fps-target: var(--fps-target-30);
+  --mobile-texture-quality: var(--texture-quality-low);
+  --mobile-geometry-detail: var(--geometry-detail-low);
+  --mobile-antialiasing: var(--antialiasing-none);
+  --mobile-shadow-quality: var(--shadow-quality-none);
+  
+  /* Tablet 3D Settings */
+  --tablet-fps-target: var(--fps-target-60);
+  --tablet-texture-quality: var(--texture-quality-medium);
+  --tablet-geometry-detail: var(--geometry-detail-medium);
+  --tablet-antialiasing: var(--antialiasing-fxaa);
+  --tablet-shadow-quality: var(--shadow-quality-low);
+  
+  /* Desktop 3D Settings */
+  --desktop-fps-target: var(--fps-target-60);
+  --desktop-texture-quality: var(--texture-quality-high);
+  --desktop-geometry-detail: var(--geometry-detail-high);
+  --desktop-antialiasing: var(--antialiasing-msaa-4x);
+  --desktop-shadow-quality: var(--shadow-quality-medium);
+  
+  /* High-End 3D Settings */
+  --high-end-fps-target: var(--fps-target-120);
+  --high-end-texture-quality: var(--texture-quality-ultra);
+  --high-end-geometry-detail: var(--geometry-detail-ultra);
+  --high-end-antialiasing: var(--antialiasing-msaa-8x);
+  --high-end-shadow-quality: var(--shadow-quality-high);
+  
+  /* ========================================
+     THREEJS PERFORMANCE PROFILES
+     ======================================== */
+  
+  /* Note: Performance profiles were removed due to invalid CSS syntax.
+     Use individual responsive tokens instead for device-specific settings. */
+}

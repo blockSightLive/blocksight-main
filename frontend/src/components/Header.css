@@ -1,0 +1,457 @@
+/**
+ * @fileoverview Header Component Styles for BlockSight.live
+ * @version 1.0.0
+ * @author Development Team
+ * @since 2025-08-25
+ * @lastModified 2025-08-25
+ * 
+ * @description
+ * Clean, minimal styles for the Header component using direct CSS properties for reliable flexbox layout.
+ * Implements the exact flex layout pattern: [Brand] ── [Search (600px)] ── [Controls]
+ * Direct CSS properties ensure reliable cross-browser flexbox behavior.
+ * 
+ * @styling
+ * - CSS Flexbox: Direct flexbox properties for reliable layout
+ * - CSS Custom Properties: All values from design token system
+ * - Glassmorphism: Basic backdrop blur and transparent backgrounds
+ * - Responsive Design: Mobile-first with design token breakpoints
+ * 
+ * @dependencies
+ * - Design tokens from styles/design-tokens/spacing-layout.css
+ * - Design tokens from styles/design-tokens/colors.css
+ * - Design tokens from styles/design-tokens/borders-radius.css
+ * 
+ * @state
+ * ✅ Fixed - Direct CSS properties for reliable flexbox layout
+ * 
+ * @bugs
+ * - None currently identified
+ * 
+ * @todo
+ * - None currently identified
+ * 
+ * @styling
+ * - CSS Flexbox: Direct flexbox properties
+ * - CSS Custom Properties: All values from design token system
+ * - Component-Specific: Header-specific styling only
+ * 
+ * @performance
+ * - Efficient CSS selectors
+ * - Minimal CSS duplication
+ * - Hardware-accelerated transforms
+ * 
+ * @security
+ * - Safe CSS properties only
+ * - No external dependencies
+ */
+
+/* ========================================
+   HEADER CONTAINER - MAIN LAYOUT
+   ======================================== */
+
+.header {
+  /* Direct flexbox properties for reliable layout */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  
+  /* Component-specific properties */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--spacing-12); /* Reduced from var(--spacing-20) for better 100% zoom sizing */
+  padding: var(--spacing-3) var(--spacing-6); /* Added vertical padding for search bar breathing room */
+  background: var(--bg-transparent);
+  backdrop-filter: var(--blur-2);
+  border-bottom: var(--border-width-sm) solid var(--color-border);
+  z-index: var(--z-index-fixed);
+}
+
+/* ========================================
+   HEADER SECTIONS - FLEX DISTRIBUTION
+   ======================================== */
+
+/* Brand Section - Left Side */
+.header__brand {
+  /* Direct flexbox properties */
+  display: flex;
+  align-items: center;
+  
+  /* Component-specific properties */
+  flex-shrink: 0;
+}
+
+.header__logo {
+  color: var(--color-text-primary);
+  text-decoration: none;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+}
+
+.logo-text {
+  color: inherit;
+}
+
+/* Search Container - Center Section */
+.header__search-container {
+  /* Direct flexbox properties */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  /* Component-specific properties */
+  flex: 1;
+  max-width: 800px; /* Updated to match search bar width */
+  margin: 0 auto;
+  padding: 0 var(--spacing-4); /* Add padding for better spacing */
+}
+
+/* Aside Section - Right Side Controls */
+.header__aside {
+  /* Direct flexbox properties */
+  display: flex;
+  align-items: center;
+  
+  /* Component-specific properties */
+  flex-shrink: 0;
+  gap: var(--spacing-4);
+}
+
+/* ========================================
+   HEADER CONTROLS - BUTTON STYLING
+   ======================================== */
+
+/* Language Selector */
+.lang-select {
+  /* Direct flexbox properties */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Component-specific properties */
+  min-width: var(--spacing-20);
+  height: var(--spacing-6); /* Further reduced from var(--spacing-8) for refined 100% zoom sizing */
+  padding: var(--spacing-1) var(--spacing-3); /* Reduced padding to match smaller height */
+  background: var(--bg-glass);
+  border: var(--border-width-sm) solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: var(--transition-button);
+}
+
+.lang-select:hover {
+  background: var(--bg-hover-weak);
+  border-color: var(--color-border-focus);
+}
+
+.lang-select:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+  box-shadow: var(--ring-focus-accent);
+}
+
+/* Theme Toggle */
+.theme-toggle {
+  /* Direct flexbox properties */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Component-specific properties */
+  min-width: var(--spacing-20);
+  height: var(--spacing-6); /* Further reduced from var(--spacing-8) for refined 100% zoom sizing */
+  padding: var(--spacing-1) var(--spacing-3); /* Reduced padding to match smaller height */
+  background: var(--bg-glass);
+  border: var(--border-width-sm) solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: var(--transition-button);
+}
+
+.theme-toggle:hover {
+  background: var(--bg-hover-weak);
+  border-color: var(--color-border-focus);
+}
+
+.theme-toggle:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+  box-shadow: var(--ring-focus-accent);
+}
+
+.theme-toggle__icon {
+  margin-right: var(--spacing-2);
+}
+
+.theme-toggle__text {
+  font-weight: var(--font-weight-medium);
+}
+
+/* Navigation Dropdown Toggle */
+.nav-dropdown__toggle {
+  /* Direct flexbox properties */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Component-specific properties */
+  min-width: var(--spacing-20);
+  height: var(--spacing-6); /* Further reduced from var(--spacing-8) for refined 100% zoom sizing */
+  padding: var(--spacing-1) var(--spacing-3); /* Reduced padding to match smaller height */
+  background: var(--bg-glass);
+  border: var(--border-width-sm) solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: var(--transition-button);
+}
+
+.nav-dropdown__toggle:hover {
+  background: var(--bg-hover-weak);
+  border-color: var(--color-border-focus);
+}
+
+.nav-dropdown__toggle:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+  box-shadow: var(--ring-focus-accent);
+}
+
+.nav-dropdown__text {
+  font-weight: var(--font-weight-medium);
+}
+
+/* Status Dots */
+.status-dots {
+  /* Direct flexbox properties */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Component-specific properties */
+  min-width: var(--spacing-20);
+  height: var(--spacing-6); /* Further reduced from var(--spacing-8) for refined 100% zoom sizing */
+  padding: var(--spacing-1) var(--spacing-3); /* Reduced padding to match smaller height */
+  background: var(--bg-glass);
+  border: var(--border-width-sm) solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: var(--transition-button);
+}
+
+.status-dots:hover {
+  background: var(--bg-hover-weak);
+  border-color: var(--color-border-focus);
+}
+
+.status-dots:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+  box-shadow: var(--ring-focus-accent);
+}
+
+/* Status Dot Indicators */
+.dot {
+  width: var(--spacing-2);
+  height: var(--spacing-2);
+  border-radius: 50%;
+  display: inline-block;
+  margin: 0 var(--spacing-1);
+}
+
+.dot--ok { 
+  background: var(--color-success-500);
+  box-shadow: var(--glow-cosmic);
+}
+
+.dot--down { 
+  background: var(--color-error-500);
+  box-shadow: var(--glow-bitcoin);
+}
+
+/* ========================================
+   DROPDOWN MENUS - POSITIONING
+   ======================================== */
+
+/* Language Dropdown Container */
+.lang-dropdown-container {
+  position: relative;
+}
+
+/* Language Dropdown */
+.lang-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: var(--z-index-dropdown);
+  min-width: 200px;
+  margin-top: var(--spacing-2);
+  background: var(--bg-glass);
+  backdrop-filter: var(--blur-10);
+  border: var(--border-width-sm) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+/* Navigation Dropdown */
+.nav-dropdown {
+  position: relative;
+}
+
+.nav-dropdown__menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: var(--z-index-dropdown);
+  min-width: 200px;
+  margin-top: var(--spacing-2);
+  background: var(--bg-glass);
+  backdrop-filter: var(--blur-10);
+  border: var(--border-width-sm) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+/* ========================================
+   DROPDOWN ITEMS - STYLING
+   ======================================== */
+
+/* Language Dropdown Items */
+.lang-dropdown__item {
+  display: block;
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-4);
+  background: transparent;
+  border: none;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: var(--transition-button);
+}
+
+.lang-dropdown__item:hover {
+  background: var(--bg-hover-weak);
+}
+
+.lang-dropdown__item:focus {
+  outline: none;
+  background: var(--bg-hover-weak);
+}
+
+.lang-dropdown__item--active {
+  background: var(--bg-hover-strong);
+  color: var(--color-primary-500);
+}
+
+/* Navigation Dropdown Items */
+.nav-dropdown__item {
+  display: block;
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-4);
+  background: transparent;
+  border: none;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: var(--transition-button);
+  text-decoration: none;
+}
+
+.nav-dropdown__item:hover {
+  background: var(--bg-hover-weak);
+}
+
+.nav-dropdown__item:focus {
+  outline: none;
+  background: var(--bg-hover-weak);
+}
+
+.nav-dropdown__item--active {
+  background: var(--bg-hover-strong);
+  color: var(--color-primary-500);
+}
+
+/* ========================================
+   RESPONSIVE DESIGN - MOBILE FIRST
+   ======================================== */
+
+@media (width <= 768px) {
+  .header {
+    /* Mobile flexbox properties */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    /* Component-specific mobile properties */
+    height: var(--spacing-12); /* Reduced from var(--spacing-16) for consistency */
+    padding: var(--spacing-3) var(--spacing-4);
+  }
+  
+  .header__brand {
+    /* Mobile flexbox properties */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* Component-specific mobile properties */
+    order: 1;
+  }
+  
+  .header__search-container {
+    /* Mobile flexbox properties */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* Component-specific mobile properties */
+    order: 2;
+    width: 100%;
+    max-width: 600px;
+    margin-top: var(--spacing-2);
+  }
+  
+  .header__aside {
+    /* Mobile flexbox properties */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* Component-specific mobile properties */
+    order: 3;
+    gap: var(--spacing-3);
+  }
+  
+  /* Mobile button adjustments */
+  .lang-select,
+  .theme-toggle,
+  .nav-dropdown__toggle,
+  .status-dots {
+    min-width: var(--spacing-16);
+    height: var(--spacing-5); /* Further reduced from var(--spacing-6) for mobile optimization */
+    padding: var(--spacing-1) var(--spacing-2); /* Reduced padding to match smaller height */
+    font-size: var(--font-size-xs);
+  }
+  
+  .theme-toggle__text,
+  .nav-dropdown__text {
+    display: none; /* Hide text on mobile for space */
+  }
+}
+
+

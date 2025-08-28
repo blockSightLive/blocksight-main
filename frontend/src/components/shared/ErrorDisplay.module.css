@@ -1,0 +1,114 @@
+/* Co-located styles for ErrorDisplay */
+
+.error-display {
+	padding: var(--spacing-4);
+	background: var(--color-error-light);
+	border: var(--border-width-thin) solid var(--color-error);
+	border-radius: var(--radius-md);
+	color: var(--color-error-dark);
+	margin: var(--spacing-4) 0;
+}
+
+.error-display__header {
+	display: flex;
+	align-items: center;
+	margin-bottom: var(--spacing-3);
+}
+
+.error-display__icon {
+	margin-right: var(--spacing-2);
+	font-size: var(--font-size-lg);
+}
+
+.error-display__title {
+	font-weight: var(--font-weight-semibold);
+	font-size: var(--font-size-lg);
+	margin: var(--spacing-none);
+}
+
+.error-display__message {
+	margin: var(--spacing-2) 0;
+	line-height: var(--line-height-relaxed);
+}
+
+.error-display__details {
+	background: var(--color-background);
+	border: var(--border-width-thin) solid var(--color-error);
+	border-radius: var(--radius-sm);
+	padding: var(--spacing-3);
+	margin-top: var(--spacing-3);
+	font-family: var(--font-family-mono);
+	font-size: var(--font-size-sm);
+	overflow-x: auto;
+}
+
+.error-display__actions {
+	margin-top: var(--spacing-3);
+	display: flex;
+	gap: var(--spacing-2);
+}
+
+.error-display__button {
+	padding: var(--spacing-2) var(--spacing-3);
+	background: var(--color-error);
+	color: var(--color-text-inverse);
+	border: var(--border-width-none);
+	border-radius: var(--radius-sm);
+	cursor: var(--cursor-pointer);
+	font-size: var(--font-size-sm);
+	transition: background var(--duration-200) var(--ease-in-out);
+}
+
+.error-display__button:hover {
+	background: var(--color-error-dark);
+}
+
+.error-display__button--secondary {
+	background: var(--bg-transparent);
+	color: var(--color-error);
+	border: var(--border-width-thin) solid var(--color-error);
+}
+
+.error-display__button--secondary:hover {
+	background: var(--color-error);
+	color: var(--color-text-inverse);
+}
+
+@media (max-width: 768px) {
+	.error-display {
+		padding: var(--spacing-3);
+	}
+
+	.error-display__header {
+		flex-direction: var(--flex-col);
+		align-items: var(--align-start);
+		gap: var(--spacing-2);
+	}
+
+	.error-display__actions {
+		flex-direction: var(--flex-col);
+		align-items: var(--align-stretch);
+	}
+}
+
+@media (max-width: 576px) {
+	.error-display {
+		padding: var(--spacing-2);
+		margin: var(--spacing-2) 0;
+	}
+
+	.error-display__title {
+		font-size: var(--font-size-base);
+	}
+
+	.error-display__message {
+		font-size: var(--font-size-sm);
+	}
+
+	.error-display__button {
+		padding: var(--spacing-1) var(--spacing-2);
+		font-size: var(--font-size-xs);
+	}
+}
+
+

@@ -97,7 +97,7 @@ graph TD
     UI[Frontend Container]
     Electrs[electrs (container or host service)]
   end
-  VM[Linux VM: Bitcoin Core]
+  VM[VirtualBox Ubuntu LTS VM: Bitcoin Core]
 
   Backend --> Redis
   Backend --> Electrs

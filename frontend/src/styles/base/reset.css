@@ -1,0 +1,316 @@
+/**
+ * @fileoverview CSS Reset and Base Styles for BlockSight.live
+ * @version 1.0.0
+ * @author Development Team
+ * @since 2025-08-23
+ * @lastModified 2025-08-23
+ * 
+ * @description
+ * CSS reset and base styles for consistent cross-browser rendering
+ * 
+ * @dependencies
+ * - None - pure CSS reset
+ * 
+ * @usage
+ * Imported by main index.css for consistent base styling
+ * 
+ * @state
+ * ✅ Functional - Complete CSS reset system
+ * 
+ * @bugs
+ * - None currently identified
+ * 
+ * @todo
+ * - None currently identified
+ * 
+ * @styling
+ * - CSS Reset: Normalize browser differences
+ * - Base Styles: Foundation for all components
+ * - Accessibility: Focus and skip link styles
+ * 
+ * @performance
+ * - Efficient CSS selectors
+ * - Minimal CSS duplication
+ * 
+ * @security
+ * - Safe CSS properties only
+ * - No external dependencies
+ */
+
+/* ========================================
+   CSS RESET - NORMALIZE BROWSER DIFFERENCES
+   ======================================== */
+
+/* Box sizing rules */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Remove default margin and padding */
+* {
+  margin: 0;
+  padding: 0;
+}
+
+/* Set core body defaults */
+html {
+  line-height: 1.15;
+  text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizelegibility;
+}
+
+body {
+  min-height: 100vh;
+  scroll-behavior: smooth;
+  text-rendering: optimizespeed;
+  line-height: 1.5;
+}
+
+/* ========================================
+   ELEMENT RESETS
+   ======================================== */
+
+/* Remove list styles */
+ul,
+ol {
+  list-style: none;
+}
+
+/* Remove default button styles */
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Remove default input styles */
+input,
+textarea,
+select {
+  font: inherit;
+  border: none;
+  outline: none;
+  background: none;
+}
+
+/* Remove default link styles */
+a {
+  color: inherit;
+  text-decoration: none;
+  background-color: transparent;
+}
+
+/* Remove default table styles */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* Remove default fieldset styles */
+fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Remove default legend styles */
+legend {
+  padding: 0;
+}
+
+/* Remove default details styles */
+details {
+  display: block;
+}
+
+/* Remove default summary styles */
+summary {
+  display: list-item;
+  cursor: pointer;
+}
+
+/* Remove default template styles */
+template {
+  display: none;
+}
+
+/* Remove default hidden styles */
+[hidden] {
+  display: none !important;
+}
+
+/* ========================================
+   TYPOGRAPHY RESETS
+   ======================================== */
+
+/* Remove default margins and paddings from text elements */
+h1, h2, h3, h4, h5, h6, p, dl, dt, dd {
+  margin: 0;
+  padding: 0;
+}
+
+/* Set consistent line heights */
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.2;
+}
+
+p {
+  line-height: 1.6;
+}
+
+/* ========================================
+   FORM ELEMENT RESETS
+   ======================================== */
+
+/* Remove default appearance */
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  appearance: none;
+}
+
+/* Remove default number input spinners */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  appearance: textfield;
+}
+
+/* Remove default select arrow */
+select {
+  appearance: none;
+}
+
+/* ========================================
+   MEDIA ELEMENT RESETS
+   ======================================== */
+
+/* Make images responsive */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Remove default border from iframes */
+iframe {
+  border: 0;
+}
+
+/* ========================================
+   INTERACTIVE ELEMENT RESETS
+   ======================================== */
+
+/* Remove default cursor from clickable elements */
+[role="button"],
+[tabindex] {
+  cursor: pointer;
+}
+
+/* Remove default outline from non-focusable elements */
+[tabindex="-1"]:focus:not(:focus-visible) {
+  outline: 0 !important;
+}
+
+/* ========================================
+   ACCESSIBILITY RESETS
+   ======================================== */
+
+/* Skip link for keyboard navigation - basic positioning only */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  z-index: 1000;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
+/* Focus styles for accessibility - basic outline only */
+:focus-visible {
+  outline: 2px solid currentcolor;
+  outline-offset: 2px;
+}
+
+/* Remove focus outline from mouse users */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ========================================
+   PRINT RESETS
+   ======================================== */
+
+@media print {
+  *,
+  *::before,
+  *::after {
+    background: transparent !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  
+  a,
+  a:visited {
+    text-decoration: underline;
+  }
+  
+  a[href]::after {
+    content: " (" attr(href) ")";
+  }
+  
+  abbr[title]::after {
+    content: " (" attr(title) ")";
+  }
+  
+  pre,
+  blockquote {
+    border: 1px solid #999;
+    break-inside: avoid;
+  }
+  
+  thead {
+    display: table-header-group;
+  }
+  
+  tr,
+  img {
+    break-inside: avoid;
+  }
+  
+  img {
+    max-width: 100% !important;
+  }
+  
+  p,
+  h2,
+  h3 {
+    orphans: 3;
+    widows: 3;
+  }
+  
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+}

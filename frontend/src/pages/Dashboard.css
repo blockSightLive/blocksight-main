@@ -1,0 +1,290 @@
+/**
+ * @fileoverview Dashboard Styles for BlockSight.live
+ * @version 1.0.0
+ * @author Development Team
+ * @since 2025-08-25
+ * @lastModified 2025-08-27
+ * 
+ * @description
+ * Clean three-column dashboard layout using our styles system.
+ * Left and center columns are transparent for ThreeJS and search functionality.
+ * Right column has glass effect for dashboard data widgets.
+ * Responsive design that fills screen without overflow.
+ * Properly positioned below fixed header using design tokens.
+ * 
+ * @styling
+ * - CSS Modules: Layout and grid structure
+ * - CSS Custom Properties: Theme colors and spacing from styles system
+ * - Responsive Design: Mobile-first with equal columns
+ * - Fixed Header Integration: Proper spacing using design tokens
+ * 
+ * @dependencies
+ * - Design tokens from styles/design-tokens/
+ * - Responsive breakpoints from spacing-layout.css
+ * - Color system from colors.css
+ * 
+ * @usage
+ * Imported by Dashboard.tsx for component styling
+ * 
+ * @state
+ * ✅ Updated - Transparent columns for ThreeJS, no titles, fixed header spacing
+ * 
+ * @bugs
+ * - None currently identified
+ * 
+ * @todo
+ * - [HIGH] Integrate ThreeJS for blockchain visualization in center column
+ * - [MEDIUM] Add real dashboard data components to right column
+ * - [MEDIUM] Implement search functionality in left column
+ * - [LOW] Optimize responsive breakpoints for the dashboard
+ * 
+ * @performance
+ * - Efficient grid layout
+ * - Minimal re-renders
+ * - Responsive breakpoints
+ * 
+ * @security
+ * - No external data yet
+ * - Safe placeholder content
+ */
+
+/* ========================================
+   DASHBOARD CONTAINER
+   ======================================== */
+
+.dashboard {
+  /* Layout */
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--spacing-4); /* Reduced from var(--spacing-6) for more compact layout */
+  
+  /* Sizing */
+  width: 100%;
+  height: calc(100vh - var(--spacing-12)); /* Updated to match new header height */
+  max-width: 100vw;
+  max-height: 100vh;
+  
+  /* Spacing */
+  padding: var(--spacing-4); /* Reduced from var(--spacing-6) for more compact layout */
+  
+  /* Positioning */
+  position: relative;
+  z-index: 2;
+  
+  /* Prevent overflow */
+  overflow: hidden;
+}
+
+/* ========================================
+   COLUMN STYLES
+   ======================================== */
+
+/* Left Column - Search Results */
+.dashboard-left {
+  /* Layout */
+  display: flex;
+  flex-direction: column;
+  
+  /* Sizing */
+  height: 100%;
+  min-height: 0;
+  
+  /* Background - Completely transparent */
+  background: transparent;
+  
+  /* Border - Subtle border that matches theme */
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-md); /* Reduced from var(--radius-lg) for more refined appearance */
+  
+  /* Spacing */
+  padding: var(--spacing-4); /* Reduced from var(--spacing-6) for more compact layout */
+  
+  /* Effects */
+  backdrop-filter: blur(8px);
+  
+  /* Content */
+  overflow: hidden;
+}
+
+/* Center Column - Blockchain Visualizer */
+.dashboard-center {
+  /* Layout */
+  display: flex;
+  flex-direction: column;
+  
+  /* Sizing */
+  height: 100%;
+  min-height: 0;
+  
+  /* Background - Completely transparent for ThreeJS */
+  background: transparent;
+  
+  /* Border - Subtle border that matches theme */
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-md); /* Reduced from var(--radius-lg) for more refined appearance */
+  
+  /* Spacing */
+  padding: var(--spacing-4); /* Reduced from var(--spacing-6) for more compact layout */
+  
+  /* Effects */
+  backdrop-filter: blur(8px);
+  
+  /* Content */
+  overflow: hidden;
+}
+
+/* Right Column - Dashboard Data */
+.dashboard-right {
+  /* Layout */
+  display: flex;
+  flex-direction: column;
+  
+  /* Sizing - Allow component to determine height */
+  height: 100%;
+  min-height: 0;
+  
+  /* Background - Completely transparent to show cosmic background */
+  background: transparent !important;
+  
+  /* Border - Remove border to show component cleanly */
+  border: none;
+  border-radius: 0;
+  
+  /* Spacing */
+  padding: 0;
+  
+  /* Effects - Remove all effects */
+  backdrop-filter: none;
+  box-shadow: none;
+  
+  /* Content */
+  overflow: visible;
+}
+
+/* ========================================
+   COLUMN CONTENT
+   ======================================== */
+
+.column-content {
+  /* Layout */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  
+  /* Sizing */
+  min-height: 0;
+  
+  /* Content */
+  overflow: auto;
+}
+
+/* Right column content doesn't need flex stretching */
+.dashboard-right .column-content {
+  flex: none;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+/* Mobile - Stack columns vertically */
+@media (width <= 768px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    gap: var(--spacing-3); /* Reduced from var(--spacing-4) for mobile optimization */
+    height: auto;
+    padding: var(--spacing-3); /* Reduced from var(--spacing-4) for mobile optimization */
+  }
+  
+  .dashboard-left,
+  .dashboard-center,
+  .dashboard-right {
+    height: auto;
+    min-height: var(--spacing-24); /* Reduced from var(--spacing-32) for mobile optimization */
+  }
+}
+
+/* Tablet - Two columns */
+@media (769px <= width <= 1024px) {
+  .dashboard {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr auto;
+    gap: var(--spacing-4); /* Reduced from var(--spacing-5) for consistency */
+  }
+  
+  .dashboard-left {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  
+  .dashboard-center {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  
+  .dashboard-right {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    height: auto;
+  }
+}
+
+/* ========================================
+   THEME INTEGRATION
+   ======================================== */
+
+/* Light theme adjustments */
+[data-theme="light"] .dashboard-left,
+[data-theme="light"] .dashboard-center {
+  border-color: var(--color-border);
+  background: transparent; /* Keep transparent for ThreeJS and search */
+}
+
+[data-theme="light"] .dashboard-right {
+  border-color: var(--color-border);
+  background: var(--bg-glass);
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .dashboard-left,
+[data-theme="dark"] .dashboard-center {
+  border-color: var(--color-border);
+  background: transparent; /* Keep transparent for ThreeJS and search */
+}
+
+[data-theme="dark"] .dashboard-right {
+  border-color: var(--color-border);
+  background: var(--bg-glass);
+}
+
+/* ========================================
+   ACCESSIBILITY
+   ======================================== */
+
+/* Focus states */
+.dashboard-left:focus-within,
+.dashboard-center:focus-within,
+.dashboard-right:focus-within {
+  outline: var(--border-width-md) solid var(--color-border-focus);
+  outline-offset: var(--spacing-1);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-left,
+  .dashboard-center,
+  .dashboard-right {
+    backdrop-filter: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: more) {
+  .dashboard-left,
+  .dashboard-center,
+  .dashboard-right {
+    border-width: var(--border-width-md);
+    background: var(--color-grey-light);
+  }
+}

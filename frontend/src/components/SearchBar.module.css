@@ -1,0 +1,193 @@
+/**
+ * @fileoverview SearchBar CSS Module for BlockSight.live
+ * @version 1.0.0
+ * @author Development Team
+ * @since 2025-08-25
+ * @lastModified 2025-08-27
+ * 
+ * @description
+ * CSS Module for SearchBar component with clean, minimal styling using design tokens.
+ * Search bar is now wider (800px max-width) for better user experience.
+ * Uses design tokens for consistent styling across the application.
+ * 
+ * @styling
+ * - CSS Modules: Component-scoped styling
+ * - CSS Custom Properties: Design tokens for colors, spacing, and effects
+ * - Glassmorphism: Backdrop blur and transparent backgrounds
+ * - Responsive Design: Mobile-first approach with standard breakpoints
+ * 
+ * @dependencies
+ * - Design tokens from styles/design-tokens/spacing-layout.css
+ * - Design tokens from styles/design-tokens/colors.css
+ * - Design tokens from styles/design-tokens/borders-radius.css
+ * - Design tokens from styles/design-tokens/sizes-dimensions.css
+ * - Design tokens from styles/design-tokens/animation-timing.css
+ * - Design tokens from styles/design-tokens/performance-optimization.css
+ * 
+ * @usage
+ * Imported by SearchBar.tsx for component styling
+ * 
+ * @state
+ * ✅ Updated - width (800px) and design token integration
+ * 
+ * @bugs
+ * - None currently identified
+ * 
+ * @todo
+ * - [LOW] Optimize responsive breakpoints
+ * 
+ * @styling
+ * - CSS Modules: Component-scoped styling
+ * - CSS Custom Properties: All values from design token system
+ * - Responsive Design: Mobile-first with standard breakpoints
+ * 
+ * @performance
+ * - Efficient CSS selectors
+ * - Minimal CSS duplication
+ * - Hardware-accelerated transforms
+ * 
+ * @security
+ * - Safe CSS properties only
+ * - No external dependencies
+ */
+
+/* ========================================
+   SEARCH BAR ROOT - CONTAINER LAYOUT
+   ======================================== */
+
+.root {
+  /* Layout properties using design tokens */
+  width: var(--width-full);
+  max-width: var(--searchbar-max-width-md); /* 800px */
+  min-width: var(--searchbar-min-width);
+  margin: var(--spacing-none) var(--spacing-4);
+}
+
+/* ========================================
+   SEARCH BAR CONTAINER - POSITIONING
+   ======================================== */
+
+.container {
+  position: relative;
+  width: var(--width-full);
+}
+
+/* ========================================
+   SEARCH INPUT - STYLING AND INTERACTIONS
+   ======================================== */
+
+.input {
+  /* Dimensions using design tokens */
+  width: var(--width-full);
+  height: var(--searchbar-height-sm); /* Reduced from var(--searchbar-height) for better 100% zoom sizing */
+  padding: var(--searchbar-padding-y-sm) var(--searchbar-padding-x-sm); /* Adjusted padding to match smaller height */
+  
+  /* Visual styling using design tokens */
+  border-radius: var(--searchbar-border-radius);
+  background: var(--bg-glass);
+  border: var(--border-width-thin) solid var(--border-alpha-accent-25);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-inset-deep);
+  backdrop-filter: var(--blur-6);
+  
+  /* Typography using design tokens */
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+  
+  /* Transitions using design tokens */
+  transition: 
+    background var(--duration-200) var(--ease-in-out),
+    border-color var(--duration-200) var(--ease-in-out),
+    box-shadow var(--duration-200) var(--ease-in-out);
+}
+
+/* ========================================
+   PLACEHOLDER STYLING
+   ======================================== */
+
+.input::placeholder {
+  color: var(--color-text-tertiary);
+  font-style: var(--font-style-normal);
+  opacity: var(--opacity-60);
+}
+
+/* ========================================
+   HOVER STATE
+   ======================================== */
+
+.input:hover {
+  background: var(--bg-hover-weak);
+  border-color: var(--border-alpha-accent-35);
+  box-shadow: var(--shadow-inset-deep), var(--shadow-hover-weak);
+}
+
+/* ========================================
+   FOCUS STATE - BITCOIN THEME
+   ======================================== */
+
+.input:focus-visible {
+  outline: none;
+  border-color: var(--color-bitcoin-500);
+  box-shadow: var(--ring-focus-bitcoin), var(--shadow-inset-deep);
+  animation: soft-glow-bitcoin var(--duration-2000) var(--ease-in-out) infinite;
+}
+
+/* ========================================
+   ANIMATIONS - SOFT GLOW EFFECT
+   ======================================== */
+
+@keyframes soft-glow-bitcoin {
+  0% {
+    box-shadow: var(--ring-none), var(--shadow-inset-deep);
+  }
+
+  50% {
+    box-shadow: var(--glow-bitcoin), var(--shadow-inset-deep);
+  }
+
+  100% {
+    box-shadow: var(--ring-none), var(--shadow-inset-deep);
+  }
+}
+
+/* ========================================
+   RESPONSIVE DESIGN - MOBILE FIRST
+   ======================================== */
+
+@media (max-width: 1200px) {
+  .root {
+    max-width: var(--searchbar-max-width-lg); /* 1000px for large screens */
+    min-width: var(--spacing-none);
+  }
+}
+
+@media (max-width: 992px) {
+  .root {
+    max-width: var(--searchbar-max-width-md); /* 800px for medium screens */
+    min-width: var(--spacing-none);
+  }
+}
+
+@media (max-width: 768px) {
+  .root {
+    max-width: var(--searchbar-max-width-sm); /* 600px for small screens */
+    min-width: var(--spacing-none);
+  }
+}
+
+@media (max-width: 576px) {
+  .root {
+    max-width: var(--width-full); /* Full width for mobile */
+    min-width: var(--spacing-none);
+    margin: var(--spacing-none) var(--spacing-2);
+  }
+  
+  .input {
+    height: var(--searchbar-height-sm); /* Smaller height for mobile */
+    padding: var(--searchbar-padding-y-sm) var(--searchbar-padding-x-sm);
+    font-size: var(--font-size-sm);
+  }
+}
+
+

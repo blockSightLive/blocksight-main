@@ -87,8 +87,26 @@ DoD checks
 
 ## Environments
 
-- Dev (Windows host + Linux VM): Bitcoin Core runs in a Linux VM; electrs, backend, frontend on the Windows host. Private RPC/P2P, NTP time sync, SSD storage for chainstate/RocksDB. See README for setup.
-- Prod (AWS): Private subnets for Core/electrs; public for API/CDN. Multi‑AZ electrs (active/standby). API behind gateway/ingress. Object storage (S3) for media when applicable.
+### Development Environment (Current State - Validated)
+- **Windows Host**: Backend/frontend run in Docker containers, electrs runs natively
+- **Linux VM (Ubuntu LTS)**: Bitcoin Core runs with shared folder access to external drive
+- **Network Topology**: 
+  - VM IP: `192.168.1.67` (accessible from Windows host `192.168.1.3`)
+  - Bitcoin Core RPC: `192.168.1.67:8332` (bound to both localhost and VM IP)
+  - Bitcoin Core P2P: `192.168.1.67:8333`
+  - ZMQ: `127.0.0.1:28332` (local only)
+- **Storage**: External drive `B:\bitcoin-data` shared via VirtualBox to `/media/sf_bitcoin-data`
+- **Connectivity**: 
+  - Windows → VM: ✅ `Test-NetConnection "192.168.1.67:8332"` passes
+  - electrs → Bitcoin Core: ✅ Direct TCP connection to VM IP
+  - Docker → electrs: ✅ `host.docker.internal:50001` accessible
+- **Status**: Bitcoin Core synced to block 910,659 (100% complete), electrs running and indexing
+
+### Production Environment (Planned)
+- **AWS**: Private subnets for Core/electrs; public for API/CDN
+- **Multi-AZ**: electrs (active/standby) with health-checked failover
+- **API**: Behind gateway/ingress with security groups
+- **Object Storage**: S3 for media and analytics data
 
 ## When to flag/canary
 
@@ -104,6 +122,7 @@ DoD checks
 - Future Considerations: Inscriptions/media, Lightning, forks.
 - Automation Playbook: CI/CD and collaboration automation (see `docs/automation-playbook.md`).
 - Onboarding Guide: Step-by-step developer onboarding (see `docs/onboarding.md`).
+ - Electrs WSL2 Stability: see `docs/infrastructure/electrs-wsl2-stability.md`.
 
 ---
 
@@ -189,6 +208,16 @@ Conventions and Quality
 - Realtime updates via `ws` (WebSocket) for mempool/chain events.
 - Electrum TCP integration with reliability and caching.
 - Strong defaults for security, logging, observability, and testing.
+
+### Naming Conventions (CRITICAL)
+**Backend MUST follow our centralized naming conventions:**
+- **Reference**: `frontend/src/constants/naming-conventions.md` - Single source of truth
+- **Action Types**: Use clean, concise names (e.g., `BLOCK_NEW`, not `RECEIVE_NEW_BLOCK_FROM_BACKEND`)
+- **API Endpoints**: Follow RESTful patterns (e.g., `/api/v1/blocks`, not `/api/bitcoin/blocks/retrieve`)
+- **WebSocket Events**: Use dot notation (e.g., `block.new`, not `bitcoin-block-new-received`)
+- **Data Types**: Follow `[Entity][Type]` pattern (e.g., `BitcoinBlock`, not `BitcoinBlockDataInterface`)
+
+**Implementation**: Backend will implement the opposite side of frontend actions, maintaining consistency across the entire system.
 
 ### Proposed Directory Structure (documented first)
 We will create this tree during implementation; shown here for orientation:
@@ -318,6 +347,61 @@ Implications:
 - Basic counters/timers (extend with OpenTelemetry later)
 - Correlation IDs propagated to Electrum calls
  - Health endpoints: `/health` (liveness), `/ready` (readiness)
+
+### Electrs stability hardening (WSL2 VM)
+- Storage: keep electrs `db_dir` on ext4 (inside WSL filesystem or an ext4‑formatted mount via `wsl --mount`), not under `/mnt/<drive>`.
+- Limits: raise open files before launch (`ulimit -n 8192`).
+- Throttle: `db_parallelism=1`, `ignore_mempool=true` while syncing; consider `index_batch_size=500-1000` if supported; increase `jsonrpc_timeout` (e.g., `60s`).
+- Resilience: `reindex_last_blocks=1000`, `auto_reindex=true`.
+- Controlled pauses: wrap with `timeout --signal=INT <seconds>` to exit cleanly and resume later.
+- Windows host: disable USB selective suspend; High performance power plan; AV exclusions on electrs DB path.
+
+## Current Infrastructure State (Validated - 2025-08-18)
+
+### Network Configuration
+- **VM IP Address**: `192.168.1.67` (VirtualBox Ubuntu LTS VM)
+- **Windows Host IP**: `192.168.1.3`
+- **Network Segment**: `192.168.1.0/24` (home network)
+- **Gateway**: `192.168.1.1`
+
+### Bitcoin Core Status
+- **Version**: Pre-release test build (main branch)
+- **Sync Status**: Block 910,659 of 910,659 (100% complete)
+- **Chain**: mainnet
+- **Storage**: 774GB on external drive via VirtualBox shared folder
+- **RPC Binding**: 
+  - `127.0.0.1:8332` (localhost)
+  - `192.168.1.67:8332` (VM IP - external access)
+- **P2P Port**: `192.168.1.67:8333`
+- **ZMQ Ports**: `127.0.0.1:28332` (raw block), `127.0.0.1:28333` (raw tx)
+
+### Electrs Status
+- **Version**: 0.10.10 (x86_64 Windows native)
+- **Process**: Running (PID 21000, 163MB memory)
+- **Database**: `B:\bitcoin-data\electrs-db\bitcoin`
+- **Electrum RPC**: `0.0.0.0:50001` (external access enabled)
+- **Monitoring**: `127.0.0.1:4224` (Prometheus metrics)
+- **Bitcoin Core Connection**: `192.168.1.67:8332` (VM IP)
+- **Cookie File**: `B:\bitcoin-data\.cookie`
+
+### Connectivity Validation
+- **Windows → Bitcoin Core VM**: ✅ `Test-NetConnection "192.168.1.67:8332"` passes
+- **Electrs → Bitcoin Core**: ✅ Direct TCP connection established
+- **Docker → Electrs**: ✅ `host.docker.internal:50001` accessible
+- **External → Electrs**: ✅ Port 50001 listening on all interfaces
+
+### Storage Configuration
+- **External Drive**: `B:\bitcoin-data` (Windows)
+- **VM Mount Point**: `/media/sf_bitcoin-data` (VirtualBox shared folder)
+- **Shared Folder Name**: `bitcoin-data`
+- **Permissions**: User `blocksight` (UID/GID 1002) in `vboxsf` group
+- **Symlink**: `/home/blocksight/.bitcoin` → `/media/sf_bitcoin-data`
+
+### Docker Environment
+- **Status**: ✅ Build successful, compose working
+- **Backend Port**: `localhost:8000`
+- **Redis Port**: `localhost:6379`
+- **Network**: Docker bridge with host access via `host.docker.internal`
 
 ### Testing Strategy
 - Unit: services, adapters with fakes/mocks
@@ -586,3 +670,43 @@ Worked example (no code): Implement fee estimate fetcher
 - Follow `code-standard.md` for error handling, loading states, and cleanup rules
 - Keep controller thin; move logic to services; adapters remain IO-only
 - Use schemas to validate both input and output; contract-first when feasible
+
+## Backend HTTP API – Bootstrap Snapshot
+
+The frontend gates its splash screen using a minimal snapshot from the backend.
+
+- Method: `GET /api/v1/bootstrap`
+- Purpose: Provide the fastest-available network readiness signal for the UI.
+- Response:
+```
+{
+  "height": number,               // Electrum tip height
+  "coreHeight": number | null,    // Bitcoin Core height when enabled
+  "mempoolPending": number | null, // Core pending tx count; null when unavailable
+  "mempoolVsize": number | undefined, // Electrum histogram derived vsize (approximate)
+  "asOfMs": number,
+  "source": "electrum"
+}
+```
+
+Caching & Metrics:
+- L1 key: `l1:bootstrap:v1`, TTL ≈ 3 seconds
+- Metrics recorded: `bootstrap` latency and cache hit/miss
+
+Notes:
+- If Core is disabled, `coreHeight` is omitted and `mempoolPending` may be null.
+- This endpoint is not for live updates; the WebSocket remains the primary realtime channel.
+
+### Electrum vs Core Controller Separation
+
+- Electrum Controller (`backend/src/controllers/electrum.controller.ts`)
+  - Electrum-backed endpoints only (fees, electrum height, electrum mempool fallback).
+  - L1 cache keys: `l1:fees:estimates:v1`, `l1:network:height:v1`, `l1:mempool:summary:v1`.
+
+- Core Controller (`backend/src/controllers/core.controller.ts`)
+  - Core-backed endpoints only: `/core/height`, `/core/mempool`.
+  - L1 cache keys: `l1:core:height:v1`, `l1:core:mempool:summary:v1`.
+
+- Bootstrap Controller (`backend/src/controllers/bootstrap.controller.ts`)
+  - Orchestrates both sources for cold-start: `/bootstrap` with TTL ≈ 3s (`l1:bootstrap:v1`).
+  - Returns `height`, optional `coreHeight`, and mempool fields for quick readiness.

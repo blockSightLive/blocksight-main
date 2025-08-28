@@ -1,0 +1,240 @@
+/**
+ * @fileoverview Global CSS Utilities and Overrides for BlockSight.live
+ * @version 1.0.0
+ * @author Development Team
+ * @since 2025-08-19
+ * @lastModified 2025-08-27
+ * 
+ * @description
+ * Global CSS utility classes and overrides that apply across the entire application.
+ * This file provides common utilities and global style adjustments.
+ * 
+ * @dependencies
+ * - Design tokens are imported via main index.css
+ * - Background system is imported via main index.css
+ * 
+ * @usage
+ * Global utility classes and application-wide style overrides
+ * 
+ * @state
+ * ✅ Refactored - Clean global utilities only
+ * 
+ * @bugs
+ * - None currently identified
+ * 
+ * @todo
+ * - Add more utility classes as needed
+ * - Monitor usage patterns
+ * 
+ * @styling
+ * - Utility Classes: Common layout and styling utilities
+ * - Global Overrides: Application-wide style adjustments
+ * - No Duplicates: Clean, focused utilities
+ * 
+ * @performance
+ * - Efficient utility classes
+ * - Minimal CSS footprint
+ * 
+ * @security
+ * - Safe CSS properties only
+ */
+
+/* ========================================
+   GLOBAL UTILITY CLASSES
+   ======================================== */
+
+/* Layout Utilities */
+.container {
+  width: 100%;
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-4);
+}
+
+.grid {
+  display: grid;
+  gap: var(--spacing-4);
+}
+
+.grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+/* Flexbox Utilities */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.flex-row { flex-direction: row; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+
+/* Spacing Utilities */
+.m-0 { margin: var(--spacing-none); }
+.m-1 { margin: var(--spacing-1); }
+.m-2 { margin: var(--spacing-2); }
+.m-3 { margin: var(--spacing-3); }
+.m-4 { margin: var(--spacing-4); }
+.m-5 { margin: var(--spacing-5); }
+.m-6 { margin: var(--spacing-6); }
+.m-8 { margin: var(--spacing-8); }
+.m-10 { margin: var(--spacing-10); }
+.m-12 { margin: var(--spacing-12); }
+.m-16 { margin: var(--spacing-16); }
+.m-20 { margin: var(--spacing-20); }
+.m-24 { margin: var(--spacing-24); }
+.m-32 { margin: var(--spacing-32); }
+
+.p-0 { padding: var(--spacing-none); }
+.p-1 { padding: var(--spacing-1); }
+.p-2 { padding: var(--spacing-2); }
+.p-3 { padding: var(--spacing-3); }
+.p-4 { padding: var(--spacing-4); }
+.p-5 { padding: var(--spacing-5); }
+.p-6 { padding: var(--spacing-6); }
+.p-8 { padding: var(--spacing-8); }
+.p-10 { padding: var(--spacing-10); }
+.p-12 { padding: var(--spacing-12); }
+.p-16 { padding: var(--spacing-16); }
+.p-20 { padding: var(--spacing-20); }
+.p-24 { padding: var(--spacing-24); }
+.p-32 { padding: var(--spacing-32); }
+
+/* ========================================
+   RESPONSIVE UTILITIES
+   ======================================== */
+
+/* Small screens and up */
+@media (640px <= width) {
+  .container { padding: 0 var(--spacing-6); }
+  .grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+  .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* Medium screens and up */
+@media (768px <= width) {
+  .container { padding: 0 var(--spacing-8); }
+  .grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+  .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* Large screens and up */
+@media (1024px <= width) {
+  .container { padding: 0 var(--spacing-10); }
+  .grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+  .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* Extra large screens and up */
+@media (1280px <= width) {
+  .container { padding: 0 var(--spacing-12); }
+  .grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+  .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* 2XL screens and up */
+@media (1536px <= width) {
+  .container { padding: 0 var(--spacing-16); }
+  .grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+  .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ========================================
+   RTL SUPPORT
+   ======================================== */
+
+[dir="rtl"] {
+  .container {
+    text-align: right;
+  }
+}
+
+/* ========================================
+   FOCUS UTILITIES
+   ======================================== */
+
+:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+/* ========================================
+   PERFORMANCE UTILITIES
+   ======================================== */
+
+/* Performance toggle button */
+.performance-toggle {
+  background: rgb(0 0 0 / 80%);
+  color: white;
+  padding: var(--spacing-2) var(--spacing-3);
+  border: 1px solid rgb(255 255 255 / 20%);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--duration-200) var(--ease-in-out);
+  white-space: nowrap;
+  min-width: 140px;
+}
+
+.performance-toggle:hover {
+  background: rgb(0 0 0 / 90%);
+  border-color: rgb(255 255 255 / 40%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgb(0 0 0 / 30%);
+}
+
+.performance-toggle:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgb(0 0 0 / 30%);
+}
+
+.performance-toggle:focus {
+  outline: 2px solid var(--color-accent-500);
+  outline-offset: 2px;
+}
+
+/* Performance mode indicator */
+.performance-mode-indicator {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: rgb(0 0 0 / 70%);
+  color: white;
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  z-index: 1000;
+  pointer-events: none;
+  backdrop-filter: blur(4px);
+}
+
+.performance-mode-indicator::before {
+  content: "Performance: ";
+  opacity: 0.7;
+}
+
+/* ========================================
+   BACKGROUND INTEGRATION - REMOVED (NOW HANDLED BY BACKGROUNDSYSTEM COMPONENT)
+   ======================================== */
+
+/*
+   Background integration is now handled by the BackgroundSystem component
+   which renders behind all content using Styled Components.
+   
+   This approach provides:
+   - Direct control over background rendering
+   - No CSS cascade conflicts
+   - Better performance and maintainability
+   - Proper z-index layering
+*/

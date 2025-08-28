@@ -2,7 +2,7 @@
 
 ## Overview
 
-This Data Flow Diagram reflects the corrected Electrum TCP integration, our Node.js adapter (HTTP/JSON + WebSocket), subscriptions-first real-time model, multi-tier caching, and a read-only PostgreSQL mirror for analytics and exploration.
+This Data Flow Diagram reflects the implemented Electrum TCP integration, our Node.js adapter (HTTP/JSON + WebSocket), current polling-first real-time model (subscriptions planned), multi-tier caching (planned/in progress), and a read-only PostgreSQL mirror for analytics and exploration.
 
 ## Data Flow Diagram
 
@@ -32,8 +32,8 @@ This Data Flow Diagram reflects the corrected Electrum TCP integration, our Node
 │  │                                                                            │ │
 │  │  ┌─────────────────┐    ┌─────────────────┐    ┌────────────────────────┐  │ │
 │  │  │ ElectrumClient  │    │ Connection Pool │    │ Circuit Breaker        │  │ │
-│  │  │ headers.sub     │    │ keep‑alive TCP  │    │ backoff/half‑open      │  │ │
-│  │  │ scripthash.*    │    │ bounded sockets │    │ node quarantine        │  │ │
+│  │  │ tcp/json msgs   │    │ keep‑alive TCP  │    │ backoff/half‑open      │  │ │
+│  │  │ (electrum‑client)│   │ bounded sockets │    │ node quarantine        │  │ │
 │  │  └─────────────────┘    └─────────────────┘    └────────────────────────┘  │ │
 │  └────────────────────────────────────────────────────────────────────────────┘ │
 │                                    │                                            │
@@ -43,7 +43,7 @@ This Data Flow Diagram reflects the corrected Electrum TCP integration, our Node
 │  │                                                                            │ │
 │  │  ┌─────────────────┐    ┌─────────────────┐    ┌────────────────────────┐  │ │
 │  │  │   Redis L1      │    │  Memory‑Mapped  │    │   HTTP Cache (Our API) │  │ │
-│  │  │   (Hot, 1‑2s)   │    │  L2 (Warm)      │    │   L3 (1s‑24h)          │  │ │
+│  │  │   (Hot, TTL)    │    │  L2 (Warm)      │    │   L3 (1s‑24h)          │  │ │
 │  │  │   ~0.1‑1ms      │    │  ~1‑5ms         │    │   ~5‑20ms              │  │ │
 │  │  └─────────────────┘    └─────────────────┘    └────────────────────────┘  │ │
 │  └────────────────────────────────────────────────────────────────────────────┘ │
@@ -54,7 +54,10 @@ This Data Flow Diagram reflects the corrected Electrum TCP integration, our Node
 │  │                                                                            │ │
 │  │  ┌─────────────────┐    ┌─────────────────┐    ┌────────────────────────┐  │ │
 │  │  │    REST API     │    │   WebSocket     │    │    ETL → PostgreSQL    │  │ │
-│  │  │ blocks/txs/addr │    │ headers/fees    │    │ mirror (views/MVs)     │  │ │
+│  │  │ health/fees     │    │ events:         │    │ mirror (views/MVs)     │  │ │
+│  │  │ mempool/height  │    │ • tip.height    │    │                         │  │ │
+│  │  │ (current MVP)   │    │ • network.fees  │    │                         │  │ │
+│  │  │                 │    │ • network.mempool│   │                         │  │ │
 │  │  └─────────────────┘    └─────────────────┘    └────────────────────────┘  │ │
 │  └────────────────────────────────────────────────────────────────────────────┘ │
 │                                    │                      │                     │
@@ -68,31 +71,33 @@ This Data Flow Diagram reflects the corrected Electrum TCP integration, our Node
 
 ## Data Flow Patterns
 
-### 1. Ingestion & Subscriptions (Real‑Time)
+### 1. Ingestion & Real‑Time (Current: Polling‑First)
 1. Bitcoin Core → electrs: electrs indexes blockchain data into internal RocksDB and serves Electrum TCP.
-2. Node ElectrumClient subscribes to headers and (optionally) scripthash/mempool signals.
-3. On new header/mempool change: update Redis L1 and Memory‑Mapped L2; emit WebSocket events.
+2. Node ElectrumClient connects over TCP and polls:
+   - Tip height every ~5s
+   - Fee estimates every ~15s
+   - Mempool summary every ~10s (Core preferred when enabled; fallback via adapter)
+3. On change detection: emit WebSocket events `tip.height`, `network.fees`, `network.mempool` to clients. Subscriptions‑first (headers.sub) is planned.
 
 ### 2. Read Path (User/API Retrieval)
-1. Client/API request → L1 (Redis) lookup (~0.1‑1ms)
-2. Miss → L2 (Memory‑mapped) (~1‑5ms)
-3. Miss → HTTP Cache (our adapter responses) (~5‑20ms)
-4. Miss → Electrum call via ElectrumClient (bounded, circuit‑protected)
-5. Heavy analytics → PostgreSQL mirror (views/MVs, ~100‑500ms)
+1. Client/API request → Adapter endpoints (health, fees, mempool, height) with bounded timeouts.
+2. L1 (Redis) lookup (~0.1‑1ms) for hot paths (fees, mempool). Future: L2 (Memory‑mapped) (~1‑5ms) → HTTP Cache (~5‑20ms).
+3. Cache miss → Electrum call via ElectrumClient (bounded, circuit‑protected).
+4. Heavy analytics (future) → PostgreSQL mirror (views/MVs).
 
 ### 3. Real‑Time Push
-- Electrum headers/mempool → ElectrumClient → Cache (L1/L2) → WebSocket broadcast (1‑2s freshness)
-- Price feeds → Adapter → Cache → WS update on change (hourly default)
+- Polling results (tip/fees/mempool) → WebSocket broadcast (`tip.height`, `network.fees`, `network.mempool`) with ~1–2s freshness budget.
+- Price feeds (future) → Adapter → Cache → WS update on change (hourly default).
 
-### 4. Analytics & ETL
-- Adapter batches minimal subset into PostgreSQL (append‑only, idempotent upserts)
-- Provide SQL views/MVs for human‑friendly queries and dashboards
+### 4. Analytics & ETL (Planned)
+- Adapter to batch minimal subset into PostgreSQL (append‑only, idempotent upserts).
+- Provide SQL views/MVs for human‑friendly queries and dashboards.
 - Scheduled/materialized refresh; bounded lag with backpressure
 
-### 5. Search Flow (Address/Tx/Block)
-1. Address query → derive scripthash → Electrum get_history/get_balance (paged)
-2. Cache responses; enforce pagination and response size limits
-3. Long histories/rollups → PostgreSQL views/MVs
+### 5. Search Flow (Planned)
+1. Address query → derive scripthash → Electrum get_history/get_balance (paged).
+2. Cache responses; enforce pagination and response size limits.
+3. Long histories/rollups → PostgreSQL views/MVs.
 
 ## Performance Characteristics
 

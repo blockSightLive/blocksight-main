@@ -112,7 +112,7 @@ This document contains Class Diagrams showing the core data structures and relat
 └──────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-## 2. HTTP API Integration Classes (Our Implementation)
+## 2. Electrum Integration & API Classes (Current Implementation)
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────────┐
@@ -120,23 +120,21 @@ This document contains Class Diagrams showing the core data structures and relat
 ├──────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                  │
 │  ┌─────────────────────────────────────────────────────────────────────────────┐ │
-│  │                         ElectrsHttpClient Class                             │ │
+│  │                         ElectrumClientAdapter Class                        │ │
 │  │                                                                             │ │
 │  │  ┌────────────────────────────────────────────────────────────────────────┐ │ │
-│  │  │  + base_url: String                                                    │ │ │
-│  │  │  + timeout: Duration                                                   │ │ │
-│  │  │  + retry_config: RetryConfig                                           │ │ │
-│  │  │  + connection_pool: ConnectionPool                                     │ │ │
-│  │  │  + circuit_breaker: CircuitBreaker                                     │ │ │
-│  │  │  + metrics: HttpMetrics                                                │ │ │
+│  │  │  + host: String                                                        │ │ │
+│  │  │  + port: u16                                                           │ │ │
+│  │  │  + tls: bool                                                           │ │ │
+│  │  │  + connection_pool: ConnectionPool (tcp)                               │ │ │
+│  │  │  + circuit_breaker: CircuitBreaker (planned)                           │ │ │
+│  │  │  + metrics: ElectrumMetrics (planned)                                  │ │ │
 │  │  │                                                                        │ │ │
-│  │  │  + new(config: HttpConfig) -> ElectrsHttpClient                        │ │ │
-│  │  │  + get_block(height: u32) -> Result<Block, Error>                      │ │ │
-│  │  │  + get_transaction(txid: String) -> Result<Transaction, Error>         │ │ │
-│  │  │  + get_address_history(addr: String) -> Result<Vec<Transaction>, Error>│ │ │
-│  │  │  + get_memory_pool() -> Result<Vec<Transaction>, Error>                │ │ │
-│  │  │  + get_network_stats() -> Result<NetworkStats, Error>                  │ │ │
-│  │  │  + poll_updates() -> Result<Vec<Update>, Error>                        │ │ │
+│  │  │  + new(config: ElectrumConfig) -> ElectrumClientAdapter                │ │ │
+│  │  │  + ping() -> Result<bool, Error>                                       │ │ │
+│  │  │  + getFeeEstimates() -> Result<FeeEstimates, Error>                    │ │ │
+│  │  │  + getTipHeight() -> Result<u32, Error>                                │ │ │
+│  │  │  + getMempoolSummary() -> Result<MempoolSummary, Error>                │ │ │
 │  │  └────────────────────────────────────────────────────────────────────────┘ │ │
 │  └─────────────────────────────────────────────────────────────────────────────┘ │
 │                                    │                                             │

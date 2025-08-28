@@ -1,0 +1,211 @@
+/**
+ * @fileoverview Light Theme for BlockSight.live
+ * @version 1.0.0
+ * @author Development Team
+ * @since 2025-08-23
+ * @lastModified 2025-08-27
+ * 
+ * @description
+ * Light theme styles for components and UI elements.
+ * Backgrounds are handled by the cosmic BackgroundSystem component.
+ * 
+ * @styling
+ * - CSS Custom Properties: Light theme color scheme
+ * - Component Styling: UI element colors and effects
+ * - No Backgrounds: Cosmic background handled separately
+ * 
+ * @dependencies
+ * - Design tokens from design-tokens/colors.css
+ * - Base styles from base/reset.css
+ */
+
+/* ========================================
+   LIGHT THEME - COMPONENT STYLING ONLY
+   ======================================== */
+
+html[data-theme="light"] {
+  /* ========================================
+     COMPONENT COLORS - NO BACKGROUNDS
+     ======================================== */
+  
+  /* Surface Colors */
+  --color-surface: #F5F5F5;
+  --color-surface-elevated: #E8E8E8;
+  --color-surface-hover: #f1f5f9;
+  --color-surface-active: #e2e8f0;
+  
+  /* Card Colors */
+  --color-card: #F5F5F5;
+  --color-card-hover: #E8E8E8;
+  --color-card-border: #444;
+  
+  /* Text Colors */
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #64748b;
+  --color-text-tertiary: #94a3b8;
+  --color-text-muted: #cbd5e1;
+  --color-text-inverse: #f8fafc;
+  
+  /* Border Colors */
+  --color-border: #e2e8f0;
+  --color-border-hover: #cbd5e1;
+  --color-border-focus: #3b82f6;
+  --color-border-error: #ef4444;
+  --color-border-success: #22c55e;
+  --color-border-warning: #f59e0b;
+  
+  /* Input Colors */
+  --color-input-background: #fff;
+  --color-input-border: #e2e8f0;
+  --color-input-border-focus: #3b82f6;
+  --color-input-text: #0f172a;
+  --color-input-placeholder: #94a3b8;
+  
+  /* Button Colors */
+  --color-button-primary: #2563eb;
+  --color-button-primary-hover: #3b82f6;
+  --color-button-primary-active: #1d4ed8;
+  --color-button-secondary: #e2e8f0;
+  --color-button-secondary-hover: #cbd5e1;
+  --color-button-secondary-active: #94a3b8;
+  
+  /* Status Colors */
+  --color-success: #16a34a;
+  --color-success-light: #22c55e;
+  --color-success-dark: #15803d;
+  --color-warning: #d97706;
+  --color-warning-light: #f59e0b;
+  --color-warning-dark: #b45309;
+  --color-error: #dc2626;
+  --color-error-light: #ef4444;
+  --color-error-dark: #b91c1c;
+  --color-info: #2563eb;
+  --color-info-light: #3b82f6;
+  --color-info-dark: #1d4ed8;
+  
+  /* Shadow Colors */
+  --color-shadow: rgb(0 0 0 / 10%);
+  --color-shadow-light: rgb(0 0 0 / 5%);
+  --color-shadow-heavy: rgb(0 0 0 / 20%);
+  --color-shadow-colored: rgb(14 165 233 / 15%);
+  
+  /* Glass Effects */
+  --color-glass: rgb(255 255 255 / 80%);
+  --color-glass-light: rgb(255 255 255 / 60%);
+  --color-glass-heavy: rgb(255 255 255 / 90%);
+  --color-glass-border: rgb(148 163 184 / 20%);
+  
+  /* ========================================
+     COMPONENT-SPECIFIC LIGHT THEME
+     ======================================== */
+  
+  /* Header Component */
+  --header-background: var(--bg-glass);
+  --header-border: var(--border-alpha-accent-25);
+  --header-text: var(--color-text-primary);
+  --header-text-secondary: var(--color-text-secondary);
+  
+  /* Navigation Component */
+  --nav-background: var(--bg-glass);
+  --nav-border: var(--border-alpha-accent-25);
+  --nav-item-background: transparent;
+  --nav-item-background-hover: var(--color-surface-hover);
+  --nav-item-background-active: var(--color-primary-600);
+  --nav-item-text: var(--color-text-primary);
+  --nav-item-text-hover: var(--color-text-primary);
+  --nav-item-text-active: var(--color-text-inverse);
+  
+  /* Card Component */
+  --card-background: var(--bg-glass);
+  --card-border: var(--border-alpha-accent-25);
+  --card-shadow: var(--color-shadow);
+  --card-background-hover: var(--color-glass-light);
+  --card-shadow-hover: var(--color-shadow-heavy);
+  
+  /* Button Component */
+  --button-text: var(--color-text-primary);
+  --button-text-inverse: var(--color-text-inverse);
+  --button-shadow: var(--color-shadow);
+  --button-shadow-hover: var(--color-shadow-heavy);
+  
+  /* Input Component */
+  --input-background: var(--bg-glass);
+  --input-border: var(--border-alpha-accent-25);
+  --input-text: var(--color-text-primary);
+  --input-shadow: var(--color-shadow-light);
+  --input-shadow-focus: var(--color-shadow-colored);
+  
+  /* Table Component */
+  --table-background: var(--bg-glass);
+  --table-border: var(--border-alpha-accent-25);
+  --table-header-background: var(--color-surface-elevated);
+  --table-row-background: transparent;
+  --table-row-background-hover: var(--color-surface-hover);
+  --table-row-background-striped: var(--color-surface-elevated);
+  
+  /* Modal Component */
+  --modal-background: var(--bg-glass-heavy);
+  --modal-border: var(--border-alpha-accent-25);
+  --modal-shadow: var(--color-shadow-heavy);
+  --modal-overlay: rgb(0 0 0 / 30%);
+  
+  /* Tooltip Component */
+  --tooltip-background: var(--color-neutral-100);
+  --tooltip-text: var(--color-text-primary);
+  --tooltip-border: var(--color-neutral-300);
+  --tooltip-shadow: var(--color-shadow-heavy);
+  
+  /* ========================================
+     SPECIAL EFFECTS - LIGHT THEME
+     ======================================== */
+  
+  /* Glow Effects */
+  --glow-primary: 0 0 20px rgb(14 165 233 / 20%);
+  --glow-bitcoin: 0 0 20px rgb(249 115 22 / 20%);
+  --glow-cosmic: 0 0 20px rgb(168 85 247 / 20%);
+  --glow-success: 0 0 20px rgb(34 197 94 / 20%);
+  --glow-warning: 0 0 20px rgb(245 158 11 / 20%);
+  --glow-error: 0 0 20px rgb(239 68 68 / 20%);
+  
+  /* Focus Rings */
+  --focus-ring-primary: 0 0 0 3px rgb(14 165 233 / 25%);
+  --focus-ring-bitcoin: 0 0 0 3px rgb(249 115 22 / 25%);
+  --focus-ring-cosmic: 0 0 0 3px rgb(168 85 247 / 25%);
+  --focus-ring-success: 0 0 0 3px rgb(34 197 94 / 25%);
+  --focus-ring-warning: 0 0 0 3px rgb(245 158 11 / 25%);
+  --focus-ring-error: 0 0 0 3px rgb(239 68 68 / 25%);
+  
+  /* Hover Effects */
+  --hover-lift: translateY(-2px);
+  --hover-scale: scale(1.02);
+  --hover-shadow: var(--color-shadow-heavy);
+  --hover-glow: var(--glow-primary);
+  
+  /* ========================================
+     RESPONSIVE LIGHT THEME
+     ======================================== */
+  
+  /* Mobile Light Theme Adjustments */
+  @media (width <= 768px) {
+    --color-glass: rgb(255 255 255 / 90%);
+    --color-glass-light: rgb(255 255 255 / 80%);
+    --color-glass-heavy: rgb(255 255 255 / 95%);
+  }
+  
+  /* High Contrast Mode Support */
+  @media (prefers-contrast: more) {
+    --color-border: var(--color-neutral-500);
+    --color-border-hover: var(--color-neutral-600);
+    --color-border-focus: var(--color-primary-700);
+    --color-text-secondary: var(--color-neutral-800);
+    --color-text-tertiary: var(--color-neutral-700);
+  }
+  
+  /* Reduced Motion Support */
+  @media (prefers-reduced-motion: reduce) {
+    --hover-lift: none;
+    --hover-scale: none;
+    --hover-shadow: var(--color-shadow);
+    --hover-glow: none;
+  }
+}

@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   redis:
     image: redis:7-alpine
@@ -20,18 +18,24 @@ services:
       dockerfile: Dockerfile
       target: runtime
     container_name: blocksight-backend
+    env_file:
+      - backend/.env
     environment:
       - NODE_ENV=development
       - PORT=8000
-      - LOG_LEVEL=info
+      - LOG_LEVEL=debug
+      - FRONTEND_ORIGIN=http://localhost:3000
+      - ELECTRUM_ENABLED=true
       - ELECTRUM_HOST=host.docker.internal
       - ELECTRUM_PORT=50001
       - ELECTRUM_TLS=false
+      # Core RPC (prefer values from backend/.env via env_file)
       - REDIS_URL=redis://redis:6379
-      - CORS_ORIGIN=http://localhost:3000
     depends_on:
       redis:
         condition: service_healthy
     ports:
       - "8000:8000"
     command: ["node", "backend/dist/server.js"]
+
+

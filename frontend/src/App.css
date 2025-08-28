@@ -1,0 +1,225 @@
+/**
+ * @fileoverview App Component Styles for BlockSight.live
+ * @version 1.0.0
+ * @author Development Team
+ * @since 2025-08-11
+ * @lastModified 2025-08-27
+ * 
+ * @description
+ * Styles for the main App component container and layout.
+ * Designed to work with cosmic background from BackgroundToggle component.
+ * Proper spacing for fixed header integration using design tokens.
+ * 
+ * @styling
+ * - CSS Modules: App container and layout styles
+ * - CSS Custom Properties: Theme-aware styling
+ * - Z-index Management: Proper layering with cosmic background
+ * - Fixed Header Integration: Proper main content spacing
+ * 
+ * @dependencies
+ * - Design tokens from styles/design-tokens/
+ * - Theme system for dynamic styling
+ * - Cosmic background integration
+ * 
+ * @usage
+ * Imported by App.tsx for component styling
+ * 
+ * @state
+ * ✅ Updated - Cosmic background compatible styling with fixed header spacing
+ * 
+ * @bugs
+ * - None currently identified
+ * 
+ * @todo
+ * - [MEDIUM] Test theme switching with cosmic background
+ * - [LOW] Optimize responsive design
+ * 
+ * @performance
+ * - Efficient CSS selectors
+ * - Minimal CSS duplication
+ * 
+ * @security
+ * - Safe CSS properties only
+ * - No external dependencies
+ */
+
+/* ========================================
+   APP CONTAINER - COSMIC BACKGROUND COMPATIBLE
+   ======================================== */
+
+.app {
+  /* Layout */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  
+  /* Z-index: Above cosmic background but below modals */
+  z-index: 1;
+  
+  /* Theme-aware styling */
+  color: var(--color-text-primary);
+  background: transparent; /* Let cosmic background show through */
+  
+  /* Typography */
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  
+  /* Smooth transitions */
+  transition: color var(--duration-200) var(--ease-in-out);
+}
+
+/* ========================================
+   MAIN CONTENT AREA
+   ======================================== */
+
+.main-content {
+  /* Layout */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  
+  /* Positioning */
+  position: relative;
+  z-index: 2; /* Above app container */
+  
+  /* Spacing */
+  padding: 0;
+  margin: 0;
+  margin-top: var(--spacing-12); /* Account for fixed header height - updated for reduced header size */
+  
+  /* Background: Transparent to show cosmic background */
+  background: transparent;
+  
+  /* Animation support for splash screen */
+  transition: opacity 2s var(--ease-out);
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+/* Mobile-first responsive design */
+@media (width <= 768px) {
+  .app {
+    /* Mobile adjustments */
+    min-height: 100vh;
+    padding: 0;
+  }
+  
+  .main-content {
+    /* Mobile content adjustments */
+    padding: 0;
+  }
+}
+
+/* Tablet adjustments */
+@media (769px <= width <= 1024px) {
+  .app {
+    /* Tablet adjustments */
+    padding: 0;
+  }
+}
+
+/* Desktop adjustments */
+@media (1025px <= width) {
+  .app {
+    /* Desktop adjustments */
+    padding: 0;
+  }
+}
+
+/* ========================================
+   THEME-SPECIFIC STYLES
+   ======================================== */
+
+/* Dark theme adjustments */
+
+[data-theme="dark"] .app {
+  /* Dark theme specific styles */
+  color: var(--color-text-primary);
+}
+
+/* Light theme adjustments */
+
+[data-theme="light"] .app {
+  /* Light theme specific styles */
+  color: var(--color-text-primary);
+}
+
+/* ========================================
+   ACCESSIBILITY SUPPORT
+   ======================================== */
+
+/* High contrast mode */
+@media (prefers-contrast: more) {
+  .app {
+    /* Enhanced contrast for accessibility */
+    color: var(--color-text-primary);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .app {
+    /* Disable animations for accessibility */
+    transition: none;
+  }
+}
+
+/* ========================================
+   PRINT STYLES
+   ======================================== */
+
+@media print {
+  .app {
+    /* Print-friendly styles */
+    background: white !important;
+    color: black !important;
+    min-height: auto;
+  }
+  
+  .main-content {
+    /* Print content adjustments */
+    background: white !important;
+  }
+}
+
+/* ========================================
+   SPLASH SCREEN AND FADE-IN ANIMATIONS
+   ======================================== */
+
+/* Splash Screen Container */
+.splash-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+
+  /* Transparent background to show cosmic background */
+  background: transparent;
+  z-index: 1000; /* Above everything */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Add fade-out animation */
+  opacity: 1;
+  transition: opacity 2s var(--ease-out);
+}
+
+/* Splash screen fade-out state */
+.splash-screen.fade-out {
+  opacity: 0;
+}
+
+/* Main Content Fade-In States - Consolidated with existing .main-content */
+.main-content.loading {
+  opacity: 0;
+}
+
+.main-content.loaded {
+  opacity: 1;
+}

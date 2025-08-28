@@ -1,21 +1,25 @@
 {
-  "extends": "../tsconfig.json",
   "compilerOptions": {
     "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "jsx": "react-jsx",
     "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
     "strict": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "src/types"],
   "exclude": ["node_modules", "dist"]
 }
 

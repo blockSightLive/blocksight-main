@@ -1,0 +1,148 @@
+/* From Uiverse.io by gsperandio - Enhanced with Blockchain Colors */
+.cubes {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-style: preserve-3d;
+  perspective: 900px;
+}
+
+.loop {
+  transform: rotateX(-35deg) rotateY(-45deg) translateZ(1.5625em);
+  transform-style: preserve-3d;
+  position: relative;
+}
+
+@keyframes s {
+  to {
+    transform: scale3d(0.2, 0.2, 0.2);
+  }
+}
+
+.item {
+  position: absolute;
+  width: 3.125em;
+  height: 3.125em;
+  transform-origin: 50% 50% -1.5625em;
+  box-shadow: 0 0 0.125em currentcolor;
+  background: currentcolor;
+  animation: s 0.6s cubic-bezier(0.45, 0.03, 0.51, 0.95) infinite alternate;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  left: 50%;
+  margin-left: -1.5625em;
+}
+
+.item::before,
+.item::after {
+  position: absolute;
+  width: inherit;
+  height: inherit;
+  transform-origin: 0 100%;
+  box-shadow: inherit;
+  background: currentcolor;
+  content: "";
+  backface-visibility: hidden;
+}
+
+.item::before {
+  bottom: 100%;
+  transform: rotateX(90deg) translateZ(0);
+}
+
+.item::after {
+  left: 100%;
+  transform: rotateY(90deg) translateZ(0);
+}
+
+/* ========================================
+   BLOCKCHAIN COLOR PROGRESSION - 6 CUBES
+   FIXED RENDERING ORDER: Absolute Positioning
+   ======================================== */
+
+/* Top Cubes - Orange (Unconfirmed Blocks) */
+.item:nth-child(1) {
+  top: -9.375em; /* Top position */
+  color: #F29F58; /* Light Orange */
+  animation-delay: -1.2s;
+}
+
+.item:nth-child(1)::before {
+  color: #F9D8A2; /* Dark Orange */
+}
+
+.item:nth-child(1)::after {
+  color: #F29F58; /* Light Orange */
+}
+
+.item:nth-child(2) {
+  top: -6.25em; /* Second from top */
+  color: #F29F58; /* Dark Orange */
+  animation-delay: -1s;
+}
+
+.item:nth-child(2)::before {
+  color: #F9D8A2; /* Light Orange */
+}
+
+.item:nth-child(2)::after {
+  color: #F29F58; /* Dark Orange */
+}
+
+/* Center Cubes - Red (Next Blocks) - ANCHORED CENTER */
+.item:nth-child(3) {
+  top: -3.125em; /* Upper center */
+  color: #AB4459; /* Light Red */
+  animation-delay: -0.8s;
+}
+
+.item:nth-child(3)::before {
+  color: #FC7A99; /* Dark Red */
+}
+
+.item:nth-child(3)::after {
+  color: #AB4459; /* Light Red */
+}
+
+.item:nth-child(4) {
+  top: 0; /* Center anchor */
+  color: #AB4459; /* Dark Red */
+  animation-delay: -0.6s;
+}
+
+.item:nth-child(4)::before {
+  color: #FC7A99; /* Light Red */
+}
+
+.item:nth-child(4)::after {
+  color: #AB4459; /* Dark Red */
+}
+
+/* Bottom Cubes - Purple (Previous Blocks) */
+.item:nth-child(5) {
+  top: 3.125em; /* Lower center */
+  color: #431752; /* Light Purple */
+  animation-delay: -0.4s;
+}
+
+.item:nth-child(5)::before {
+  color: #7B2F9B; /* Dark Purple */
+}
+
+.item:nth-child(5)::after {
+  color: #431752; /* Light Purple */
+}
+
+.item:nth-child(6) {
+  top: 6.25em; /* Bottom position */
+  color: #431752; /* Dark Purple */
+  animation-delay: -0.2s;
+}
+
+.item:nth-child(6)::before {
+  color: #7B2F9B; /* Light Purple */
+}
+
+.item:nth-child(6)::after {
+  color: #431752; /* Dark Purple */
+}

@@ -26,13 +26,12 @@ BlockSight.live is a cutting-edge Bitcoin-exclusive blockchain analysis platform
 
 ### High-Level Architecture
 ```
-Bitcoin Core → electrs (Indexer) → HTTP REST API → NodeJS Backend → Multi-Tier Cache → WebSocket Events → BlockSight Frontend
+Bitcoin Core → electrs (Indexer, Electrum TCP) → NodeJS Backend (Electrum adapter + REST/WS) → (Planned) Multi‑Tier Cache → WebSocket Events → BlockSight Frontend
 ```
 
-Deployment Notes (Dev → Prod)
-- Single-machine development: Windows host runs backend/frontend/electrs; Bitcoin Core full node runs inside a Linux VM. Connectivity over the host-only/bridge network with authenticated RPC; electrs points to the VM’s Core. Ensure clock sync and stable disk I/O.
-- Containerized development (preferred): Use Docker with compose. Backend and Redis run as containers; electrs can be reached via `host.docker.internal` or as a compose service. Service DNS names (e.g., `redis`, `backend`) are used within the compose network; external access uses mapped host ports.
-- Production (AWS): mixed private/public subnets. Private: Bitcoin Core and electrs; Public: API and CDN edges. Use security groups/VPC endpoints; pin electrs to private interfaces; expose public read APIs via gateway/ingress. HA via multiple AZs and active/standby electrs.
+- **Single-machine development (Current - Validated)**: Windows host runs backend/frontend in Docker containers; Bitcoin Core runs in VirtualBox Ubuntu LTS VM (192.168.1.67); electrs runs natively on Windows host. Backend connects to electrs over TCP (50001) via `host.docker.internal:50001`. Bitcoin Core accessible via VM IP (192.168.1.67:8332). Shared folder `B:\bitcoin-data` mounted to `/media/sf_bitcoin-data` in VM. Network: Windows host (192.168.1.3) → VM (192.168.1.67) via home network (192.168.1.0/24). Status: Bitcoin Core synced to block 910,659 (100% complete), electrs running and indexing.
+- **Containerized development (Current - Working)**: Docker compose with backend and Redis containers. Backend reaches electrs via `host.docker.internal:50001`. Service DNS names (e.g., `redis`, `backend`) used within compose network. External access via mapped host ports (backend:8000, Redis:6379).
+- **Production (AWS)**: Mixed private/public subnets. Private: Bitcoin Core and electrs; public: API and CDN edges. Use security groups/VPC endpoints; pin electrs to private interfaces; expose public read APIs via gateway/ingress. HA via multiple AZs and active/standby electrs.
 
 ### Core Components
 
@@ -42,7 +41,7 @@ Deployment Notes (Dev → Prod)
 - **Integration Method**: Git submodule for clean dependency management and version control
 - **Responsibilities**: Parse blocks, extract transactions, index addresses, maintain UTXO set
 - **Script Support**: 100% Bitcoin script type coverage (P2PKH, P2SH, P2WPKH, P2WSH, P2TR, Multisig, OP_RETURN)
-- **Interface**: Electrum protocol over TCP (standard ports). We expose a thin HTTP/JSON adapter in our backend if/when REST is required.
+- **Interface**: Electrum protocol over TCP (standard ports 50001/50002). We expose a thin HTTP/JSON adapter in our backend if/when REST is required.
 - **Operation Mode**: Two-phase operation - Initial historical indexing followed by continuous real-time updates
 - **Real-Time Updates**: Monitors Bitcoin network continuously, indexes new blocks within 1-2 seconds of confirmation
 - **Benefits**: 
@@ -56,10 +55,13 @@ Deployment Notes (Dev → Prod)
 - Active/standby electrs with health-checked failover; staggered reindex to avoid correlated failures.
 - Index integrity playbook: detect corruption, quarantine node, fast rebootstrap from known-good tip.
 - Tip-lag SLOs and reindex SLAs tracked in monitoring.
+ - WSL2 guidance (dev): prefer ext4 for `db_dir`, conservative parallelism, periodic clean exits to persist progress.
 
-#### 2. HTTP API Integration Layer
-- **Technology**: NodeJS backend with 1-2s polling
-- **Purpose**: Bridge between electrs and application layer
+#### 2. Electrum Integration & API Layer
+- **Technology**: NodeJS backend using Electrum TCP via `electrum-client`
+- **Real‑time (current)**: Polling loops — tip height (~5s), fee estimates (~15s), mempool summary (~10s, Core preferred when enabled)
+- **Planned**: headers/mempool subscriptions, circuit breaker, Redis L1/L2 caches
+- **Purpose**: Bridge between electrs and application layer; expose REST and WS events (`tip.height`, `network.fees`, `network.mempool`)
 
 #### 3. Multi-Tier Cache Architecture
 - **L1**: Redis in-memory (1-2s TTL, ~0.1-1ms)
@@ -141,6 +143,63 @@ Deployment Notes (Dev → Prod)
 ---
 
 ## DevOps & CI/CD Architecture
+
+### Current Infrastructure State (Validated - 2025-08-18)
+
+#### Network Topology
+- **VM IP Address**: `192.168.1.67` (VirtualBox Ubuntu LTS VM)
+- **Windows Host IP**: `192.168.1.3`
+- **Network Segment**: `192.168.1.0/24` (home network)
+- **Gateway**: `192.168.1.1`
+
+#### Bitcoin Core Configuration
+- **Version**: Pre-release test build (main branch)
+- **Sync Status**: Block 910,659 of 910,659 (100% complete)
+- **Chain**: mainnet
+- **Storage**: 774GB on external drive via VirtualBox shared folder
+- **RPC Binding**: 
+  - `127.0.0.1:8332` (localhost)
+  - `192.168.1.67:8332` (VM IP - external access)
+- **P2P Port**: `192.168.1.67:8333`
+- **ZMQ Ports**: `127.0.0.1:28332` (raw block), `127.0.0.1:28333` (raw tx)
+
+#### Electrs Configuration
+- **Version**: 0.10.10 (x86_64 Windows native)
+- **Process**: Running (PID 21000, 163MB memory)
+- **Database**: `B:\bitcoin-data\electrs-db\bitcoin`
+- **Electrum RPC**: `0.0.0.0:50001` (external access enabled)
+- **Monitoring**: `127.0.0.1:4224` (Prometheus metrics)
+- **Bitcoin Core Connection**: `192.168.1.67:8332` (VM IP)
+- **Cookie File**: `B:\bitcoin-data\.cookie`
+
+#### Connectivity Validation
+- **Windows → Bitcoin Core VM**: ✅ `Test-NetConnection "192.168.1.67:8332"` passes
+- **Electrs → Bitcoin Core**: ✅ Direct TCP connection established
+- **Docker → Electrs**: ✅ `host.docker.internal:50001` accessible
+- **External → Electrs**: ✅ Port 50001 listening on all interfaces
+
+#### Storage Configuration
+- **External Drive**: `B:\bitcoin-data` (Windows)
+- **VM Mount Point**: `/media/sf_bitcoin-data` (VirtualBox shared folder)
+- **Shared Folder Name**: `bitcoin-data`
+- **Permissions**: User `blocksight` (UID/GID 1002) in `vboxsf` group
+- **Symlink**: `/home/blocksight/.bitcoin` → `/media/sf_bitcoin-data`
+
+#### Docker Environment
+- **Status**: ✅ Build successful, compose working
+- **Backend Port**: `localhost:8000`
+- **Redis Port**: `localhost:6379`
+- **Network**: Docker bridge with host access via `host.docker.internal`
+
+#### Backend Application Status
+- **Container Status**: ✅ **RUNNING AND HEALTHY**
+- **Real Electrum Adapter**: ✅ **SUCCESSFULLY CONNECTED TO ELECTRS**
+- **API Endpoints**: ✅ **RETURNING LIVE BLOCKCHAIN DATA**
+  - `/v1/health`: `{"ok":true}` (electrs connection validated)
+  - `/v1/fee/estimates`: Real fee data from Bitcoin network
+- **Network Connectivity**: ✅ **DOCKER → ELECTRS → BITCOIN CORE**
+- **Protocol Compatibility**: ✅ **ELECTRUM PROTOCOL V1.4 VALIDATED**
+- **Performance**: ✅ **SUB-200MS RESPONSE TIMES ACHIEVED**
 
 ### Development Workflow
 - **Main Branch**: Always contains the most advanced working product
@@ -482,3 +541,35 @@ Implementation follows a structured approach with automated quality gates, compr
 - **Live Data**: Real-time updates for current blockchain state
 - **Consistency**: All environments maintain current blockchain state
 - **Performance**: Fast queries on both historical and live data
+
+### Cold‑Start Bootstrap Flow
+
+To avoid gating solely on WebSocket readiness, the frontend issues a minimal HTTP request at app start.
+
+- Endpoint: `GET /api/v1/bootstrap`
+- Output: `{ height, coreHeight?, mempoolPending?, mempoolVsize?, asOfMs, source }`
+- Sources:
+  - Electrum: `blockchain.headers.subscribe` → `height`
+  - Core (optional): `getblockcount` → `coreHeight`, `getmempoolinfo` → `mempoolPending`
+  - Electrum fallback: `mempool.get_fee_histogram` → `mempoolVsize`
+- Caching: L1 `l1:bootstrap:v1`, TTL ≈ 3s
+- Observability: latency + cache hit/miss counters under `bootstrap`
+
+### HTTP Controller Layer (Separation of Concerns)
+
+We expose distinct controllers per data source plus a thin orchestrator for cold start:
+
+- Electrum Controller (`electrum.controller.ts`)
+  - Endpoints: `/api/v1/fee/estimates`, `/api/v1/network/height` (Electrum-backed), `/api/v1/network/mempool` (fallback when Core disabled)
+  - Cache: `l1:fees:estimates:v1`, `l1:network:height:v1`, `l1:mempool:summary:v1`
+  - TTLs: fees ~10–20s, height ~2s, mempool ~3–5s (short)
+
+- Core Controller (`core.controller.ts`)
+  - Endpoints: `/api/v1/core/height`, `/api/v1/core/mempool`
+  - Cache: `l1:core:height:v1`, `l1:core:mempool:summary:v1`
+  - TTLs: height ~2s, mempool ~5s
+
+- Bootstrap Controller (`bootstrap.controller.ts`)
+  - Endpoint: `/api/v1/bootstrap` (orchestrates Electrum + Core for initial snapshot)
+  - Cache: `l1:bootstrap:v1` with TTL ≈ 3s
+  - Purpose: Fast, minimal JSON for splash gating; not a live data feed
