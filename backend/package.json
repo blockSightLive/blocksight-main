@@ -34,11 +34,12 @@
     "supertest": "*",
     "ts-node": "*",
     "tsconfig-paths": "*",
-    "typescript": "*"
+    "typescript": "*",
+    "nodemon": "*"
   },
   "scripts": {
-    "dev": "nodemon --exec ts-node --transpile-only src/server.ts",
-    "start": "node dist/src/server.js",
+    "dev": "nodemon --watch src --ext ts --exec ts-node --transpile-only src/server.ts",
+    "start": "node dist/server.js",
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",

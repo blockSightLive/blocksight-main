@@ -1,0 +1,416 @@
+/**
+ * @fileoverview Animation and Timing Design Tokens for BlockSight.live
+ * @version 1.0.0
+ * @author Development Team
+ * @since 2025-08-23
+ * @lastModified 2025-08-23
+ * 
+ * @description
+ * Comprehensive animation durations, easing functions, transforms, filters, and timing values
+ * 
+ * @styling
+ * - CSS Custom Properties: Animation timing and easing system
+ */
+
+:root {
+  /* ========================================
+     ANIMATION DURATIONS - COMPREHENSIVE SYSTEM
+     ======================================== */
+  
+  /* Micro-animations (instant feedback) */
+  --duration-50: 50ms;
+  --duration-75: 75ms;
+  --duration-100: 100ms;
+  --duration-125: 125ms;
+  --duration-150: 150ms;
+  
+  /* Standard animations (smooth interactions) */
+  --duration-200: 200ms;
+  --duration-250: 250ms;
+  --duration-300: 300ms;
+  --duration-350: 350ms;
+  --duration-400: 400ms;
+  --duration-500: 500ms;
+  --duration-600: 600ms;
+  --duration-700: 700ms;
+  
+  /* Macro-animations (complex movements) */
+  --duration-800: 800ms;
+  --duration-900: 900ms;
+  --duration-1000: 1000ms;
+  --duration-1200: 1200ms;
+  --duration-1500: 1500ms;
+  --duration-2000: 2000ms;
+  --duration-2500: 2500ms;
+  --duration-3000: 3000ms;
+  --duration-4000: 4000ms;
+  --duration-5000: 5000ms;
+  
+  /* ========================================
+     EASING FUNCTIONS - COMPREHENSIVE SYSTEM
+     ======================================== */
+  
+  /* Linear */
+  --ease-linear: linear;
+  
+  /* Standard Easing */
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Enhanced Easing */
+  --ease-in-quad: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  --ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-in-out-quad: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+  --ease-in-cubic: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  --ease-out-cubic: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-in-out-cubic: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+  --ease-in-quart: cubic-bezier(0.895, 0.03, 0.685, 0.22);
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+  --ease-in-out-quart: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-in-quint: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+  --ease-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-quint: cubic-bezier(0.86, 0, 0.07, 1);
+  
+  /* Special Easing */
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-elastic: cubic-bezier(0.68, -0.6, 0.32, 1.6);
+  --ease-back: cubic-bezier(0.6, -0.28, 0.735, 0.045);
+  --ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
+  
+  /* ========================================
+     TRANSFORM VALUES - COMPREHENSIVE SYSTEM
+     ======================================== */
+  
+  /* Rotation Values */
+  --rotate-0: 0deg;
+  --rotate-1: 1deg;
+  --rotate-2: 2deg;
+  --rotate-3: 3deg;
+  --rotate-6: 6deg;
+  --rotate-12: 12deg;
+  --rotate-15: 15deg;
+  --rotate-30: 30deg;
+  --rotate-45: 45deg;
+  --rotate-60: 60deg;
+  --rotate-90: 90deg;
+  --rotate-120: 120deg;
+  --rotate-135: 135deg;
+  --rotate-150: 150deg;
+  --rotate-180: 180deg;
+  --rotate-270: 270deg;
+  --rotate-360: 360deg;
+  
+  /* Translate Values - Y Axis */
+  --translate-y-neg-100: -100%;
+  --translate-y-neg-75: -75%;
+  --translate-y-neg-50: -50%;
+  --translate-y-neg-25: -25%;
+  --translate-y-neg-20: -20%;
+  --translate-y-neg-16: -16px;
+  --translate-y-neg-12: -12px;
+  --translate-y-neg-8: -8px;
+  --translate-y-neg-4: -4px;
+  --translate-y-neg-2: -2px;
+  --translate-y-neg-1: -1px;
+  --translate-y-0: 0;
+  --translate-y-1: 1px;
+  --translate-y-2: 2px;
+  --translate-y-4: 4px;
+  --translate-y-8: 8px;
+  --translate-y-12: 12px;
+  --translate-y-16: 16px;
+  --translate-y-20: 20px;
+  --translate-y-25: 25%;
+  --translate-y-50: 50%;
+  --translate-y-75: 75%;
+  --translate-y-100: 100%;
+  
+  /* Translate Values - X Axis */
+  --translate-x-neg-100: -100%;
+  --translate-x-neg-75: -75%;
+  --translate-x-neg-50: -50%;
+  --translate-x-neg-25: -25%;
+  --translate-x-neg-20: -20%;
+  --translate-x-neg-16: -16px;
+  --translate-x-neg-12: -12px;
+  --translate-x-neg-8: -8px;
+  --translate-x-neg-4: -4px;
+  --translate-x-neg-2: -2px;
+  --translate-x-neg-1: -1px;
+  --translate-x-0: 0;
+  --translate-x-1: 1px;
+  --translate-x-2: 2px;
+  --translate-x-4: 4px;
+  --translate-x-8: 8px;
+  --translate-x-12: 12px;
+  --translate-x-16: 16px;
+  --translate-x-20: 20px;
+  --translate-x-25: 25%;
+  --translate-x-50: 50%;
+  --translate-x-75: 75%;
+  --translate-x-100: 100%;
+  
+  /* Scale Values */
+  --scale-0: 0;
+  --scale-50: 0.5;
+  --scale-75: 0.75;
+  --scale-90: 0.9;
+  --scale-95: 0.95;
+  --scale-100: 1;
+  --scale-105: 1.05;
+  --scale-110: 1.1;
+  --scale-125: 1.25;
+  --scale-150: 1.5;
+  --scale-200: 2;
+  --scale-300: 3;
+  
+  /* Skew Values */
+  --skew-0: 0deg;
+  --skew-1: 1deg;
+  --skew-2: 2deg;
+  --skew-3: 3deg;
+  --skew-6: 6deg;
+  --skew-12: 12deg;
+  --skew-neg-1: -1deg;
+  --skew-neg-2: -2deg;
+  --skew-neg-3: -3deg;
+  --skew-neg-6: -6deg;
+  --skew-neg-12: -12deg;
+  
+  /* ========================================
+     FILTER VALUES - COMPREHENSIVE SYSTEM
+     ======================================== */
+  
+  /* Blur Values */
+  --blur-none: 0;
+  --blur-xs: 2px;
+  --blur-sm: 4px;
+  --blur-md: 6px;
+  --blur-lg: 8px;
+  --blur-xl: 12px;
+  --blur-2xl: 16px;
+  --blur-3xl: 24px;
+  --blur-4xl: 32px;
+  --blur-5xl: 40px;
+  --blur-6xl: 48px;
+  
+  /* Specific blur values used in components */
+  --blur-1: blur(1px) saturate(105%);
+  --blur-2: blur(2px) saturate(105%);
+  --blur-3: blur(3px) saturate(108%);
+  --blur-4: blur(4px) saturate(110%);
+  --blur-5: blur(5px) saturate(112%);
+  --blur-6: blur(6px) saturate(115%);
+  --blur-8: blur(8px) saturate(120%);
+  --blur-10: blur(10px) saturate(125%);
+  --blur-12: blur(12px) saturate(130%);
+  --blur-16: blur(16px) saturate(135%);
+  --blur-20: blur(20px) saturate(140%);
+  --blur-24: blur(24px) saturate(145%);
+  
+  /* Brightness Values */
+  --brightness-0: 0;
+  --brightness-50: 0.5;
+  --brightness-75: 0.75;
+  --brightness-90: 0.9;
+  --brightness-95: 0.95;
+  --brightness-100: 1;
+  --brightness-105: 1.05;
+  --brightness-110: 1.1;
+  --brightness-125: 1.25;
+  --brightness-150: 1.5;
+  --brightness-200: 2;
+  
+  /* Contrast Values */
+  --contrast-0: 0;
+  --contrast-50: 0.5;
+  --contrast-75: 0.75;
+  --contrast-100: 1;
+  --contrast-125: 1.25;
+  --contrast-150: 1.5;
+  --contrast-200: 2;
+  
+  /* Grayscale Values */
+  --grayscale-0: 0;
+  --grayscale-25: 0.25;
+  --grayscale-50: 0.5;
+  --grayscale-75: 0.75;
+  --grayscale-100: 1;
+  
+  /* Hue Rotate Values */
+  --hue-rotate-0: 0deg;
+  --hue-rotate-15: 15deg;
+  --hue-rotate-30: 30deg;
+  --hue-rotate-45: 45deg;
+  --hue-rotate-60: 60deg;
+  --hue-rotate-90: 90deg;
+  --hue-rotate-180: 180deg;
+  --hue-rotate-360: 360deg;
+  
+  /* Invert Values */
+  --invert-0: 0;
+  --invert-100: 1;
+  
+  /* Saturate Values */
+  --saturate-0: 0;
+  --saturate-50: 0.5;
+  --saturate-75: 0.75;
+  --saturate-100: 1;
+  --saturate-125: 1.25;
+  --saturate-150: 1.5;
+  --saturate-200: 2;
+  
+  /* Sepia Values */
+  --sepia-0: 0;
+  --sepia-25: 0.25;
+  --sepia-50: 0.5;
+  --sepia-75: 0.75;
+  --sepia-100: 1;
+  
+  /* ========================================
+     OPACITY VALUES - COMPREHENSIVE SYSTEM
+     ======================================== */
+  
+  --opacity-0: 0;
+  --opacity-5: 0.05;
+  --opacity-10: 0.1;
+  --opacity-15: 0.15;
+  --opacity-20: 0.2;
+  --opacity-25: 0.25;
+  --opacity-30: 0.3;
+  --opacity-35: 0.35;
+  --opacity-40: 0.4;
+  --opacity-45: 0.45;
+  --opacity-50: 0.5;
+  --opacity-55: 0.55;
+  --opacity-60: 0.6;
+  --opacity-65: 0.65;
+  --opacity-70: 0.7;
+  --opacity-75: 0.75;
+  --opacity-80: 0.8;
+  --opacity-85: 0.85;
+  --opacity-90: 0.9;
+  --opacity-95: 0.95;
+  --opacity-100: 1;
+  
+  /* ========================================
+     ANIMATION DELAYS - STAGGERED SYSTEM
+     ======================================== */
+  
+  /* Micro Delays */
+  --delay-50: 50ms;
+  --delay-75: 75ms;
+  --delay-100: 100ms;
+  --delay-125: 125ms;
+  --delay-150: 150ms;
+  
+  /* Standard Delays */
+  --delay-200: 200ms;
+  --delay-250: 250ms;
+  --delay-300: 300ms;
+  --delay-350: 350ms;
+  --delay-400: 400ms;
+  --delay-500: 500ms;
+  
+  /* Macro Delays */
+  --delay-600: 600ms;
+  --delay-700: 700ms;
+  --delay-800: 800ms;
+  --delay-900: 900ms;
+  --delay-1000: 1000ms;
+  --delay-1200: 1200ms;
+  --delay-1500: 1500ms;
+  --delay-2000: 2000ms;
+  
+  /* Staggered Delays for Lists */
+  --delay-stagger-1: var(--delay-100);
+  --delay-stagger-2: var(--delay-200);
+  --delay-stagger-3: var(--delay-300);
+  --delay-stagger-4: var(--delay-400);
+  --delay-stagger-5: var(--delay-500);
+  --delay-stagger-6: var(--delay-600);
+  --delay-stagger-7: var(--delay-700);
+  --delay-stagger-8: var(--delay-800);
+  --delay-stagger-9: var(--delay-900);
+  --delay-stagger-10: var(--delay-1000);
+  
+  /* ========================================
+     ANIMATION ITERATION COUNTS
+     ======================================== */
+  
+  --iteration-none: 0;
+  --iteration-1: 1;
+  --iteration-2: 2;
+  --iteration-3: 3;
+  --iteration-4: 4;
+  --iteration-5: 5;
+  --iteration-infinite: infinite;
+  
+  /* ========================================
+     ANIMATION FILL MODES
+     ======================================== */
+  
+  --fill-mode-none: none;
+  --fill-mode-forwards: forwards;
+  --fill-mode-backwards: backwards;
+  --fill-mode-both: both;
+  
+  /* ========================================
+     ANIMATION DIRECTION
+     ======================================== */
+  
+  --direction-normal: normal;
+  --direction-reverse: reverse;
+  --direction-alternate: alternate;
+  --direction-alternate-reverse: alternate-reverse;
+  
+  /* ========================================
+     ANIMATION PLAY STATE
+     ======================================== */
+  
+  --play-state-running: running;
+  --play-state-paused: paused;
+  
+  /* ========================================
+     TRANSITION PROPERTIES
+     ======================================== */
+  
+  --transition-none: none;
+  --transition-all: all;
+  --transition-colors: color, background-color, border-color, text-decoration-color, fill, stroke;
+  --transition-opacity: opacity;
+  --transition-shadow: box-shadow;
+  --transition-transform: transform;
+  --transition-width: width;
+  --transition-height: height;
+  --transition-spacing: margin, padding;
+  --transition-layout: margin, padding, width, height;
+  
+  /* ========================================
+     COMMON ANIMATION COMBINATIONS
+     ======================================== */
+  
+  /* Hover Effects */
+  --transition-hover: all var(--duration-200) var(--ease-out);
+  --transition-hover-fast: all var(--duration-150) var(--ease-out);
+  --transition-hover-slow: all var(--duration-300) var(--ease-out);
+  
+  /* Focus Effects */
+  --transition-focus: all var(--duration-150) var(--ease-out);
+  --transition-focus-ring: box-shadow var(--duration-150) var(--ease-out);
+  
+  /* Loading States */
+  --transition-loading: opacity var(--duration-300) var(--ease-in-out);
+  --transition-spinner: transform var(--duration-1000) var(--ease-linear) infinite;
+  
+  /* Page Transitions */
+  --transition-page: all var(--duration-300) var(--ease-in-out);
+  --transition-modal: all var(--duration-250) var(--ease-out);
+  
+  /* Component Animations */
+  --transition-button: all var(--duration-200) var(--ease-out);
+  --transition-input: all var(--duration-200) var(--ease-out);
+  --transition-card: all var(--duration-300) var(--ease-out);
+  --transition-nav: all var(--duration-200) var(--ease-out);
+}

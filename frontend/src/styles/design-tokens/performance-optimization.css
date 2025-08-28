@@ -1,0 +1,307 @@
+/**
+ * @fileoverview Performance Optimization Design Tokens for BlockSight.live
+ * @version 1.0.0
+ * @author Development Team
+ * @since 2025-08-23
+ * @lastModified 2025-08-27
+ * 
+ * @description
+ * Centralized performance optimization design tokens.
+ * Provides consistent shadows, effects, and performance values.
+ * 
+ * @dependencies
+ * - Base design tokens from other design-token files
+ * 
+ * @usage
+ * Imported by main index.css for performance optimization system
+ * 
+ * @state
+ * ✅ Functional - Complete performance optimization system
+ * 
+ * @bugs
+ * - None currently identified
+ * 
+ * @todo
+ * - None currently identified
+ * 
+ * @styling
+ * - Performance Optimization: Shadows, effects, and performance values
+ * - Design Token Usage: Uses centralized design tokens
+ * - Hardware Acceleration: GPU-accelerated properties
+ * 
+ * @performance
+ * - Hardware-accelerated transforms
+ * - Efficient shadow rendering
+ * - Minimal layout thrashing
+ * 
+ * @security
+ * - Safe CSS properties only
+ * - No external dependencies
+ */
+
+:root {
+  /* ========================================
+     SHADOW SYSTEM - DEPTH AND ELEVATION
+     ======================================== */
+  
+  /* Base Shadows */
+  --shadow-none: none;
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 5%);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px -1px rgb(0 0 0 / 10%);
+  --shadow-base: 0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px -1px rgb(0 0 0 / 10%);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -2px rgb(0 0 0 / 10%);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -4px rgb(0 0 0 / 10%);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 10%), 0 8px 10px -6px rgb(0 0 0 / 10%);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 25%);
+  
+  /* Base Shadow Alias - Components expect this */
+  --shadow: var(--shadow-sm);
+  
+  /* Inset Shadows */
+  --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 5%);
+  --shadow-inset-deep: inset 0 2px 6px rgb(0 0 0 / 35%);
+  
+  /* Ambient Shadows */
+  --shadow-ambient-12: 0 0 12px rgb(0 0 0 / 30%);
+  
+  /* Hover Shadows */
+  --shadow-hover-weak: 0 2px 8px rgb(0 0 0 / 15%);
+  --shadow-hover-strong: 0 4px 12px rgb(0 0 0 / 25%);
+  
+  /* Ring Shadows */
+  --ring-none: 0 0 0 0 rgb(0 0 0 / 0%);
+  --ring-focus-bitcoin: 0 0 0 3px rgb(249 115 22 / 25%);
+  --ring-focus-accent: 0 0 0 3px rgb(168 85 247 / 25%);
+  --ring-hover-bitcoin-2: 0 0 0 2px rgb(249 115 22 / 35%);
+  
+  /* Glow Effects */
+  --glow-cosmic: 0 0 24px rgb(168 85 247 / 35%);
+  --glow-bitcoin: 0 0 28px rgb(249 115 22 / 35%);
+  
+  /* ========================================
+     EFFECTS SYSTEM - VISUAL ENHANCEMENTS
+     ======================================== */
+  
+  /* Backdrop Filters */
+  --blur-6: blur(6px);
+  --blur-8: blur(8px);
+  --blur-12: blur(12px);
+  --blur-16: blur(16px);
+  --blur-24: blur(24px);
+  
+  /* Glass Effects */
+  --bg-glass: rgb(255 255 255 / 80%);
+  --bg-glass-light: rgb(255 255 255 / 60%);
+  --bg-glass-heavy: rgb(255 255 255 / 90%);
+  --bg-glass-weak: rgb(17 24 39 / 35%);
+  --bg-hover-weak: rgb(255 255 255 / 8%);
+  --bg-hover-strong: rgb(255 255 255 / 12%);
+  
+  /* ========================================
+     TRANSFORM SYSTEM - ANIMATIONS
+     ======================================== */
+  
+  /* Translate Y Values */
+  --translate-y-neg-1: -0.25rem;
+  --translate-y-neg-2: -0.5rem;
+  --translate-y-neg-3: -0.75rem;
+  --translate-y-neg-4: -1rem;
+  --translate-y-neg-5: -1.25rem;
+  --translate-y-neg-6: -1.5rem;
+  --translate-y-neg-8: -2rem;
+  --translate-y-neg-10: -2.5rem;
+  --translate-y-neg-12: -3rem;
+  --translate-y-neg-16: -4rem;
+  --translate-y-neg-20: -5rem;
+  --translate-y-neg-24: -6rem;
+  
+  /* Translate X Values */
+  --translate-x-neg-1: -0.25rem;
+  --translate-x-neg-2: -0.5rem;
+  --translate-x-neg-3: -0.75rem;
+  --translate-x-neg-4: -1rem;
+  --translate-x-neg-5: -1.25rem;
+  --translate-x-neg-6: -1.5rem;
+  --translate-x-neg-8: -2rem;
+  --translate-x-neg-10: -2.5rem;
+  --translate-x-neg-12: -3rem;
+  --translate-x-neg-16: -4rem;
+  --translate-x-neg-20: -5rem;
+  --translate-x-neg-24: -6rem;
+  
+  /* Scale Values */
+  --scale-0: 0;
+  --scale-50: 0.5;
+  --scale-75: 0.75;
+  --scale-90: 0.9;
+  --scale-95: 0.95;
+  --scale-100: 1;
+  --scale-105: 1.05;
+  --scale-110: 1.1;
+  --scale-125: 1.25;
+  --scale-150: 1.5;
+  
+  /* Rotate Values */
+  --rotate-0: 0deg;
+  --rotate-1: 1deg;
+  --rotate-2: 2deg;
+  --rotate-3: 3deg;
+  --rotate-6: 6deg;
+  --rotate-12: 12deg;
+  --rotate-45: 45deg;
+  --rotate-90: 90deg;
+  --rotate-180: 180deg;
+  
+  /* ========================================
+     TRANSITION SYSTEM - ANIMATION TIMING
+     ======================================== */
+  
+  /* Duration Values */
+  --duration-75: 75ms;
+  --duration-100: 100ms;
+  --duration-150: 150ms;
+  --duration-200: 200ms;
+  --duration-300: 300ms;
+  --duration-500: 500ms;
+  --duration-700: 700ms;
+  --duration-1000: 1000ms;
+  --duration-2000: 2000ms;
+  
+  /* Easing Functions */
+  --ease-linear: linear;
+  --ease-in: ease-in;
+  --ease-out: ease-out;
+  --ease-in-out: ease-in-out;
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-elastic: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  
+  /* Transition Properties */
+  --transition: all var(--duration-200) var(--ease-in-out);
+  --transition-fast: all var(--duration-100) var(--ease-out);
+  --transition-slow: all var(--duration-500) var(--ease-in-out);
+  
+  /* ========================================
+     PERFORMANCE OPTIMIZATION - HARDWARE ACCELERATION
+     ======================================== */
+  
+  /* Will Change Properties */
+  --will-change-auto: auto;
+  --will-change-scroll: scroll-position;
+  --will-change-contents: contents;
+  --will-change-transform: transform;
+  --will-change-opacity: opacity;
+  --will-change-layout: layout;
+  --will-change-paint: paint;
+  
+  /* Transform Style */
+  --transform-style-flat: flat;
+  --transform-style-3d: preserve-3d;
+  
+  /* Backface Visibility */
+  --backface-visible: visible;
+  --backface-hidden: hidden;
+  
+  /* Perspective */
+  --perspective-none: none;
+  --perspective-250: 250px;
+  --perspective-500: 500px;
+  --perspective-750: 750px;
+  --perspective-1000: 1000px;
+  
+  /* ========================================
+     LAYER SYSTEM - COMPOSITING
+     ======================================== */
+  
+  /* Isolation */
+  --isolation-auto: auto;
+  --isolation-isolate: isolate;
+  
+  /* Mix Blend Mode */
+  --mix-blend-normal: normal;
+  --mix-blend-multiply: multiply;
+  --mix-blend-screen: screen;
+  --mix-blend-overlay: overlay;
+  --mix-blend-darken: darken;
+  --mix-blend-lighten: lighten;
+  --mix-blend-color-dodge: color-dodge;
+  --mix-blend-color-burn: color-burn;
+  --mix-blend-hard-light: hard-light;
+  --mix-blend-soft-light: soft-light;
+  --mix-blend-difference: difference;
+  --mix-blend-exclusion: exclusion;
+  --mix-blend-hue: hue;
+  --mix-blend-saturation: saturation;
+  --mix-blend-color: color;
+  --mix-blend-luminosity: luminosity;
+  
+  /* ========================================
+     FILTER SYSTEM - VISUAL EFFECTS
+     ======================================== */
+  
+  /* Brightness */
+  --brightness-0: 0;
+  --brightness-50: 0.5;
+  --brightness-75: 0.75;
+  --brightness-90: 0.9;
+  --brightness-95: 0.95;
+  --brightness-100: 1;
+  --brightness-105: 1.05;
+  --brightness-110: 1.1;
+  --brightness-125: 1.25;
+  --brightness-150: 1.5;
+  --brightness-200: 2;
+  
+  /* Contrast */
+  --contrast-0: 0;
+  --contrast-50: 0.5;
+  --contrast-75: 0.75;
+  --contrast-100: 1;
+  --contrast-125: 1.25;
+  --contrast-150: 1.5;
+  --contrast-200: 2;
+  
+  /* Grayscale */
+  --grayscale-0: 0;
+  --grayscale-25: 0.25;
+  --grayscale-50: 0.5;
+  --grayscale-75: 0.75;
+  --grayscale-100: 1;
+  
+  /* Hue Rotate */
+  --hue-rotate-0: 0deg;
+  --hue-rotate-15: 15deg;
+  --hue-rotate-30: 30deg;
+  --hue-rotate-60: 60deg;
+  --hue-rotate-90: 90deg;
+  --hue-rotate-180: 180deg;
+  
+  /* Invert */
+  --invert-0: 0;
+  --invert-100: 1;
+  
+  /* Opacity */
+  --opacity-0: 0;
+  --opacity-25: 0.25;
+  --opacity-50: 0.5;
+  --opacity-60: 0.6;
+  --opacity-75: 0.75;
+  --opacity-90: 0.9;
+  --opacity-95: 0.95;
+  --opacity-100: 1;
+  
+  /* Saturate */
+  --saturate-0: 0;
+  --saturate-50: 0.5;
+  --saturate-75: 0.75;
+  --saturate-100: 1;
+  --saturate-125: 1.25;
+  --saturate-150: 1.5;
+  --saturate-200: 2;
+  
+  /* Sepia */
+  --sepia-0: 0;
+  --sepia-25: 0.25;
+  --sepia-50: 0.5;
+  --sepia-75: 0.75;
+  --sepia-100: 1;
+}

@@ -59,6 +59,23 @@ This System Context Diagram shows BlockSight.live as the central system and its 
 │  │  │  │  │   Dashboard     │    │   Navigation    │    │   Tools       │ │ │ │ │
 │  │  │  │  │ • WS updates    │    │ • Address/Tx    │    │ • Fee/Load    │ │ │ │ │
 │  │  │  │  │   1‑2s          │    │   lookup        │    │   timelines   │ │ │ │ │
+│  │  │  │  │ • 3D Design     │    │ • Advanced      │    │ • Advanced    │ │ │ │ │
+│  │  │  │  │   System        │    │   UI Components │    │   Styling     │ │ │ │ │
+│  │  │  │  │ • LoadingBlocks │    │ • Theme System  │    │ • CSS Modules │ │ │ │ │
+│  │  │  │  │ • Splash Screen │    │ • Responsive    │    │ • Custom Props│ │ │ │ │
+│  │  │  │  └─────────────────┘    └─────────────────┘    └───────────────┘ │ │ │ │
+│  │  │  └──────────────────────────────────────────────────────────────────┘ │ │ │
+│  │  │                                                                       │ │ │
+│  │  │  ┌──────────────────────────────────────────────────────────────────┐ │ │ │
+│  │  │  │                    STYLES SYSTEM ARCHITECTURE                    │ │ │ │
+│  │  │  │                                                                  │ │ │ │
+│  │  │  │  ┌─────────────────┐    ┌─────────────────┐    ┌───────────────┐ │ │ │ │
+│  │  │  │  │   CSS Modules   │    │ CSS Custom      │    │ Styled        │ │ │ │ │
+│  │  │  │  │   (Layout)      │    │ Properties      │    │ Components    │ │ │ │ │
+│  │  │  │  │ • Component     │    │ (Theming)       │    │ (Interactive) │ │ │ │ │
+│  │  │  │  │   isolation     │    │ • Theme         │    │ • Dynamic     │ │ │ │ │
+│  │  │  │  │ • Grid systems  │    │   switching     │    │   styling     │ │ │ │ │
+│  │  │  │  │ • 3D containers │    │ • Global tokens │    │ • Animations  │ │ │ │ │
 │  │  │  │  └─────────────────┘    └─────────────────┘    └───────────────┘ │ │ │ │
 │  │  │  └──────────────────────────────────────────────────────────────────┘ │ │ │
 │  │  └───────────────────────────────────────────────────────────────────────┘ │ │
@@ -84,12 +101,18 @@ This System Context Diagram shows BlockSight.live as the central system and its 
 - electrs (Open Source): Indexing + internal RocksDB; Electrum protocol over TCP
 - Node.js Backend: Electrum client adapter → HTTP/JSON + WebSocket; multi‑tier caching; analytics ETL to PostgreSQL
 - Storage & Cache: Redis L1, Memory‑mapped L2, PostgreSQL analytics mirror
-- Frontend: Real‑time UI driven by WS and cached HTTP
+- Frontend: Real‑time UI driven by WS and cached HTTP, advanced 3D design system, comprehensive styling architecture
 
 ### External Interfaces
 - Monitoring & Logging: Prometheus, Grafana, structured logs, alerts
 - External APIs: Price sources with rate limiting and backoff
 - Dev Tooling: GitHub Actions, IaC, testing frameworks
+
+### Styles System Architecture
+- **CSS Modules Layer**: Component isolation, grid systems, 3D containers, layout management
+- **CSS Custom Properties Layer**: Dynamic theming, global design tokens, responsive breakpoints
+- **Styled Components Layer**: Interactive elements, dynamic styling, animations, theme integration
+- **Advanced Features**: 3D design system, LoadingBlocks component, splash screen, responsive optimization
 
 ## Data Flow Summary
 
@@ -99,6 +122,7 @@ This System Context Diagram shows BlockSight.live as the central system and its 
 4. API Layer → Frontend: UI consumes cached HTTP and WS events with 1‑2s freshness
 5. Price Feeds → Backend: hourly/on‑change updates; cached and forwarded to UI as needed
 6. Analytics ETL → PostgreSQL mirror: minimal subset mirrored for human‑friendly SQL views/MVs (no direct RocksDB reads)
+7. Styles System → UI Components: CSS Modules for layout, Custom Properties for theming, Styled Components for interactions
 
 ## System Characteristics
 
@@ -106,3 +130,4 @@ This System Context Diagram shows BlockSight.live as the central system and its 
 - Real‑Time Performance: 1‑2s tip detection with WS pushes; sub‑50ms cache hits
 - Multi‑Tier Architecture: Redis L1, memory‑mapped L2, PostgreSQL analytics mirror
 - Production‑Ready: HA electrs, health checks, circuit breakers, rollback, observability
+- Advanced UI Architecture: Three-tier CSS system (Modules, Custom Properties, Styled Components), 3D design system, responsive optimization

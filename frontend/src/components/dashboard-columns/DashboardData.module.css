@@ -1,0 +1,46 @@
+/* DashboardData component styles */
+
+.dashboard-data {
+	--card-theme-background: var(--color-grey-light);
+	--card-theme-border: var(--color-border);
+	--card-theme-hover: var(--color-grey-medium);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	width: 95%; /* Moved from data-card */
+	height: 85vh; /* Moved from data-card */
+	min-height: 600px; /* Moved from data-card */
+	padding: var(--spacing-6); /* Moved from data-card */
+	border-radius: var(--radius-lg); /* Moved from data-card */
+	background: var(--color-grey-light); /* Light theme: #F5F5F5 */
+	border: 2px solid #F29F58; /* Moved from data-card */
+	box-shadow: 0 0 15px rgb(242 159 88 / 30%); /* Moved from data-card */
+	overflow: visible;
+	position: relative; /* Moved from data-card */
+	z-index: 1; /* Moved from data-card */
+}
+
+/* Dark theme override */
+html[data-theme="dark"] .dashboard-data {
+	background: var(--color-grey-deep); /* Dark theme: #0A0A0A */
+}
+
+.card-content {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+	padding: var(--spacing-4);
+	background: transparent;
+	overflow: visible;
+	user-select: none;
+}
+
+@media (max-width: 768px) {
+	.dashboard-data {
+		height: 75vh; /* Consolidated mobile height */
+		padding: var(--spacing-4); /* Consolidated mobile padding */
+		width: 95%; /* Keep consistent width */
+	}
+}

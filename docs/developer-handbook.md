@@ -209,6 +209,16 @@ Conventions and Quality
 - Electrum TCP integration with reliability and caching.
 - Strong defaults for security, logging, observability, and testing.
 
+### Naming Conventions (CRITICAL)
+**Backend MUST follow our centralized naming conventions:**
+- **Reference**: `frontend/src/constants/naming-conventions.md` - Single source of truth
+- **Action Types**: Use clean, concise names (e.g., `BLOCK_NEW`, not `RECEIVE_NEW_BLOCK_FROM_BACKEND`)
+- **API Endpoints**: Follow RESTful patterns (e.g., `/api/v1/blocks`, not `/api/bitcoin/blocks/retrieve`)
+- **WebSocket Events**: Use dot notation (e.g., `block.new`, not `bitcoin-block-new-received`)
+- **Data Types**: Follow `[Entity][Type]` pattern (e.g., `BitcoinBlock`, not `BitcoinBlockDataInterface`)
+
+**Implementation**: Backend will implement the opposite side of frontend actions, maintaining consistency across the entire system.
+
 ### Proposed Directory Structure (documented first)
 We will create this tree during implementation; shown here for orientation:
 
@@ -660,3 +670,43 @@ Worked example (no code): Implement fee estimate fetcher
 - Follow `code-standard.md` for error handling, loading states, and cleanup rules
 - Keep controller thin; move logic to services; adapters remain IO-only
 - Use schemas to validate both input and output; contract-first when feasible
+
+## Backend HTTP API – Bootstrap Snapshot
+
+The frontend gates its splash screen using a minimal snapshot from the backend.
+
+- Method: `GET /api/v1/bootstrap`
+- Purpose: Provide the fastest-available network readiness signal for the UI.
+- Response:
+```
+{
+  "height": number,               // Electrum tip height
+  "coreHeight": number | null,    // Bitcoin Core height when enabled
+  "mempoolPending": number | null, // Core pending tx count; null when unavailable
+  "mempoolVsize": number | undefined, // Electrum histogram derived vsize (approximate)
+  "asOfMs": number,
+  "source": "electrum"
+}
+```
+
+Caching & Metrics:
+- L1 key: `l1:bootstrap:v1`, TTL ≈ 3 seconds
+- Metrics recorded: `bootstrap` latency and cache hit/miss
+
+Notes:
+- If Core is disabled, `coreHeight` is omitted and `mempoolPending` may be null.
+- This endpoint is not for live updates; the WebSocket remains the primary realtime channel.
+
+### Electrum vs Core Controller Separation
+
+- Electrum Controller (`backend/src/controllers/electrum.controller.ts`)
+  - Electrum-backed endpoints only (fees, electrum height, electrum mempool fallback).
+  - L1 cache keys: `l1:fees:estimates:v1`, `l1:network:height:v1`, `l1:mempool:summary:v1`.
+
+- Core Controller (`backend/src/controllers/core.controller.ts`)
+  - Core-backed endpoints only: `/core/height`, `/core/mempool`.
+  - L1 cache keys: `l1:core:height:v1`, `l1:core:mempool:summary:v1`.
+
+- Bootstrap Controller (`backend/src/controllers/bootstrap.controller.ts`)
+  - Orchestrates both sources for cold-start: `/bootstrap` with TTL ≈ 3s (`l1:bootstrap:v1`).
+  - Returns `height`, optional `coreHeight`, and mempool fields for quick readiness.

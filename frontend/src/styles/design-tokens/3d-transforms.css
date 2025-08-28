@@ -1,0 +1,394 @@
+/**
+ * @fileoverview 3D Transforms and Perspective Design Tokens for BlockSight.live
+ * @version 1.0.0
+ * @author Development Team
+ * @since 2025-08-23
+ * @lastModified 2025-08-23
+ * 
+ * @description
+ * Comprehensive 3D transform system for ThreeJS integration, 3D layouts, and spatial design
+ * 
+ * @styling
+ * - CSS Custom Properties: 3D transform system and spatial positioning
+ * - ThreeJS Integration: WebGL properties and performance optimization
+ * - Spatial Design: Depth layers, perspective, and 3D positioning
+ */
+
+:root {
+  /* ========================================
+     PERSPECTIVE SYSTEM - 3D DEPTH PERCEPTION
+     ======================================== */
+  
+  /* Base Perspective Values */
+  --perspective-none: none;
+  --perspective-50: 50px;
+  --perspective-100: 100px;
+  --perspective-200: 200px;
+  --perspective-300: 300px;
+  --perspective-400: 400px;
+  --perspective-500: 500px;
+  --perspective-600: 600px;
+  --perspective-700: 700px;
+  --perspective-800: 800px;
+  --perspective-900: 900px;
+  --perspective-1000: 1000px;
+  --perspective-1200: 1200px;
+  --perspective-1500: 1500px;
+  --perspective-2000: 2000px;
+  
+  /* Semantic Perspective Values */
+  --perspective-subtle: var(--perspective-200);
+  --perspective-moderate: var(--perspective-500);
+  --perspective-dramatic: var(--perspective-1000);
+  --perspective-extreme: var(--perspective-2000);
+  
+  /* Perspective Origin */
+  --perspective-origin-center: 50% 50%;
+  --perspective-origin-top: 50% 0%;
+  --perspective-origin-bottom: 50% 100%;
+  --perspective-origin-left: 0% 50%;
+  --perspective-origin-right: 100% 50%;
+  --perspective-origin-top-left: 0% 0%;
+  --perspective-origin-top-right: 100% 0%;
+  --perspective-origin-bottom-left: 0% 100%;
+  --perspective-origin-bottom-right: 100% 100%;
+  
+  /* ========================================
+     3D ROTATION SYSTEM - SPATIAL ORIENTATION
+     ======================================== */
+  
+  /* X-Axis Rotation (Pitch) */
+  --rotate-x-0: rotateX(0deg);
+  --rotate-x-1: rotateX(1deg);
+  --rotate-x-2: rotateX(2deg);
+  --rotate-x-3: rotateX(3deg);
+  --rotate-x-5: rotateX(5deg);
+  --rotate-x-10: rotateX(10deg);
+  --rotate-x-15: rotateX(15deg);
+  --rotate-x-20: rotateX(20deg);
+  --rotate-x-25: rotateX(25deg);
+  --rotate-x-30: rotateX(30deg);
+  --rotate-x-35: rotateX(35deg);
+  --rotate-x-40: rotateX(40deg);
+  --rotate-x-45: rotateX(45deg);
+  --rotate-x-50: rotateX(50deg);
+  --rotate-x-60: rotateX(60deg);
+  --rotate-x-70: rotateX(70deg);
+  --rotate-x-80: rotateX(80deg);
+  --rotate-x-90: rotateX(90deg);
+  --rotate-x-180: rotateX(180deg);
+  
+  /* Y-Axis Rotation (Yaw) */
+  --rotate-y-0: rotateY(0deg);
+  --rotate-y-1: rotateY(1deg);
+  --rotate-y-2: rotateY(2deg);
+  --rotate-y-3: rotateY(3deg);
+  --rotate-y-5: rotateY(5deg);
+  --rotate-y-10: rotateY(10deg);
+  --rotate-y-15: rotateY(15deg);
+  --rotate-y-20: rotateY(20deg);
+  --rotate-y-25: rotateY(25deg);
+  --rotate-y-30: rotateY(30deg);
+  --rotate-y-35: rotateY(35deg);
+  --rotate-y-40: rotateY(40deg);
+  --rotate-y-45: rotateY(45deg);
+  --rotate-y-50: rotateY(50deg);
+  --rotate-y-60: rotateY(60deg);
+  --rotate-y-70: rotateY(70deg);
+  --rotate-y-80: rotateY(80deg);
+  --rotate-y-90: rotateY(90deg);
+  --rotate-y-180: rotateY(180deg);
+  
+  /* Z-Axis Rotation (Roll) */
+  --rotate-z-0: rotateZ(0deg);
+  --rotate-z-1: rotateZ(1deg);
+  --rotate-z-2: rotateZ(2deg);
+  --rotate-z-3: rotateZ(3deg);
+  --rotate-z-5: rotateZ(5deg);
+  --rotate-z-10: rotateZ(10deg);
+  --rotate-z-15: rotateZ(15deg);
+  --rotate-z-20: rotateZ(20deg);
+  --rotate-z-25: rotateZ(25deg);
+  --rotate-z-30: rotateZ(30deg);
+  --rotate-z-35: rotateZ(35deg);
+  --rotate-z-40: rotateZ(40deg);
+  --rotate-z-45: rotateZ(45deg);
+  --rotate-z-50: rotateZ(50deg);
+  --rotate-z-60: rotateZ(60deg);
+  --rotate-z-70: rotateZ(70deg);
+  --rotate-z-80: rotateZ(80deg);
+  --rotate-z-90: rotateZ(90deg);
+  --rotate-z-180: rotateZ(180deg);
+  
+  /* 3D Rotation Combinations */
+  --rotate-3d-none: rotate3d(0, 0, 0, 0deg);
+  --rotate-3d-flip: rotate3d(0, 1, 0, 180deg);
+  --rotate-3d-tilt: rotate3d(1, 0, 0, 15deg);
+  --rotate-3d-spin: rotate3d(0, 0, 1, 360deg);
+  --rotate-3d-orbit: rotate3d(1, 1, 0, 45deg);
+  
+  /* ========================================
+     3D TRANSLATION SYSTEM - SPATIAL POSITIONING
+     ======================================== */
+  
+  /* X-Axis Translation (Left/Right) */
+  --translate-x-0: translateX(0);
+  --translate-x-1: translateX(1px);
+  --translate-x-2: translateX(2px);
+  --translate-x-4: translateX(4px);
+  --translate-x-8: translateX(8px);
+  --translate-x-12: translateX(12px);
+  --translate-x-16: translateX(16px);
+  --translate-x-20: translateX(20px);
+  --translate-x-24: translateX(24px);
+  --translate-x-32: translateX(32px);
+  --translate-x-40: translateX(40px);
+  --translate-x-48: translateX(48px);
+  --translate-x-56: translateX(56px);
+  --translate-x-64: translateX(64px);
+  --translate-x-80: translateX(80px);
+  --translate-x-96: translateX(96px);
+  --translate-x-112: translateX(112px);
+  --translate-x-128: translateX(128px);
+  --translate-x-144: translateX(144px);
+  --translate-x-160: translateX(160px);
+  --translate-x-192: translateX(192px);
+  --translate-x-224: translateX(224px);
+  --translate-x-256: translateX(256px);
+  
+  /* Y-Axis Translation (Up/Down) */
+  --translate-y-0: translateY(0);
+  --translate-y-1: translateY(1px);
+  --translate-y-2: translateY(2px);
+  --translate-y-4: translateY(4px);
+  --translate-y-8: translateY(8px);
+  --translate-y-12: translateY(12px);
+  --translate-y-16: translateY(16px);
+  --translate-y-20: translateY(20px);
+  --translate-y-24: translateY(24px);
+  --translate-y-32: translateY(32px);
+  --translate-y-40: translateY(40px);
+  --translate-y-48: translateY(48px);
+  --translate-y-56: translateY(56px);
+  --translate-y-64: translateY(64px);
+  --translate-y-80: translateY(80px);
+  --translate-y-96: translateY(96px);
+  --translate-y-112: translateY(112px);
+  --translate-y-128: translateY(128px);
+  --translate-y-144: translateY(144px);
+  --translate-y-160: translateY(160px);
+  --translate-y-192: translateY(192px);
+  --translate-y-224: translateY(224px);
+  --translate-y-256: translateY(256px);
+  
+  /* Z-Axis Translation (Depth) */
+  --translate-z-0: translateZ(0);
+  --translate-z-1: translateZ(1px);
+  --translate-z-2: translateZ(2px);
+  --translate-z-4: translateZ(4px);
+  --translate-z-8: translateZ(8px);
+  --translate-z-12: translateZ(12px);
+  --translate-z-16: translateZ(16px);
+  --translate-z-20: translateZ(20px);
+  --translate-z-24: translateZ(24px);
+  --translate-z-32: translateZ(32px);
+  --translate-z-40: translateZ(40px);
+  --translate-z-48: translateZ(48px);
+  --translate-z-56: translateZ(56px);
+  --translate-z-64: translateZ(64px);
+  --translate-z-80: translateZ(80px);
+  --translate-z-96: translateZ(96px);
+  --translate-z-112: translateZ(112px);
+  --translate-z-128: translateZ(128px);
+  --translate-z-144: translateZ(144px);
+  --translate-z-160: translateZ(160px);
+  --translate-z-192: translateZ(192px);
+  --translate-z-224: translateZ(224px);
+  --translate-z-256: translateZ(256px);
+  
+  /* 3D Translation Combinations */
+  --translate-3d-none: translate3d(0, 0, 0);
+  --translate-3d-forward: translate3d(0, 0, 20px);
+  --translate-3d-backward: translate3d(0, 0, -20px);
+  --translate-3d-up: translate3d(0, -20px, 0);
+  --translate-3d-down: translate3d(0, 20px, 0);
+  --translate-3d-left: translate3d(-20px, 0, 0);
+  --translate-3d-right: translate3d(20px, 0, 0);
+  --translate-3d-diagonal: translate3d(20px, -20px, 20px);
+  
+  /* ========================================
+     3D SCALE SYSTEM - SPATIAL DIMENSIONS
+     ======================================== */
+  
+  /* X-Axis Scale (Width) */
+  --scale-x-0: scaleX(0);
+  --scale-x-25: scaleX(0.25);
+  --scale-x-50: scaleX(0.5);
+  --scale-x-75: scaleX(0.75);
+  --scale-x-90: scaleX(0.9);
+  --scale-x-95: scaleX(0.95);
+  --scale-x-100: scaleX(1);
+  --scale-x-105: scaleX(1.05);
+  --scale-x-110: scaleX(1.1);
+  --scale-x-125: scaleX(1.25);
+  --scale-x-150: scaleX(1.5);
+  --scale-x-175: scaleX(1.75);
+  --scale-x-200: scaleX(2);
+  --scale-x-250: scaleX(2.5);
+  --scale-x-300: scaleX(3);
+  
+  /* Y-Axis Scale (Height) */
+  --scale-y-0: scaleY(0);
+  --scale-y-25: scaleY(0.25);
+  --scale-y-50: scaleY(0.5);
+  --scale-y-75: scaleY(0.75);
+  --scale-y-90: scaleY(0.9);
+  --scale-y-95: scaleY(0.95);
+  --scale-y-100: scaleY(1);
+  --scale-y-105: scaleY(1.05);
+  --scale-y-110: scaleY(1.1);
+  --scale-y-125: scaleY(1.25);
+  --scale-y-150: scaleY(1.5);
+  --scale-y-175: scaleY(1.75);
+  --scale-y-200: scaleY(2);
+  --scale-y-250: scaleY(2.5);
+  --scale-y-300: scaleY(3);
+  
+  /* Z-Axis Scale (Depth) */
+  --scale-z-0: scaleZ(0);
+  --scale-z-25: scaleZ(0.25);
+  --scale-z-50: scaleZ(0.5);
+  --scale-z-75: scaleZ(0.75);
+  --scale-z-90: scaleZ(0.9);
+  --scale-z-95: scaleZ(0.95);
+  --scale-z-100: scaleZ(1);
+  --scale-z-105: scaleZ(1.05);
+  --scale-z-110: scaleZ(1.1);
+  --scale-z-125: scaleZ(1.25);
+  --scale-z-150: scaleZ(1.5);
+  --scale-z-175: scaleZ(1.75);
+  --scale-z-200: scaleZ(2);
+  --scale-z-250: scaleZ(2.5);
+  --scale-z-300: scaleZ(3);
+  
+  /* 3D Scale Combinations */
+  --scale-3d-none: scale3d(1, 1, 1);
+  --scale-3d-flat: scale3d(1, 1, 0.1);
+  --scale-3d-tall: scale3d(1, 2, 1);
+  --scale-3d-wide: scale3d(2, 1, 1);
+  --scale-3d-deep: scale3d(1, 1, 2);
+  --scale-3d-uniform: scale3d(1.5, 1.5, 1.5);
+  --scale-3d-shrink: scale3d(0.8, 0.8, 0.8);
+  --scale-3d-expand: scale3d(2, 2, 2);
+  
+  /* ========================================
+     3D SKEW SYSTEM - SPATIAL DEFORMATION
+     ======================================== */
+  
+  /* X-Axis Skew (Horizontal Tilt) */
+  --skew-x-0: skewX(0deg);
+  --skew-x-1: skewX(1deg);
+  --skew-x-2: skewX(2deg);
+  --skew-x-3: skewX(3deg);
+  --skew-x-5: skewX(5deg);
+  --skew-x-10: skewX(10deg);
+  --skew-x-15: skewX(15deg);
+  --skew-x-20: skewX(20deg);
+  --skew-x-25: skewX(25deg);
+  --skew-x-30: skewX(30deg);
+  --skew-x-45: skewX(45deg);
+  
+  /* Y-Axis Skew (Vertical Tilt) */
+  --skew-y-0: skewY(0deg);
+  --skew-y-1: skewY(1deg);
+  --skew-y-2: skewY(2deg);
+  --skew-y-3: skewY(3deg);
+  --skew-y-5: skewY(5deg);
+  --skew-y-10: skewY(10deg);
+  --skew-y-15: skewY(15deg);
+  --skew-y-20: skewY(20deg);
+  --skew-y-25: skewY(25deg);
+  --skew-y-30: skewY(30deg);
+  --skew-y-45: skewY(45deg);
+  
+  /* ========================================
+     3D TRANSFORM ORIGIN - ROTATION CENTER
+     ======================================== */
+  
+  /* Transform Origin Values */
+  --transform-origin-center: center;
+  --transform-origin-top: top;
+  --transform-origin-bottom: bottom;
+  --transform-origin-left: left;
+  --transform-origin-right: right;
+  --transform-origin-top-left: top left;
+  --transform-origin-top-right: top right;
+  --transform-origin-bottom-left: bottom left;
+  --transform-origin-bottom-right: bottom right;
+  
+  /* 3D Transform Origin */
+  --transform-origin-3d-center: center center;
+  --transform-origin-3d-top: center top;
+  --transform-origin-3d-bottom: center bottom;
+  --transform-origin-3d-left: left center;
+  --transform-origin-3d-right: right center;
+  --transform-origin-3d-front: center center 0;
+  --transform-origin-3d-back: center center 100px;
+  
+  /* ========================================
+     3D BACKFACE VISIBILITY
+     ======================================== */
+  
+  --backface-visible: visible;
+  --backface-hidden: hidden;
+  
+  /* ========================================
+     3D TRANSFORM STYLE
+     ======================================== */
+  
+  --transform-style-flat: flat;
+  --transform-style-3d: preserve-3d;
+  
+  /* ========================================
+     3D COMPOSITE TRANSFORMS
+     ======================================== */
+  
+  /* Common 3D Transform Combinations */
+  --transform-3d-none: none;
+  --transform-3d-flip-horizontal: scaleX(-1);
+  --transform-3d-flip-vertical: scaleY(-1);
+  --transform-3d-flip-both: scale(-1);
+  --transform-3d-rotate-90: rotate(90deg);
+  --transform-3d-rotate-180: rotate(180deg);
+  --transform-3d-rotate-270: rotate(270deg);
+  
+  /* 3D Card Flip */
+  --transform-3d-card-flip: rotateY(180deg);
+  --transform-3d-card-flip-back: rotateY(0deg);
+  
+  /* 3D Hover Effects */
+  --transform-3d-hover-lift: translateY(-8px) scale(1.02);
+  --transform-3d-hover-tilt: rotateX(5deg) rotateY(5deg);
+  --transform-3d-hover-rotate: rotateY(15deg);
+  
+  /* 3D Loading States */
+  --transform-3d-loading-spin: rotateY(360deg);
+  --transform-3d-loading-bounce: scale(1.1) translateY(-4px);
+  --transform-3d-loading-pulse: scale(1.05);
+  
+  /* 3D Entrance Animations */
+  --transform-3d-entrance-slide-up: translateY(100px) rotateX(20deg);
+  --transform-3d-entrance-slide-down: translateY(-100px) rotateX(-20deg);
+  --transform-3d-entrance-slide-left: translateX(100px) rotateY(-20deg);
+  --transform-3d-entrance-slide-right: translateX(-100px) rotateY(20deg);
+  --transform-3d-entrance-zoom: scale(0.8) translateZ(-50px);
+  --transform-3d-entrance-flip: rotateY(90deg) scale(0.8);
+  
+  /* 3D Exit Animations */
+  --transform-3d-exit-slide-up: translateY(-100px) rotateX(-20deg);
+  --transform-3d-exit-slide-down: translateY(100px) rotateX(20deg);
+  --transform-3d-exit-slide-left: translateX(-100px) rotateY(20deg);
+  --transform-3d-exit-slide-right: translateX(100px) rotateY(-20deg);
+  --transform-3d-exit-zoom: scale(1.2) translateZ(50px);
+  --transform-3d-exit-flip: rotateY(-90deg) scale(1.2);
+}

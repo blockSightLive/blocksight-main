@@ -2,32 +2,29 @@
 
 ## Overview
 
-Subscriptions-first real-time flow: Electrum TCP → Node adapter (ElectrumClient + Pool/Breaker) → Multi-tier caches (L1/L2) → WebSocket push; mempool-driven fee analysis; backpressure and degradation paths.
+Current polling-first real-time flow (subscriptions planned): Electrum TCP → Node adapter (ElectrumClient + polling loops) → WebSocket push; mempool-driven fee snapshots; backpressure and degradation paths. Caches and breaker are planned.
 
 ```mermaid
 flowchart TD
   %% Sources
   A[Bitcoin Core] --> B[electrs (Electrum TCP 50001/50002)]
-  B -- headers.subscribe / mempool signals --> C[ElectrumClient (Node Adapter)]
+  B -. TCP connect .-> C[ElectrumClient (Node Adapter)]
 
   %% Reliability gates
-  C --> D{Breaker / Pool OK?}
-  D -- No --> E[Serve from Cache (L1/L2)] --> F[Degraded Mode Notice]
+  C --> D{Adapter reachable?}
+  D -- No --> E[Degraded Mode Notice]
   F --> G[Alert & Metrics] --> H[End]
 
-  D -- Yes --> I[Fetch/Receive Header or Mempool Summary]
-  I --> J[Update Redis L1 (hot, 1–2s TTL)]
-  J --> K[Update Memory‑Mapped L2 (warm)]
+  D -- Yes --> I[Poll height/fees/mempool (5s/15s/10s)]
 
   %% Branch: Tip updates
-  I --> L{Event Type}
-  L -- Header/Tip --> M[Broadcast WS: tip/header]
+  I --> L{Change Detected?}
+  L -- Tip height --> M[Broadcast WS: tip.height]
   M --> N[Frontend UI update (1–2s freshness)]
 
   %% Branch: Mempool → fee analysis
-  L -- Mempool --> O[Analyze fees (sats/vB, percentiles)]
-  O --> P[Cache fee bands (short TTL)]
-  P --> Q[Broadcast WS: fee update]
+  L -- Fees --> O[Fee estimates changed]
+  O --> Q[Broadcast WS: network.fees]
   Q --> R[Frontend fee gauge update]
 
   %% Backpressure / Budgets
@@ -39,8 +36,7 @@ flowchart TD
     S -- No --> W[Normal cadence]
   end
 
-  K --> S
-  P --> S
+  %% Backpressure hooks integrate with polling cadence (planned)
 
   %% ETL to PostgreSQL mirror (async, bounded)
   subgraph Analytics Mirror
@@ -62,7 +58,7 @@ flowchart TD
 ```
 
 Notes
-- Primary path is subscriptions; polling is fallback only through the adapter.
+- Primary path is polling (current); subscriptions will replace or augment polling.
 - Cache-first delivery ensures sub-50ms hits on hot paths; TTLs enforce freshness.
 - Backpressure enforces SLO budgets with graceful degradation; alerts fire on divergence/tip lag.
 - ETL mirrors a minimal subset to PostgreSQL for human‑friendly analytics without touching RocksDB directly.

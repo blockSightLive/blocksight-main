@@ -1,0 +1,241 @@
+/**
+ * @fileoverview Layout Grid Design Tokens for BlockSight.live
+ * @version 1.0.0
+ * @author Development Team
+ * @since 2025-08-23
+ * @lastModified 2025-08-27
+ * 
+ * @description
+ * Centralized layout grid design tokens.
+ * Provides consistent spacing, positioning, and layout values.
+ * 
+ * @dependencies
+ * - Base design tokens from other design-token files
+ * 
+ * @usage
+ * Imported by main index.css for layout grid system
+ * 
+ * @state
+ * ✅ Functional - Complete layout grid system
+ * 
+ * @bugs
+ * - None currently identified
+ * 
+ * @todo
+ * - None currently identified
+ * 
+ * @styling
+ * - Layout Grid: Spacing, positioning, and layout values
+ * - Design Token Usage: Uses centralized design tokens
+ * - Responsive: Mobile-first layout adjustments
+ * 
+ * @performance
+ * - Efficient layout calculations
+ * - Minimal CSS duplication
+ * 
+ * @security
+ * - Safe CSS properties only
+ * - No external dependencies
+ */
+
+:root {
+  /* ========================================
+     SPATIAL POSITIONING - LAYOUT
+     ======================================== */
+  
+  /* Z-Index Layers */
+  --z-index-base: 1;
+  --z-index-dropdown: 100;
+  --z-index-sticky: 200;
+  --z-index-fixed: 300;
+  --z-index-modal: 400;
+  --z-index-popover: 500;
+  --z-index-tooltip: 600;
+  --z-index-toast: 700;
+  --z-index-overlay: 800;
+  --z-index-max: 9999;
+  
+  /* Position Values */
+  --position-static: static;
+  --position-relative: relative;
+  --position-absolute: absolute;
+  --position-fixed: fixed;
+  --position-sticky: sticky;
+  
+  /* ========================================
+     SPATIAL SPACING - LAYOUT
+     ======================================== */
+  
+  /* Margin Spacing */
+  --margin-auto: auto;
+  --margin-none: 0;
+  --margin-xs: var(--spacing-1);
+  --margin-sm: var(--spacing-2);
+  --margin-md: var(--spacing-3);
+  --margin-lg: var(--spacing-4);
+  --margin-xl: var(--spacing-5);
+  --margin-2xl: var(--spacing-6);
+  --margin-3xl: var(--spacing-8);
+  --margin-4xl: var(--spacing-10);
+  --margin-5xl: var(--spacing-12);
+  
+  /* Padding Spacing */
+  --padding-none: 0;
+  --padding-xs: var(--spacing-1);
+  --padding-sm: var(--spacing-2);
+  --padding-md: var(--spacing-3);
+  --padding-lg: var(--spacing-4);
+  --padding-xl: var(--spacing-5);
+  --padding-2xl: var(--spacing-6);
+  --padding-3xl: var(--spacing-8);
+  --padding-4xl: var(--spacing-10);
+  --padding-5xl: var(--spacing-12);
+  
+  /* ========================================
+     SPATIAL DIMENSIONS - LAYOUT
+     ======================================== */
+  
+  /* Width Values */
+  --width-auto: auto;
+  --width-full: 100%;
+  --width-screen: 100vw;
+  --width-min: min-content;
+  --width-max: max-content;
+  --width-fit: fit-content;
+  
+  /* Height Values */
+  --height-auto: auto;
+  --height-full: 100%;
+  --height-screen: 100vh;
+  --height-min: min-content;
+  --height-max: max-content;
+  --height-fit: fit-content;
+  
+  /* ========================================
+     SPATIAL ALIGNMENT - LAYOUT
+     ======================================== */
+  
+  /* Horizontal Alignment */
+  --align-left: left;
+  --align-center: center;
+  --align-right: right;
+  --align-justify: justify;
+  
+  /* Vertical Alignment */
+  --align-top: top;
+  --align-middle: middle;
+  --align-bottom: bottom;
+  --align-baseline: baseline;
+  
+  /* Flexbox Alignment */
+  --align-start: flex-start;
+  --align-end: flex-end;
+  --align-stretch: stretch;
+  
+  /* ========================================
+     SPATIAL FLEXBOX - LAYOUT
+     ======================================== */
+  
+  /* Flex Direction */
+  --flex-row: row;
+  --flex-row-reverse: row-reverse;
+  --flex-col: column;
+  --flex-col-reverse: column-reverse;
+  
+  /* Flex Wrap */
+  --flex-wrap: wrap;
+  --flex-nowrap: nowrap;
+  --flex-wrap-reverse: wrap-reverse;
+  
+  /* Flex Grow/Shrink */
+  --flex-grow: 1;
+  --flex-shrink: 1;
+  --flex-none: 0;
+  --flex-auto: auto;
+  
+  /* ========================================
+     SPATIAL GRID - LAYOUT
+     ======================================== */
+  
+  /* Grid Template */
+  --grid-1: 1fr;
+  --grid-2: repeat(2, 1fr);
+  --grid-3: repeat(3, 1fr);
+  --grid-4: repeat(4, 1fr);
+  --grid-5: repeat(5, 1fr);
+  --grid-6: repeat(6, 1fr);
+  --grid-12: repeat(12, 1fr);
+  
+  /* Grid Gap */
+  --grid-gap-none: 0;
+  --grid-gap-xs: var(--spacing-1);
+  --grid-gap-sm: var(--spacing-2);
+  --grid-gap-md: var(--spacing-3);
+  --grid-gap-lg: var(--spacing-4);
+  --grid-gap-xl: var(--spacing-5);
+  --grid-gap-2xl: var(--spacing-6);
+  
+  /* ========================================
+     RESPONSIVE BREAKPOINTS - LAYOUT
+     ======================================== */
+  
+  /* Standard Breakpoints */
+  --breakpoint-xs: 480px;
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+  --breakpoint-xl: 1200px;
+  --breakpoint-2xl: 1536px;
+  
+  /* ========================================
+     SPATIAL RESPONSIVE - LAYOUT
+     ======================================== */
+  
+  /* Mobile Spatial Adjustments */
+  --mobile-spacing-multiplier: 0.8;
+  --mobile-margin-reduction: 0.7;
+  --mobile-padding-reduction: 0.7;
+  
+  /* Tablet Spatial Adjustments */
+  --tablet-spacing-multiplier: 0.9;
+  --tablet-margin-reduction: 0.85;
+  --tablet-padding-reduction: 0.85;
+  
+  /* Desktop Spatial Adjustments */
+  --desktop-spacing-multiplier: 1.0;
+  --desktop-margin-reduction: 1.0;
+  --desktop-padding-reduction: 1.0;
+  
+  /* ========================================
+     SPATIAL ACCESSIBILITY - LAYOUT
+     ======================================== */
+  
+  /* High Contrast Spatial Adjustments */
+  --high-contrast-spacing: 1.2;
+  --high-contrast-margin: 1.3;
+  --high-contrast-padding: 1.4;
+  
+  /* Reduced Motion Spatial Adjustments */
+  --reduced-motion-spacing: 1.0;
+  --reduced-motion-margin: 1.0;
+  --reduced-motion-padding: 1.0;
+  
+  /* ========================================
+     SPATIAL THEME - LAYOUT
+     ======================================== */
+  
+  /* Light Theme Spatial Adjustments */
+  --light-theme-spacing: 1.0;
+  --light-theme-margin: 1.0;
+  --light-theme-padding: 1.0;
+  
+  /* Dark Theme Spatial Adjustments */
+  --dark-theme-spacing: 1.0;
+  --dark-theme-margin: 1.0;
+  --dark-theme-padding: 1.0;
+  
+  /* Cosmic Theme Spatial Adjustments */
+  --cosmic-theme-spacing: 1.0;
+  --cosmic-theme-margin: 1.0;
+  --cosmic-theme-padding: 1.0;
+}

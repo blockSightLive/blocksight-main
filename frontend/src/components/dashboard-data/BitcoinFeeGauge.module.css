@@ -1,0 +1,188 @@
+.root {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-3);
+}
+
+.loading {
+	opacity: var(--opacity-85);
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.refresh-btn {
+	border: var(--border-width-thin) solid var(--border-alpha-accent-25);
+	background: var(--bg-transparent);
+	color: var(--color-text-primary);
+	border-radius: var(--radius-md);
+	padding: var(--spacing-1) var(--spacing-2);
+}
+
+.estimates {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(var(--spacing-none), var(--grid-1fr)));
+	gap: var(--spacing-2);
+}
+
+.fee-item {
+	display: grid;
+	gap: var(--spacing-1);
+}
+
+.label {
+	opacity: var(--opacity-75);
+}
+
+.value {
+	font-weight: var(--font-weight-bold);
+}
+
+.time {
+	opacity: var(--opacity-75);
+	font-size: var(--font-size-sm);
+}
+
+.mempool {
+	display: grid;
+	grid-template-columns: var(--grid-1fr) var(--grid-1fr);
+	gap: var(--spacing-2);
+}
+
+.mempool-item {
+	display: flex;
+	justify-content: space-between;
+}
+
+.timestamp {
+	opacity: var(--opacity-70);
+	font-size: var(--font-size-sm);
+}
+
+/* Co-located styles for BitcoinFeeGauge */
+
+.fee-gauge {
+	padding: var(--spacing-4);
+	background: var(--color-background);
+	border-radius: var(--radius-md);
+	box-shadow: var(--shadow);
+}
+
+.fee-gauge__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: var(--spacing-4);
+	padding-bottom: var(--spacing-2);
+	border-bottom: var(--border-width-thin) solid var(--color-border);
+}
+
+.fee-gauge__header h3 {
+	margin: var(--spacing-none);
+	color: var(--color-text-primary);
+	font-size: var(--font-size-lg);
+	font-weight: var(--font-weight-semibold);
+}
+
+.fee-gauge__value {
+	font-size: var(--font-size-2xl);
+	font-weight: var(--font-weight-bold);
+	color: var(--color-primary);
+	text-align: center;
+	margin: var(--spacing-4) 0;
+}
+
+.fee-gauge__unit {
+	font-size: var(--font-size-sm);
+	color: var(--color-text-secondary);
+	margin-left: var(--spacing-1);
+}
+
+.fee-gauge__chart {
+	height: var(--spacing-32);
+	margin: var(--spacing-4) 0;
+	background: var(--color-background-secondary);
+	border-radius: var(--radius-sm);
+	position: relative;
+	overflow: hidden;
+}
+
+.fee-gauge__bar {
+	height: 100%;
+	background: var(--gradient-primary);
+	border-radius: var(--radius-sm);
+	transition: width var(--duration-300) var(--ease-in-out);
+}
+
+.fee-gauge__labels {
+	display: flex;
+	justify-content: space-between;
+	margin-top: var(--spacing-2);
+	font-size: var(--font-size-xs);
+	color: var(--color-text-secondary);
+}
+
+.fee-gauge__min {
+	text-align: left;
+}
+
+.fee-gauge__max {
+	text-align: right;
+}
+
+.fee-gauge__status {
+	text-align: center;
+	margin-top: var(--spacing-3);
+	padding: var(--spacing-2);
+	border-radius: var(--radius-sm);
+	font-size: var(--font-size-sm);
+	font-weight: var(--font-weight-medium);
+}
+
+.fee-gauge__status--low {
+	background: var(--color-success-light);
+	color: var(--color-success);
+}
+
+.fee-gauge__status--medium {
+	background: var(--color-warning-light);
+	color: var(--color-warning);
+}
+
+.fee-gauge__status--high {
+	background: var(--color-error-light);
+	color: var(--color-error);
+}
+
+@media (max-width: 768px) {
+	.fee-gauge {
+		padding: var(--spacing-3);
+	}
+
+	.fee-gauge__value {
+		font-size: var(--font-size-xl);
+	}
+
+	.fee-gauge__chart {
+		height: var(--spacing-24);
+	}
+}
+
+@media (max-width: 576px) {
+	.fee-gauge {
+		padding: var(--spacing-2);
+	}
+
+	.fee-gauge__header h3 {
+		font-size: var(--font-size-base);
+	}
+
+	.fee-gauge__value {
+		font-size: var(--font-size-lg);
+	}
+}
+
+

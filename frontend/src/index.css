@@ -1,0 +1,123 @@
+/**
+ * @fileoverview Main CSS Entry Point for BlockSight.live
+ * @version 1.0.0
+ * @author Development Team
+ * @since 2025-08-11
+ * @lastModified 2025-08-25
+ * 
+ * @description
+ * Main CSS entry point that imports all organized CSS files in the correct order.
+ * This file serves as the single import point for all styling.
+ * 
+ * @dependencies
+ * - Base styles from styles/base/
+ * - Design tokens from styles/design-tokens/
+ * - BackgroundSystem component for cosmic background rendering
+ * - Global styles from styles/globals.css
+ * - Themes from styles/themes/
+ * 
+ * @usage
+ * Import this file in your main entry point for complete styling
+ * 
+ * @state
+ * ✅ Restored - Full CSS system with cosmic background compatibility
+ * 
+ * @bugs
+ * - None currently identified
+ * 
+ * @todo
+ * - [HIGH] Test cosmic background with full CSS system
+ * - [MEDIUM] Verify theme switching works correctly
+ * - [LOW] Optimize CSS loading performance
+ * 
+ * @styling
+ * - Import Hub: Centralized CSS imports
+ * - Organized Structure: Logical import order
+ * - No Inline Styles: Pure import file
+ * - BackgroundSystem: Handles cosmic background rendering
+ * - Theme System: Dark/light themes for components only
+ * 
+ * @performance
+ * - Efficient CSS loading
+ * - Organized cascade
+ * - BackgroundSystem: Optimized background rendering
+ * 
+ * @security
+ * - Safe CSS imports only
+ * - No external dependencies beyond organized files
+ */
+
+/* ========================================
+   CSS IMPORT ORDER - CRITICAL FOR CASCADE
+   ======================================== */
+
+/* 1. BASE STYLES - Foundation and resets */
+@import url('./styles/base/reset.css');
+
+/* 2. DESIGN TOKENS - CSS custom properties and variables */
+@import url('./styles/design-tokens/index.css');
+
+/* 3. TYPOGRAPHY SYSTEM - SINGLE SOURCE OF TRUTH for all typography */
+@import url('./styles/base/typography-system.css');
+
+/* 5. THEMES - Light and dark theme variations (backgrounds handled by BackgroundSystem) */
+@import url('./styles/themes/light.css');
+@import url('./styles/themes/dark.css');
+
+/* 6. GLOBAL STYLES - Utility classes and global overrides */
+@import url('./styles/globals.css');
+
+/* ========================================
+   PERMANENT BROWSER BACKGROUND FIXES
+   ======================================== */
+
+/* CRITICAL: Prevent browser default white backgrounds from obscuring cosmic background */
+html, body {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Ensure root element doesn't interfere */
+#root {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  overflow: hidden !important;
+}
+
+/* Force cosmic background visibility for dark theme */
+[data-theme="dark"] {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* ========================================
+   IMPORT ORDER EXPLANATION
+   ======================================== */
+
+/*
+   The import order is critical for proper CSS cascade:
+   
+   1. RESET: Normalizes browser differences first
+   2. DESIGN TOKENS: Provides CSS custom properties for all subsequent styles
+   3. TYPOGRAPHY SYSTEM: SINGLE SOURCE OF TRUTH for all typography (fonts, tokens, styles)
+   4. THEMES: Applies theme-specific styles (backgrounds handled by BackgroundSystem)
+   5. GLOBALS: Provides utility classes and overrides with access to everything
+   
+   This order ensures:
+   - Base styles are established first
+   - Design tokens are available for all subsequent styles
+   - Typography system provides fonts, tokens, and complete styles in one place
+   - Themes provide color and styling without background conflicts
+   - Global utilities have access to all previous styles
+   - Proper cascade and specificity
+   - Single typography source eliminates conflicts and duplication
+   
+   Note: Cosmic backgrounds are now handled by the BackgroundSystem component
+   using HTML5 Canvas, providing direct control and avoiding CSS cascade conflicts.
+   Browser background fixes ensure no white backgrounds can obscure the cosmic background.
+*/

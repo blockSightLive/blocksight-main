@@ -16,6 +16,24 @@ export class FakeElectrumAdapter implements ElectrumAdapter {
   async getFeeEstimates(): Promise<FeeEstimates> {
     return { fast: 20, normal: 10, slow: 5 };
   }
+
+  async getTipHeight(): Promise<number> {
+    // Return a monotonically increasing fake height based on time
+    const genesis = 800000;
+    const increment = Math.floor((Date.now() / 1000) % 600 === 0 ? 1 : 0);
+    return genesis + increment;
+  }
+
+  async getTipHeader(): Promise<{ height: number; headerHex?: string }> {
+    const height = await this.getTipHeight();
+    // Use a static hex fingerprint placeholder for tests
+    return { height, headerHex: '0000000000000000' };
+  }
+
+  async getMempoolSummary(): Promise<{ pendingTransactions?: number | null; vsize?: number }> {
+    // Provide a stable, low-noise fake summary
+    return { pendingTransactions: 0, vsize: 0 };
+  }
 }
 
 

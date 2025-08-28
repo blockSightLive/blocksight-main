@@ -15,6 +15,19 @@ export type FeeEstimates = {
 export interface ElectrumAdapter {
   ping(): Promise<boolean>;
   getFeeEstimates(): Promise<FeeEstimates>;
+  /**
+   * Get current best chain tip height.
+   * Implementations may poll or subscribe under the hood.
+   */
+  getTipHeight(): Promise<number>;
+  /**
+   * Get the current best chain tip header information, including raw header hex when available.
+   */
+  getTipHeader(): Promise<{ height: number; headerHex?: string }>;
+  /**
+   * Memory pool summary (pending tx count and virtual size in vBytes if available).
+   */
+  getMempoolSummary(): Promise<{ pendingTransactions?: number | null; vsize?: number }>;
 }
 
 

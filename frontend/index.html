@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/bitcoin-icon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Primary Meta Tags -->
+    <title>BlockSight.live - Bitcoin Blockchain Explorer</title>
+    <meta name="title" content="BlockSight.live - Bitcoin Blockchain Explorer">
+    <meta name="description" content="Real-time Bitcoin blockchain explorer with advanced analytics, fee estimation, and network monitoring. Explore blocks, transactions, and addresses with live updates.">
+    <meta name="keywords" content="bitcoin, blockchain, explorer, blocks, transactions, addresses, fees, network, real-time, analytics">
+    <meta name="author" content="BlockSight.live">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://blocksight.live/">
+    <meta property="og:title" content="BlockSight.live - Bitcoin Blockchain Explorer">
+    <meta property="og:description" content="Real-time Bitcoin blockchain explorer with advanced analytics, fee estimation, and network monitoring.">
+    <meta property="og:image" content="https://blocksight.live/og-image.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://blocksight.live/">
+    <meta property="twitter:title" content="BlockSight.live - Bitcoin Blockchain Explorer">
+    <meta property="twitter:description" content="Real-time Bitcoin blockchain explorer with advanced analytics, fee estimation, and network monitoring.">
+    <meta property="twitter:image" content="https://blocksight.live/twitter-image.png">
+    
+    <!-- Bitcoin-specific Meta Tags -->
+    <meta name="bitcoin:network" content="mainnet">
+    <meta name="bitcoin:version" content="1.0.0">
+    
+    <!-- Security Meta Tags -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    
+    <!-- Performance Meta Tags -->
+    <meta http-equiv="Cache-Control" content="public, max-age=31536000">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#f7931a">
+    <meta name="msapplication-TileColor" content="#f7931a">
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="/site.webmanifest">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "BlockSight.live",
+      "description": "Real-time Bitcoin blockchain explorer with advanced analytics",
+      "url": "https://blocksight.live",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "BlockSight.live"
+      }
+    }
+    </script>
+  </head>
+  <body>
+    <noscript>
+      <div style="padding: 20px; text-align: center; font-family: Arial, sans-serif;">
+        <h1>BlockSight.live</h1>
+        <p>JavaScript is required to run this Bitcoin blockchain explorer.</p>
+        <p>Please enable JavaScript in your browser to continue.</p>
+        <p style="margin-top: 20px; font-size: 14px; color: #666;">
+          BlockSight.live requires JavaScript to provide real-time Bitcoin blockchain data, 
+          interactive visualizations, and live network monitoring.
+        </p>
+      </div>
+    </noscript>
+    
+    <div id="root"></div>
+    
+    <!-- Bitcoin Network Status Indicator -->
+    <div id="bitcoin-status" style="display: none;">
+      <span id="network-status">Connecting to Bitcoin network...</span>
+      <span id="last-block">Block height: --</span>
+      <span id="fee-estimate">Fast fee: -- sats/vB</span>
+    </div>
+    
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

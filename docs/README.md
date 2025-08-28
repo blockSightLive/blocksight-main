@@ -13,6 +13,7 @@ Use this index to find what you need fast.
 - Getting started: docs/onboarding.md
 - Daily work (how to code here): docs/developer-handbook.md
 - Standards (naming, patterns, quality bars): docs/code-standard.md
+- **Naming Conventions**: frontend/src/constants/naming-conventions.md (CRITICAL - Single source of truth)
 - Automation (CI/CD and collaboration): docs/automation-playbook.md
 - Install commands and post-install steps: docs/install-notes.md
 - Bitcoin Core setup: docs/bitcoin-core-virtualbox-setup.md

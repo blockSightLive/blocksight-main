@@ -1,0 +1,182 @@
+/**
+ * @fileoverview Animation Orchestration Design Tokens for BlockSight.live
+ * @version 1.0.0
+ * @author Development Team
+ * @since 2025-08-23
+ * @lastModified 2025-08-27
+ * 
+ * @description
+ * Centralized animation orchestration design tokens.
+ * Provides consistent animation timing, easing, and orchestration values.
+ * 
+ * @dependencies
+ * - Base design tokens from other design-token files
+ * 
+ * @usage
+ * Imported by main index.css for animation system
+ * 
+ * @state
+ * ✅ Functional - Complete animation orchestration system
+ * 
+ * @bugs
+ * - None currently identified
+ * 
+ * @todo
+ * - None currently identified
+ * 
+ * @styling
+ * - Animation Orchestration: Timing, easing, and orchestration values
+ * - Design Token Usage: Uses centralized design tokens
+ * - Performance: Optimized animation values
+ * 
+ * @performance
+ * - Efficient animation timing
+ * - Hardware-accelerated properties
+ * 
+ * @security
+ * - Safe CSS properties only
+ * - No external dependencies
+ */
+
+:root {
+  /* ========================================
+     ANIMATION TIMING - ORCHESTRATION
+     ======================================== */
+  
+  /* Duration Orchestration */
+  --duration-orchestration-fast: 100ms;
+  --duration-orchestration-quick: 150ms;
+  --duration-orchestration-normal: 200ms;
+  --duration-orchestration-slow: 300ms;
+  --duration-orchestration-slower: 400ms;
+  --duration-orchestration-slowest: 500ms;
+  
+  /* Easing Orchestration */
+  --ease-orchestration-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-orchestration-elastic: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-orchestration-back: cubic-bezier(0.6, -0.28, 0.735, 0.045);
+  --ease-orchestration-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  
+  /* ========================================
+     ANIMATION SEQUENCING - ORCHESTRATION
+     ======================================== */
+  
+  /* Stagger Delays */
+  --stagger-delay-1: 0ms;
+  --stagger-delay-2: 50ms;
+  --stagger-delay-3: 100ms;
+  --stagger-delay-4: 150ms;
+  --stagger-delay-5: 200ms;
+  --stagger-delay-6: 250ms;
+  --stagger-delay-7: 300ms;
+  --stagger-delay-8: 350ms;
+  
+  /* Cascade Delays */
+  --cascade-delay-1: 0ms;
+  --cascade-delay-2: 75ms;
+  --cascade-delay-3: 150ms;
+  --cascade-delay-4: 225ms;
+  --cascade-delay-5: 300ms;
+  
+  /* ========================================
+     ANIMATION PHASES - ORCHESTRATION
+     ======================================== */
+  
+  /* Entry Phase */
+  --phase-entry: 0ms;
+  --phase-entry-delay: 100ms;
+  --phase-entry-duration: 300ms;
+  
+  /* Active Phase */
+  --phase-active: 400ms;
+  --phase-active-delay: 0ms;
+  --phase-active-duration: 200ms;
+  
+  /* Exit Phase */
+  --phase-exit: 600ms;
+  --phase-exit-delay: 0ms;
+  --phase-exit-duration: 250ms;
+  
+  /* ========================================
+     COMPLEX ANIMATION ORCHESTRATION
+     ======================================== */
+  
+  /* Multi-step Animation */
+  --animation-step-1: 0ms;
+  --animation-step-2: 200ms;
+  --animation-step-3: 400ms;
+  --animation-step-4: 600ms;
+  --animation-step-5: 800ms;
+  
+  /* Choreographed Sequences */
+  --sequence-hero: 0ms 300ms 600ms 900ms;
+  --sequence-card: 100ms 400ms 700ms 1000ms;
+  --sequence-list: 50ms 200ms 350ms 500ms;
+  
+  /* ========================================
+     PERFORMANCE OPTIMIZATION - ORCHESTRATION
+     ======================================== */
+  
+  /* GPU Acceleration Thresholds */
+  --gpu-threshold-transform: 0.1;
+  --gpu-threshold-opacity: 0.01;
+  --gpu-threshold-filter: 0.1;
+  
+  /* Batch Processing */
+  --batch-size-small: 5;
+  --batch-size-medium: 10;
+  --batch-size-large: 20;
+  --batch-delay: 16ms;
+  
+  /* ========================================
+     RESPONSIVE ANIMATION - ORCHESTRATION
+     ======================================== */
+  
+  /* Mobile Animation Adjustments */
+  --mobile-duration-multiplier: 0.8;
+  --mobile-stagger-reduction: 0.6;
+  --mobile-cascade-simplification: 0.7;
+  
+  /* Tablet Animation Adjustments */
+  --tablet-duration-multiplier: 0.9;
+  --tablet-stagger-reduction: 0.8;
+  --tablet-cascade-simplification: 0.85;
+  
+  /* Desktop Animation Adjustments */
+  --desktop-duration-multiplier: 1.0;
+  --desktop-stagger-reduction: 1.0;
+  --desktop-cascade-simplification: 1.0;
+  
+  /* ========================================
+     ACCESSIBILITY ANIMATION - ORCHESTRATION
+     ======================================== */
+  
+  /* Reduced Motion Adjustments */
+  --reduced-motion-duration: 0.1;
+  --reduced-motion-stagger: 0.1;
+  --reduced-motion-cascade: 0.1;
+  
+  /* High Contrast Adjustments */
+  --high-contrast-duration: 1.2;
+  --high-contrast-stagger: 1.3;
+  --high-contrast-cascade: 1.4;
+  
+  /* ========================================
+     THEME ANIMATION - ORCHESTRATION
+     ======================================== */
+  
+  /* Light Theme Adjustments */
+  --light-theme-duration: 1.0;
+  --light-theme-stagger: 1.0;
+  --light-theme-cascade: 1.0;
+  
+  /* Dark Theme Adjustments */
+  --dark-theme-duration: 1.1;
+  --dark-theme-stagger: 1.1;
+  --dark-theme-cascade: 1.1;
+  
+  /* Cosmic Theme Adjustments */
+  --cosmic-theme-duration: 1.2;
+  --cosmic-theme-stagger: 1.2;
+  --cosmic-theme-cascade: 1.2;
+}

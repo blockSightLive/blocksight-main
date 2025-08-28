@@ -4,12 +4,12 @@
 
 This document contains key sequence diagrams showing the interaction flows between BlockSight.live system components for critical user scenarios and system operations with realistic performance characteristics.
 
-## 1. Block Discovery and Real-Time Update Flow
+## 1. Block Discovery and Real-Time Update Flow (Current: Polling → WS)
 
 ```
 ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│ Bitcoin     │    │ electrs     │    │ HTTP Client │    │ WebSocket   │    │ Frontend    │
-│ Core        │    │ Open Source │    │ Manager     │    │ Server      │    │ Dashboard   │
+│ Bitcoin     │    │ electrs     │    │ Electrum    │    │ WebSocket   │    │ Frontend    │
+│ Core        │    │ (TCP JSON)  │    │ Adapter Poll│    │ Server/Hub  │    │ Dashboard   │
 └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
        │                   │                   │                   │                   │
        │                   │                   │                   │                   │
@@ -27,14 +27,15 @@ This document contains key sequence diagrams showing the interaction flows betwe
        │                   │    (Internal)     │                   │                   │
        │                   │◀──────────────────│                   │                   │
        │                   │                   │                   │                   │
-       │                   │ 4. HTTP API       │                   │                   │
-       │                   │    Available      │                   │                   │
-       │                   │    (Port 3000)    │                   │                   │
+       │                   │ 4. Electrum TCP   │                   │                   │
+       │                   │    (Index done)   │                   │                   │
+       │                   │    available      │                   │                   │
        │                   │──────────────────▶│                   │                   │
        │                   │                   │                   │                   │
        │                   │                   │ 5. Poll for       │                   │
-       │                   │                   │    Updates        │                   │
-       │                   │                   │    (~1-2s)        │                   │
+       │                   │                   │    height/fees/   │                   │
+       │                   │                   │    mempool        │                   │
+       │                   │                   │    (5/15/10s)     │                   │
        │                   │◀──────────────────│                   │                   │
        │                   │                   │                   │                   │
        │                   │ 6. Block Data     │                   │                   │
@@ -57,7 +58,7 @@ This document contains key sequence diagrams showing the interaction flows betwe
        │                   │                   │                   │◀──────────────────│
 ```
 
-## 1. Tip Discovery and Real-Time Update (Subscriptions-First)
+## 2. Tip Discovery and Real-Time Update (Planned: Subscriptions-First)
 
 ```
 ┌─────────────┐    ┌─────────────┐    ┌────────────────┐    ┌───────────────┐    ┌─────────────┐
@@ -80,7 +81,7 @@ This document contains key sequence diagrams showing the interaction flows betwe
        │                  │                    │                      │────────────────────▶│
 ```
 
-## 2. Address Search and Transaction Lookup (Scripthash)
+## 3. Address Search and Transaction Lookup (Scripthash) — Planned
 
 ```
 ┌─────────────┐    ┌─────────────┐    ┌────────────────┐    ┌───────────────┐    ┌─────────────┐
@@ -112,7 +113,7 @@ This document contains key sequence diagrams showing the interaction flows betwe
        │◀─────────────────│                    │                      │                     │
 ```
 
-## 3. Fee Analysis and Network Load Calculation Flow
+## 4. Fee Analysis and Network Load Calculation Flow — Planned
 
 ```
 ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
@@ -169,7 +170,7 @@ This document contains key sequence diagrams showing the interaction flows betwe
        │                   │                   │                   │◀──────────────────│
 ```
 
-## 4. Price Data Integration and Currency Conversion Flow
+## 5. Price Data Integration and Currency Conversion Flow — Planned
 
 ```
 ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
@@ -198,31 +199,117 @@ This document contains key sequence diagrams showing the interaction flows betwe
        │                   │                   │                   │                   │
        │                   │ 5. WebSocket      │                   │                   │
        │                   │    Update         │                   │                   │
-       │                   │    (If Changed)   │                   │                   │
+       │                   │    (Price)        │                   │                   │
        │                   │──────────────────▶│                   │                   │
        │                   │                   │                   │                   │
-       │                   │                   │                   │ 6. Price Update   │
-       │                   │                   │                   │    Received       │
-       │                   │                   │                   │    (Hourly)       │
+       │                   │                   │                   │ 6. Update Price   │
+       │                   │                   │                   │     Display       │
+       │                   │                   │                   │     (Real-time)   │
        │                   │                   │                   │◀──────────────────│
-       │                   │                   │                   │                   │
-       │                   │                   │                   │ 7. Update Price   │
-       │                   │                   │                   │    Display        │
-       │                   │                   │                   │◀──────────────────│
-       │                   │                   │                   │                   │
-       │                   │                   │                   │ 8. Calculator     │
-       │                   │                   │                   │    Request        │
-       │                   │                   │                   │    (~10-20ms      │
-       │                   │                   │                   │     cached)       │
-       │                   │                   │                   │◀──────────────────│
-       │                   │                   │                   │                   │
-       │                   │                   │                   │ 9. Real-time      │
-       │                   │                   │                   │    Conversion     │
-       │                   │                   │                   │◀──────────────────│
-       │                   │                   │                   │                   │
-       │                   │                   │                   │ 10. Display       │
-       │                   │                   │                   │     Results       │
-       │                   │                   │                   │◀──────────────────│
+```
+
+## 6. Styles System and Theme Switching Flow (CSS Architecture)
+
+```
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│ User        │    │ Frontend    │    │ React       │    │ CSS Custom  │    │ UI          │
+│ Browser     │    │ Theme Toggle│    │ Context     │    │ Properties  │    │ Components  │
+└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
+       │                  │                    │                    │                   │
+       │ 1. Click Theme   │                    │                    │                   │
+       │    Toggle        │                    │                    │                   │
+       │─────────────────▶│                    │                    │                   │
+       │                  │ 2. Update Theme    │                    │                   │
+       │                  │    State           │                    │                   │
+       │                  │───────────────────▶│                    │                   │
+       │                  │                    │ 3. Update Context  │                   │
+       │                  │                    │    (Light/Dark)    │                   │
+       │                  │                    │───────────────────▶│                   │
+       │                  │                    │ 4. Context         │                   │
+       │                  │                    │    Updated         │                   │
+       │                  │                    │◀───────────────────│                   │
+       │                  │                    │ 5. Update CSS      │                   │
+       │                  │                    │    Variables       │                   │
+       │                  │                    │    (data-theme)    │                   │
+       │                  │                    │───────────────────▶│                   │
+       │                  │                    │ 6. CSS Variables   │                   │
+       │                  │                    │    Updated         │                   │
+       │                  │                    │◀───────────────────│                   │
+       │                  │                    │ 7. Broadcast Theme │                   │
+       │                  │                    │    Change          │                   │
+       │                  │                    │───────────────────▶│                   │
+       │                  │                    │                    │ 8. Re-render      │
+       │                  │                    │                    │     Components    │
+       │                  │                    │                    │     (Theme-aware) │
+       │                  │                    │                    │◀──────────────────│
+       │                  │ 9. Theme Applied   │                    │                   │
+       │                  │    (Instant)       │                    │                   │
+       │◀─────────────────│                    │                    │                   │
+```
+
+## 7. 3D Design System and LoadingBlocks Flow (Advanced UI)
+
+```
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│ User        │    │ Frontend    │    │ CSS Modules │    │ CSS Custom  │    │ 3D          │
+│ Browser     │    │ App Load    │    │ (Layout)    │    │ Properties  │    │ Components  │
+└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
+       │                  │                    │                    │                   │
+       │ 1. App Load      │                    │                    │                   │
+       │    (Splash)      │                    │                    │                   │
+       │─────────────────▶│                    │                    │                   │
+       │                  │ 2. Initialize      │                    │                   │
+       │                  │    LoadingBlocks   │                    │                   │
+       │                  │───────────────────▶│                    │                   │
+       │                  │                    │ 3. Load CSS        │                   │
+       │                  │                    │    Modules         │                   │
+       │                  │                    │    (Layout)        │                   │
+       │                  │                    │───────────────────▶│                   │
+       │                  │                    │ 4. Layout Ready    │                   │
+       │                  │                    │◀───────────────────│                   │
+       │                  │                    │ 5. Load CSS Custom │                   │
+       │                  │                    │    Properties      │                   │
+       │                  │                    │    (3D Transforms) │                   │
+       │                  │                    │───────────────────▶│                   │
+       │                  │                    │ 6. 3D Properties   │                   │
+       │                  │                    │    Ready           │                   │
+       │                  │                    │◀───────────────────│                   │
+       │                  │                    │ 7. Initialize 3D   │                   │
+       │                  │                    │    Components      │                   │
+       │                  │                    │───────────────────▶│                   │
+       │                  │                    │                    │ 8. 3D System      │
+       │                  │                    │                    │     Ready         │
+       │                  │                    │                    │◀──────────────────│
+       │                  │ 9. LoadingBlocks   │                    │                   │
+       │                  │    Animation       │                    │                   │
+       │                  │    (60fps)         │                    │                   │
+       │◀─────────────────│                    │                    │                   │ │                  │                    │                    │                   │
+       │                  │    Update          │                    │                   │
+       │                  │    (If Changed)    │                    │                   │
+       │                  │───────────────────▶│                    │                   │
+       │                  │                    │                    │                   │
+       │                  │                    │                    │ 6. Price Update   │
+       │                  │                    │                    │    Received       │
+       │                  │                    │                    │    (Hourly)       │
+       │                  │                    │                    │◀──────────────────│
+       │                  │                    │                    │                   │
+       │                  │                    │                    │ 7. Update Price   │
+       │                  │                    │                    │    Display        │
+       │                  │                    │                    │◀──────────────────│
+       │                  │                    │                    │                   │
+       │                  │                    │                    │ 8. Calculator     │
+       │                  │                    │                    │    Request        │
+       │                  │                    │                    │    (~10-20ms      │
+       │                  │                    │                    │     cached)       │
+       │                  │                    │                    │◀──────────────────│
+       │                  │                    │                    │                   │
+       │                  │                    │                    │ 9. Real-time      │
+       │                  │                    │                    │    Conversion     │
+       │                  │                    │                    │◀──────────────────│
+       │                  │                    │                    │                   │
+       │                  │                    │                    │ 10. Display       │
+       │                  │                    │                    │     Results       │
+       │                  │                    │                    │◀──────────────────│
 ```
 
 ## 5. System Health Monitoring and Alerting Flow
@@ -479,19 +566,19 @@ This document contains key sequence diagrams showing the interaction flows betwe
 
 ## Key Interaction Patterns
 
-### **Real-Time Data Flow (Realistic)**
+### **Real-Time Data Flow (Current)**
 
-- **Block Discovery**: Bitcoin Core → electrs → HTTP API → 1-2s Polling → WebSocket → Frontend
-- **Memory Pool Updates**: HTTP polling every 1-2s → Analytics Engine → WebSocket push
+- **Block Discovery**: Bitcoin Core → electrs (TCP) → Electrum adapter polls (height) → WebSocket → Frontend
+- **Memory Pool Updates**: Adapter polling (mempool, ~10s) → WebSocket push
 - **Price Updates**: External APIs → Hourly updates → Cache → WebSocket (if changed)
 
-### **Search and Query Flow (Multi-tier Cache)**
+### **Search and Query Flow (Multi-tier Cache) — Planned**
 
 - **Cache Hierarchy**: L1 Redis (~0.1-1ms) → L2 Memory-mapped (~1-5ms) → L3 Nginx (~5-20ms)
-- **API Fallback**: Cache miss → electrs HTTP API (~50-200ms) → PostgreSQL (~100-500ms)
+- **API Fallback**: Cache miss → Electrum TCP via adapter (~50-200ms) → PostgreSQL (~100-500ms)
 - **Performance Optimization**: Aggressive caching with realistic response times
 
-### **Analytics and Processing (Our Implementation)**
+### **Analytics and Processing (Planned)**
 
 - **Fee Analysis**: Memory pool data → Analytics Engine → Real-time categorization (~500-2000ms)
 - **Network Load**: Transaction analysis → Load categorization → Cached results (~200-1000ms)
@@ -499,9 +586,9 @@ This document contains key sequence diagrams showing the interaction flows betwe
 
 ### **Error Handling and Resilience**
 
-- **Circuit Breaker Pattern**: Automatic failure detection with exponential backoff
-- **Graceful Degradation**: Fallback to multi-tier cache during electrs HTTP API outages
-- **Service Recovery**: Half-open state testing with intelligent retry mechanisms
+- **Circuit Breaker Pattern**: Automatic failure detection with exponential backoff (planned)
+- **Graceful Degradation**: Fallback to multi-tier cache during Electrum outages (planned)
+- **Service Recovery**: Half-open state testing with intelligent retry mechanisms (planned)
 
 ### **User Experience (Realistic Expectations)**
 

@@ -22,5 +22,10 @@
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=9.0.0"
+  },
+  "devDependencies": {
+    "stylelint": "^16.23.1",
+    "stylelint-config-standard": "^39.0.0",
+    "stylelint-declaration-strict-value": "^1.10.11"
   }
 }

@@ -1,0 +1,123 @@
+/* Co-located styles for BitcoinNetworkLoadGauge */
+
+.network-load-gauge {
+	padding: var(--spacing-4);
+	background: var(--color-background);
+	border-radius: var(--radius-md);
+	box-shadow: var(--shadow);
+}
+
+.network-load-gauge__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: var(--spacing-4);
+	padding-bottom: var(--spacing-2);
+	border-bottom: var(--border-width-thin) solid var(--color-border);
+}
+
+.network-load-gauge__header h3 {
+	margin: var(--spacing-none);
+	color: var(--color-text-primary);
+	font-size: var(--font-size-lg);
+	font-weight: var(--font-weight-semibold);
+}
+
+.network-load-gauge__value {
+	font-size: var(--font-size-2xl);
+	font-weight: var(--font-weight-bold);
+	color: var(--color-primary);
+	text-align: center;
+	margin: var(--spacing-4) 0;
+}
+
+.network-load-gauge__unit {
+	font-size: var(--font-size-sm);
+	color: var(--color-text-secondary);
+	margin-left: var(--spacing-1);
+}
+
+.network-load-gauge__chart {
+	height: var(--spacing-32);
+	margin: var(--spacing-4) 0;
+	background: var(--color-background-secondary);
+	border-radius: var(--radius-sm);
+	position: relative;
+	overflow: hidden;
+}
+
+.network-load-gauge__bar {
+	height: 100%;
+	background: var(--gradient-primary);
+	border-radius: var(--radius-sm);
+	transition: width var(--duration-300) var(--ease-in-out);
+}
+
+.network-load-gauge__labels {
+	display: flex;
+	justify-content: space-between;
+	margin-top: var(--spacing-2);
+	font-size: var(--font-size-xs);
+	color: var(--color-text-secondary);
+}
+
+.network-load-gauge__min {
+	text-align: left;
+}
+
+.network-load-gauge__max {
+	text-align: right;
+}
+
+.network-load-gauge__status {
+	text-align: center;
+	margin-top: var(--spacing-3);
+	padding: var(--spacing-2);
+	border-radius: var(--radius-sm);
+	font-size: var(--font-size-sm);
+	font-weight: var(--font-weight-medium);
+}
+
+.network-load-gauge__status--low {
+	background: var(--color-success-light);
+	color: var(--color-success);
+}
+
+.network-load-gauge__status--medium {
+	background: var(--color-warning-light);
+	color: var(--color-warning);
+}
+
+.network-load-gauge__status--high {
+	background: var(--color-error-light);
+	color: var(--color-error);
+}
+
+@media (max-width: 768px) {
+	.network-load-gauge {
+		padding: var(--spacing-3);
+	}
+
+	.network-load-gauge__value {
+		font-size: var(--font-size-xl);
+	}
+
+	.network-load-gauge__chart {
+		height: var(--spacing-24);
+	}
+}
+
+@media (max-width: 576px) {
+	.network-load-gauge {
+		padding: var(--spacing-2);
+	}
+
+	.network-load-gauge__header h3 {
+		font-size: var(--font-size-base);
+	}
+
+	.network-load-gauge__value {
+		font-size: var(--font-size-lg);
+	}
+}
+

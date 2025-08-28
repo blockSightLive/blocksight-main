@@ -1,0 +1,180 @@
+/* Co-located styles for BitcoinPriceDashboard */
+
+.price-dashboard {
+	padding: var(--spacing-4);
+	background: var(--color-background);
+	border-radius: var(--radius-md);
+	box-shadow: var(--shadow);
+}
+
+.price-dashboard__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: var(--spacing-4);
+	padding-bottom: var(--spacing-2);
+	border-bottom: var(--border-width-thin) solid var(--color-border);
+}
+
+.price-dashboard__header h3 {
+	margin: var(--spacing-none);
+	color: var(--color-text-primary);
+	font-size: var(--font-size-lg);
+	font-weight: var(--font-weight-semibold);
+}
+
+.price-dashboard__current-price {
+	font-size: var(--font-size-3xl);
+	font-weight: var(--font-weight-bold);
+	color: var(--color-primary);
+	text-align: center;
+	margin: var(--spacing-4) 0;
+}
+
+.price-dashboard__currency {
+	font-size: var(--font-size-sm);
+	color: var(--color-text-secondary);
+	margin-left: var(--spacing-1);
+}
+
+.price-dashboard__change {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: var(--spacing-2) 0;
+	font-size: var(--font-size-lg);
+	font-weight: var(--font-weight-medium);
+}
+
+.price-dashboard__change--positive {
+	color: var(--color-success);
+}
+
+.price-dashboard__change--negative {
+	color: var(--color-error);
+}
+
+.price-dashboard__change--neutral {
+	color: var(--color-text-secondary);
+}
+
+.price-dashboard__change-icon {
+	margin-right: var(--spacing-1);
+	font-size: var(--font-size-sm);
+}
+
+.price-dashboard__chart {
+	height: var(--spacing-32);
+	margin: var(--spacing-4) 0;
+	background: var(--color-background-secondary);
+	border-radius: var(--radius-sm);
+	position: relative;
+	overflow: hidden;
+}
+
+.price-dashboard__chart-placeholder {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	color: var(--color-text-secondary);
+	font-style: italic;
+}
+
+.price-dashboard__stats {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: var(--spacing-3);
+	margin-top: var(--spacing-4);
+}
+
+.price-dashboard__stat {
+	text-align: center;
+	padding: var(--spacing-3);
+	background: var(--color-background-secondary);
+	border-radius: var(--radius-sm);
+}
+
+.price-dashboard__stat-label {
+	font-size: var(--font-size-xs);
+	color: var(--color-text-secondary);
+	margin-bottom: var(--spacing-1);
+	text-transform: uppercase;
+	letter-spacing: var(--letter-spacing-wide);
+}
+
+.price-dashboard__stat-value {
+	font-size: var(--font-size-lg);
+	font-weight: var(--font-weight-semibold);
+	color: var(--color-text-primary);
+}
+
+.price-dashboard__timeframe {
+	display: flex;
+	justify-content: center;
+	margin-top: var(--spacing-4);
+	gap: var(--spacing-2);
+}
+
+.price-dashboard__timeframe-btn {
+	padding: var(--spacing-2) var(--spacing-3);
+	background: transparent;
+	border: var(--border-width-thin) solid var(--color-border);
+	border-radius: var(--radius-sm);
+	color: var(--color-text-secondary);
+	cursor: pointer;
+	font-size: var(--font-size-sm);
+	transition: all var(--duration-200) var(--ease-in-out);
+}
+
+.price-dashboard__timeframe-btn:hover {
+	background: var(--color-background-secondary);
+	border-color: var(--color-primary);
+	color: var(--color-primary);
+}
+
+.price-dashboard__timeframe-btn--active {
+	background: var(--color-primary);
+	border-color: var(--color-primary);
+	color: white;
+}
+
+@media (max-width: 768px) {
+	.price-dashboard {
+		padding: var(--spacing-3);
+	}
+
+	.price-dashboard__current-price {
+		font-size: var(--font-size-2xl);
+	}
+
+	.price-dashboard__chart {
+		height: var(--spacing-24);
+	}
+
+	.price-dashboard__stats {
+		grid-template-columns: 1fr;
+		gap: var(--spacing-2);
+	}
+}
+
+@media (max-width: 576px) {
+	.price-dashboard {
+		padding: var(--spacing-2);
+	}
+
+	.price-dashboard__header h3 {
+		font-size: var(--font-size-base);
+	}
+
+	.price-dashboard__current-price {
+		font-size: var(--font-size-xl);
+	}
+
+	.price-dashboard__timeframe {
+		flex-direction: column;
+		align-items: center;
+	}
+}
+
+

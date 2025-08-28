@@ -1,0 +1,211 @@
+/**
+ * @fileoverview Dark Theme for BlockSight.live
+ * @version 1.0.0
+ * @author Development Team
+ * @since 2025-08-23
+ * @lastModified 2025-08-27
+ * 
+ * @description
+ * Dark theme styles for components and UI elements.
+ * Backgrounds are handled by the cosmic BackgroundSystem component.
+ * 
+ * @styling
+ * - CSS Custom Properties: Dark theme color scheme
+ * - Component Styling: UI element colors and effects
+ * - No Backgrounds: Cosmic background handled separately
+ * 
+ * @dependencies
+ * - Design tokens from design-tokens/colors.css
+ * - Base styles from base/reset.css
+ */
+
+/* ========================================
+   DARK THEME - COMPONENT STYLING ONLY
+   ======================================== */
+
+html[data-theme="dark"] {
+  /* ========================================
+     COMPONENT COLORS - NO BACKGROUNDS
+     ======================================== */
+  
+  /* Surface Colors */
+  --color-surface: #0A0A0A;
+  --color-surface-elevated: #1e293b;
+  --color-surface-hover: #334155;
+  --color-surface-active: #475569;
+  
+  /* Card Colors */
+  --color-card: #0A0A0A;
+  --color-card-hover: #1e293b;
+  --color-card-border: #475569;
+  
+  /* Text Colors */
+  --color-text-primary: var(--color-neutral-50);
+  --color-text-secondary: var(--color-neutral-300);
+  --color-text-tertiary: var(--color-neutral-400);
+  --color-text-muted: var(--color-neutral-500);
+  --color-text-inverse: var(--color-neutral-900);
+  
+  /* Border Colors */
+  --color-border: var(--color-neutral-700);
+  --color-border-hover: var(--color-neutral-600);
+  --color-border-focus: var(--color-primary-400);
+  --color-border-error: var(--color-error-500);
+  --color-border-success: var(--color-success-500);
+  --color-border-warning: var(--color-warning-500);
+  
+  /* Input Colors */
+  --color-input-background: var(--color-neutral-800);
+  --color-input-border: var(--color-neutral-600);
+  --color-input-border-focus: var(--color-primary-400);
+  --color-input-text: var(--color-neutral-100);
+  --color-input-placeholder: var(--color-neutral-500);
+  
+  /* Button Colors */
+  --color-button-primary: var(--color-primary-600);
+  --color-button-primary-hover: var(--color-primary-500);
+  --color-button-primary-active: var(--color-primary-700);
+  --color-button-secondary: var(--color-neutral-700);
+  --color-button-secondary-hover: var(--color-neutral-600);
+  --color-button-secondary-active: var(--color-neutral-800);
+  
+  /* Status Colors */
+  --color-success: var(--color-success-500);
+  --color-success-light: var(--color-success-400);
+  --color-success-dark: var(--color-success-600);
+  --color-warning: var(--color-warning-500);
+  --color-warning-light: var(--color-warning-400);
+  --color-warning-dark: var(--color-warning-600);
+  --color-error: var(--color-error-500);
+  --color-error-light: var(--color-error-400);
+  --color-error-dark: var(--color-error-600);
+  --color-info: var(--color-info-500);
+  --color-info-light: var(--color-info-400);
+  --color-info-dark: var(--color-info-600);
+  
+  /* Shadow Colors */
+  --color-shadow: rgb(0 0 0 / 30%);
+  --color-shadow-light: rgb(0 0 0 / 10%);
+  --color-shadow-heavy: rgb(0 0 0 / 50%);
+  --color-shadow-colored: rgb(14 165 233 / 15%);
+  
+  /* Glass Effects */
+  --color-glass: rgb(30 41 59 / 80%);
+  --color-glass-light: rgb(30 41 59 / 60%);
+  --color-glass-heavy: rgb(30 41 59 / 90%);
+  --color-glass-border: rgb(148 163 184 / 20%);
+  
+  /* ========================================
+     COMPONENT-SPECIFIC DARK THEME
+     ======================================== */
+  
+  /* Header Component */
+  --header-background: var(--bg-glass);
+  --header-border: var(--border-alpha-accent-25);
+  --header-text: var(--color-text-primary);
+  --header-text-secondary: var(--color-text-secondary);
+  
+  /* Navigation Component */
+  --nav-background: var(--bg-glass);
+  --nav-border: var(--border-alpha-accent-25);
+  --nav-item-background: transparent;
+  --nav-item-background-hover: var(--color-surface-hover);
+  --nav-item-background-active: var(--color-primary-600);
+  --nav-item-text: var(--color-text-primary);
+  --nav-item-text-hover: var(--color-text-primary);
+  --nav-item-text-active: var(--color-text-inverse);
+  
+  /* Card Component */
+  --card-background: var(--bg-glass);
+  --card-border: var(--border-alpha-accent-25);
+  --card-shadow: var(--color-shadow);
+  --card-background-hover: var(--color-glass-light);
+  --card-shadow-hover: var(--color-shadow-heavy);
+  
+  /* Button Component */
+  --button-text: var(--color-text-primary);
+  --button-text-inverse: var(--color-text-inverse);
+  --button-shadow: var(--color-shadow);
+  --button-shadow-hover: var(--color-shadow-heavy);
+  
+  /* Input Component */
+  --input-background: var(--bg-glass);
+  --input-border: var(--border-alpha-accent-25);
+  --input-text: var(--color-text-primary);
+  --input-shadow: var(--color-shadow-light);
+  --input-shadow-focus: var(--color-shadow-colored);
+  
+  /* Table Component */
+  --table-background: var(--bg-glass);
+  --table-border: var(--border-alpha-accent-25);
+  --table-header-background: var(--color-surface-elevated);
+  --table-row-background: transparent;
+  --table-row-background-hover: var(--color-surface-hover);
+  --table-row-background-striped: var(--color-surface-elevated);
+  
+  /* Modal Component */
+  --modal-background: var(--color-glass-heavy);
+  --modal-border: var(--color-glass-border);
+  --modal-shadow: var(--color-shadow-heavy);
+  --modal-overlay: rgb(0 0 0 / 70%);
+  
+  /* Tooltip Component */
+  --tooltip-background: var(--color-neutral-900);
+  --tooltip-text: var(--color-text-primary);
+  --tooltip-border: var(--color-neutral-700);
+  --tooltip-shadow: var(--color-shadow-heavy);
+  
+  /* ========================================
+     SPECIAL EFFECTS - DARK THEME
+     ======================================== */
+  
+  /* Glow Effects */
+  --glow-primary: 0 0 20px rgb(14 165 233 / 30%);
+  --glow-bitcoin: 0 0 20px rgb(249 115 22 / 30%);
+  --glow-cosmic: 0 0 20px rgb(168 85 247 / 30%);
+  --glow-success: 0 0 20px rgb(34 197 94 / 30%);
+  --glow-warning: 0 0 20px rgb(245 158 11 / 30%);
+  --glow-error: 0 0 20px rgb(239 68 68 / 30%);
+  
+  /* Focus Rings */
+  --focus-ring-primary: 0 0 0 3px rgb(14 165 233 / 25%);
+  --focus-ring-bitcoin: 0 0 0 3px rgb(249 115 22 / 25%);
+  --focus-ring-cosmic: 0 0 0 3px rgb(168 85 247 / 25%);
+  --focus-ring-success: 0 0 0 3px rgb(34 197 94 / 25%);
+  --focus-ring-warning: 0 0 0 3px rgb(245 158 11 / 25%);
+  --focus-ring-error: 0 0 0 3px rgb(239 68 68 / 25%);
+  
+  /* Hover Effects */
+  --hover-lift: translateY(-2px);
+  --hover-scale: scale(1.02);
+  --hover-shadow: var(--color-shadow-heavy);
+  --hover-glow: var(--glow-primary);
+  
+  /* ========================================
+     RESPONSIVE DARK THEME
+     ======================================== */
+  
+  /* Mobile Dark Theme Adjustments */
+  @media (width <= 768px) {
+    --color-glass: rgb(30 41 59 / 90%);
+    --color-glass-light: rgb(30 41 59 / 80%);
+    --color-glass-heavy: rgb(30 41 59 / 95%);
+  }
+  
+  /* High Contrast Mode Support */
+  @media (prefers-contrast: more) {
+    --color-border: var(--color-neutral-500);
+    --color-border-hover: var(--color-neutral-400);
+    --color-border-focus: var(--color-primary-300);
+    --color-text-secondary: var(--color-neutral-200);
+    --color-text-tertiary: var(--color-neutral-300);
+  }
+  
+  /* Reduced Motion Support */
+  @media (prefers-reduced-motion: reduce) {
+    --hover-lift: none;
+    --hover-scale: none;
+    --hover-shadow: var(--color-shadow);
+    --hover-glow: none;
+  }
+}

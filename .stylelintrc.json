@@ -1,0 +1,68 @@
+{
+  "extends": [
+    "stylelint-config-standard"
+  ],
+  "plugins": [
+    "stylelint-declaration-strict-value"
+  ],
+  "rules": {
+    "selector-class-pattern": [
+      "^[a-z][a-z0-9-]*(?:__[a-z0-9-]+)?(?:--[a-z0-9-]+)?$",
+      {
+        "resolveNestedSelectors": true,
+        "message": "Use kebab-case or BEM (block__element--modifier) class names"
+      }
+    ],
+    "media-query-no-invalid": true,
+    "media-feature-range-notation": null
+  },
+  "overrides": [
+    {
+      "files": ["**/*.module.css"],
+      "rules": {
+        "scale-unlimited/declaration-strict-value": [
+          [
+            "/color",
+            "fill",
+            "stroke",
+            "border",
+            "border-color",
+            "background",
+            "background-color",
+            "box-shadow",
+            "text-shadow",
+            "font-size",
+            "line-height",
+            "letter-spacing",
+            "margin",
+            "margin-*",
+            "padding",
+            "padding-*",
+            "border-radius"
+          ],
+          {
+            "disableFix": true,
+            "message": "Use design tokens via var(--*) instead of raw values",
+            "ignoreFunctions": ["repeat", "minmax", "calc", "var"]
+          }
+        ],
+        "function-disallowed-list": [
+          [
+            "/rgba\\(/",
+            "/rgb\\(/"
+          ],
+          {
+            "message": "Do not use raw rgba/rgb. Define alpha helpers in tokens."
+          }
+        ]
+      }
+    },
+    {
+      "files": ["**/LoadingBlockchain.module.css"],
+      "rules": {
+        "scale-unlimited/declaration-strict-value": null,
+        "comment-empty-line-before": null
+      }
+    }
+  ]
+}

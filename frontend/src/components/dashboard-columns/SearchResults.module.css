@@ -1,0 +1,38 @@
+/**
+ * CSS Module for SearchResults panel
+ */
+
+.root {
+	width: var(--width-full);
+	height: var(--height-full);
+	background: var(--bg-transparent);
+
+	/* show cosmic background fully */
+	color: var(--color-text-secondary);
+	display: flex;
+
+	/* center placeholder on both axes */
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+
+	/* ensure no inherited panel padding distorts centering */
+	padding: var(--spacing-none);
+}
+
+.message,
+.placeholder {
+	margin: var(--spacing-none);
+	padding: var(--spacing-1) var(--spacing-1); /* Reduced from var(--spacing-2) for less bloated appearance */
+	text-align: center;
+	font-style: italic;
+	font-size: var(--font-size-sm); /* Reduced from default for more refined typography */
+	opacity: var(--opacity-75); /* Reduced from var(--opacity-85) for subtlety */
+}
+
+.error {
+	color: var(--color-error);
+	font-style: normal;
+}
+
+

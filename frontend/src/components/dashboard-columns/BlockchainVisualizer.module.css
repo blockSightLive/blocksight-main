@@ -1,0 +1,186 @@
+/* Co-located styles for BlockchainVisualizer */
+
+.block-visualizer {
+	padding: var(--spacing-3); /* Reduced from var(--spacing-4) for less bloated appearance */
+	background: var(--color-background);
+	border-radius: var(--radius-md);
+	box-shadow: var(--shadow);
+}
+
+.block-visualizer--empty {
+	text-align: center;
+	color: var(--color-text-secondary);
+	padding: var(--spacing-8);
+}
+
+.block-visualizer__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: var(--spacing-4);
+	padding-bottom: var(--spacing-2);
+	border-bottom: var(--border-width-thin) solid var(--color-border);
+}
+
+.block-visualizer__header h3 {
+	margin: var(--spacing-none);
+	color: var(--color-text-primary);
+	font-size: var(--font-size-lg); /* Reduced from var(--font-size-xl) for less bloated appearance */
+	font-weight: var(--font-weight-medium); /* Reduced from var(--font-weight-semibold) for refinement */
+}
+
+.block-count {
+	color: var(--color-text-secondary);
+	font-size: var(--font-size-xs); /* Reduced from var(--font-size-sm) for refinement */
+	background: var(--color-background-secondary);
+	padding: var(--spacing-1) var(--spacing-1); /* Reduced from var(--spacing-2) for less bloated appearance */
+	border-radius: var(--radius-sm);
+}
+
+.block-visualizer__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(var(--block-card-min-width), var(--grid-1fr)));
+	gap: var(--spacing-4);
+	margin-bottom: var(--spacing-4);
+}
+
+.block-card {
+	background: var(--color-background-secondary);
+	border: var(--border-width-thin) solid var(--color-border);
+	border-radius: var(--radius-md);
+	padding: var(--spacing-4);
+	cursor: pointer;
+	transition: all var(--transition);
+	position: relative;
+	overflow: hidden;
+}
+
+.block-card:hover {
+	transform: translateY(var(--translate-y-neg-2));
+	box-shadow: var(--shadow-hover);
+	border-color: var(--color-primary);
+}
+
+.block-card--selected {
+	border-color: var(--color-primary);
+	background: var(--color-primary-light);
+	box-shadow: var(--shadow-ring-primary);
+}
+
+.block-card__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: var(--spacing-3);
+}
+
+.block-height {
+	font-weight: var(--font-weight-medium); /* Reduced from var(--font-weight-semibold) for refinement */
+	color: var(--color-text-primary);
+	font-size: var(--font-size-base); /* Reduced from var(--font-size-lg) for less bloated appearance */
+}
+
+.block-status {
+	padding: var(--spacing-1) var(--spacing-2);
+	border-radius: var(--radius-sm);
+	font-size: var(--font-size-xs);
+	font-weight: var(--font-weight-medium);
+	text-transform: uppercase;
+	letter-spacing: var(--letter-spacing-wide);
+}
+
+.block-status--confirmed {
+	background: var(--color-success-light);
+	color: var(--color-success);
+}
+
+.block-status--pending {
+	background: var(--color-warning-light);
+	color: var(--color-warning);
+}
+
+.block-status--orphaned {
+	background: var(--color-error-light);
+	color: var(--color-error);
+}
+
+.block-card__content {
+	margin-bottom: var(--spacing-3);
+}
+
+.block-hash {
+	font-family: var(--font-mono);
+	font-size: var(--font-size-sm);
+	color: var(--color-text-secondary);
+	margin-bottom: var(--spacing-2);
+	word-break: break-all;
+}
+
+.block-info {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: var(--spacing-2);
+	font-size: var(--font-size-sm);
+}
+
+.tx-count {
+	color: var(--color-text-secondary);
+}
+
+.block-size {
+	color: var(--color-text-secondary);
+}
+
+.block-fees {
+	margin-bottom: var(--spacing-2);
+}
+
+.fee-range {
+	font-size: var(--font-size-sm);
+	color: var(--color-primary);
+	font-weight: var(--font-weight-medium);
+}
+
+.block-card__footer {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	font-size: var(--font-size-xs);
+	color: var(--color-text-secondary);
+}
+
+.block-time {
+	font-weight: var(--font-weight-medium);
+}
+
+.block-difficulty {
+	font-weight: var(--font-weight-medium);
+}
+
+@media (max-width: 768px) {
+	.block-visualizer__grid {
+		grid-template-columns: var(--grid-1fr);
+	}
+
+	.block-card {
+		padding: var(--spacing-3);
+	}
+
+	.block-visualizer__header {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: var(--spacing-2);
+	}
+}
+
+@media (max-width: 480px) {
+	.block-visualizer {
+		padding: var(--spacing-3);
+	}
+
+	.block-card {
+		padding: var(--spacing-2);
+	}
+}
+
+

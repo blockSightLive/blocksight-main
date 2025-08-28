@@ -1,0 +1,295 @@
+/**
+ * @fileoverview Color Design Tokens for BlockSight.live
+ * @version 1.0.0
+ * @author Development Team
+ * @since 2025-08-23
+ * @lastModified 2025-08-27
+ *
+ * @description
+ * Centralized color design tokens for consistent theming.
+ * Enhanced with professional grey palette for sophisticated themes.
+ * Provides all color values for the application.
+ * 
+ * @dependencies
+ * - Base design tokens from other design-token files
+ * 
+ * @usage
+ * Imported by main index.css for color system
+ * 
+ * @state
+ * ✅ Enhanced - Professional grey palette integrated
+ * 
+ * @bugs
+ * - None currently identified
+ * 
+ * @todo
+ * - None currently identified
+ * 
+ * @styling
+ * - Color System: All color values and variations
+ * - Professional Grey Palette: #F5F5F5, #E8E8E8, #444444, #0A0A0A
+ * - Modern Design Standards: Eye-friendly backgrounds, no harsh whites
+ * - Design Token Usage: Uses centralized design tokens
+ * - Theme Support: Light, dark, and cosmic themes with auto-adapting surfaces
+ * 
+ * @performance
+ * - Efficient color definitions
+ * - Minimal CSS duplication
+ * 
+ * @security
+ * - Safe CSS properties only
+ * - No external dependencies
+ */
+
+:root {
+  /* ========================================
+     NEUTRAL COLORS - FOUNDATION
+     ======================================== */
+  
+  /* Neutral Grays */
+  --color-neutral-0: #fff;
+  --color-neutral-50: #f8fafc;
+  --color-neutral-100: #f1f5f9;
+  --color-neutral-200: #e2e8f0;
+  --color-neutral-300: #cbd5e1;
+  --color-neutral-400: #94a3b8;
+  --color-neutral-500: #64748b;
+  --color-neutral-600: #475569;
+  --color-neutral-700: #334155;
+  --color-neutral-800: #1e293b;
+  --color-neutral-900: #0f172a;
+  
+  /* ========================================
+     PRIMARY COLORS - BRAND
+     ======================================== */
+  
+  /* Primary Blue */
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+  
+  /* Primary RGB for alpha variations */
+  --color-primary-rgb: 59 130 246;
+  
+  /* ========================================
+     BITCOIN COLORS - CRYPTO THEME
+     ======================================== */
+  
+  /* Bitcoin Orange */
+  --color-bitcoin-50: #fff7ed;
+  --color-bitcoin-100: #ffedd5;
+  --color-bitcoin-200: #fed7aa;
+  --color-bitcoin-300: #fdba74;
+  --color-bitcoin-400: #fb923c;
+  --color-bitcoin-500: #f97316;
+  --color-bitcoin-600: #ea580c;
+  --color-bitcoin-700: #c2410c;
+  --color-bitcoin-800: #9a3412;
+  --color-bitcoin-900: #7c2d12;
+  
+  /* Bitcoin RGB for alpha variations */
+  --color-bitcoin-rgb: 249 115 22;
+  
+  /* ========================================
+     BLOCKCHAIN STATUS COLORS - BLOCK VISUALIZATION
+     ======================================== */
+  
+  /* Unconfirmed Blocks - Orange */
+  --color-block-unconfirmed-light: #F9D8A2;
+  --color-block-unconfirmed-dark: #F29F58;
+  
+  /* Next Block - Red */
+  --color-block-next-light: #FC7A99;
+  --color-block-next-dark: #AB4459;
+  
+  /* Last Block - Light Purple */
+  --color-block-last-light: #7B2F9B;
+  --color-block-last-dark: #431752;
+  
+  /* Previous Block - Dark Purple */
+  --color-block-previous-light: #502168;
+  --color-block-previous-dark: #2A0F35;
+  
+  /* ========================================
+     ACCENT COLORS - UI ELEMENTS
+     ======================================== */
+  
+  /* Accent Purple */
+  --color-accent-50: #faf5ff;
+  --color-accent-100: #f3e8ff;
+  --color-accent-200: #e9d5ff;
+  --color-accent-300: #d8b4fe;
+  --color-accent-400: #c084fc;
+  --color-accent-500: #a855f7;
+  --color-accent-600: #9333ea;
+  --color-accent-700: #7c3aed;
+  --color-accent-800: #6b21a8;
+  --color-accent-900: #581c87;
+  
+  /* Accent RGB for alpha variations */
+  --color-accent-rgb: 168 85 247;
+  
+  /* ========================================
+     STATUS COLORS - FEEDBACK
+     ======================================== */
+  
+  /* Success Green */
+  --color-success-50: #f0fdf4;
+  --color-success-100: #dcfce7;
+  --color-success-200: #bbf7d0;
+  --color-success-300: #86efac;
+  --color-success-400: #4ade80;
+  --color-success-500: #22c55e;
+  --color-success-600: #16a34a;
+  --color-success-700: #15803d;
+  --color-success-800: #166534;
+  --color-success-900: #14532d;
+  
+  /* Warning Yellow */
+  --color-warning-50: #fffbeb;
+  --color-warning-100: #fef3c7;
+  --color-warning-200: #fde68a;
+  --color-warning-300: #fcd34d;
+  --color-warning-400: #fbbf24;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+  --color-warning-700: #b45309;
+  --color-warning-800: #92400e;
+  --color-warning-900: #78350f;
+  
+  /* Error Red */
+  --color-error-50: #fef2f2;
+  --color-error-100: #fee2e2;
+  --color-error-200: #fecaca;
+  --color-error-300: #fca5a5;
+  --color-error-400: #f87171;
+  --color-error-500: #ef4444;
+  --color-error-600: #dc2626;
+  --color-error-700: #b91c1c;
+  --color-error-800: #991b1b;
+  --color-error-900: #7f1d1d;
+  
+  /* Info Blue */
+  --color-info-50: #eff6ff;
+  --color-info-100: #dbeafe;
+  --color-info-200: #bfdbfe;
+  --color-info-300: #93c5fd;
+  --color-info-400: #60a5fa;
+  --color-info-500: #3b82f6;
+  --color-info-600: #2563eb;
+  --color-info-700: #1d4ed8;
+  --color-info-800: #1e40af;
+  --color-info-900: #1e3a8a;
+  
+  /* ========================================
+     TEXT COLORS - TYPOGRAPHY
+     ======================================== */
+  
+  /* Primary Text */
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #64748b;
+  --color-text-tertiary: #94a3b8;
+  --color-text-muted: #cbd5e1;
+  --color-text-inverse: #fff;
+  
+  /* ========================================
+     BASE COLOR ALIASES - FOR COMPONENT COMPATIBILITY
+     ======================================== */
+  
+  /* Base Color Variables - Components expect these */
+  --color-primary: #3b82f6;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+  --color-accent: #a855f7;
+  
+  /* ========================================
+     BACKGROUND COLORS - SURFACES
+     ======================================== */
+  
+  /* Primary Backgrounds */
+  --color-background: #fff;
+  --color-background-secondary: #f8fafc;
+  --bg-transparent: transparent;
+  
+  /* Glass Effects */
+  --color-glass: rgb(255 255 255 / 80%);
+  --color-glass-light: rgb(255 255 255 / 60%);
+  --color-glass-heavy: rgb(255 255 255 / 90%);
+  
+  /* ========================================
+     BORDER COLORS - OUTLINES
+     ======================================== */
+  
+  /* Primary Borders */
+  --color-border: #e2e8f0;
+  --color-border-hover: #cbd5e1;
+  --color-border-focus: #3b82f6;
+  --color-border-error: #ef4444;
+  --color-border-success: #22c55e;
+  --color-border-warning: #f59e0b;
+  
+  /* Border Widths */
+  --border-width-none: none;
+  --border-width-thin: 1px;
+  --border-width-sm: 2px;
+  --border-width-md: 3px;
+  --border-width-lg: 4px;
+  
+  /* Alpha Borders */
+  --border-alpha-accent-25: rgb(168 85 247 / 25%);
+  --border-alpha-accent-35: rgb(168 85 247 / 35%);
+  
+  /* ========================================
+     SHADOW COLORS - DEPTH
+     ======================================== */
+  
+  /* Primary Shadows */
+  --color-shadow: rgb(0 0 0 / 10%);
+  --color-shadow-light: rgb(0 0 0 / 5%);
+  --color-shadow-heavy: rgb(0 0 0 / 20%);
+  --color-shadow-colored: rgb(59 130 246 / 15%);
+  
+  /* ========================================
+     CURSOR COLORS - INTERACTIONS
+     ======================================== */
+  
+  /* Cursor Types */
+  --cursor-pointer: pointer;
+  --cursor-default: default;
+  --cursor-not-allowed: not-allowed;
+  
+  /* ========================================
+     ENHANCED GREY PALETTE - PROFESSIONAL THEMES
+     ======================================== */
+  
+  /* Professional Grey Shades - Cross-Theme Foundation */
+  --color-grey-light: #F5F5F5;    /* Soft, sophisticated light grey - easy on eyes */
+  --color-grey-medium: #E8E8E8;   /* Medium grey for subtle depth */
+  --color-grey-dark: #444;     /* Dark grey for contrast in light theme */
+  --color-grey-deep: #0A0A0A;     /* Very black for sleek dark theme - modern standard */
+  
+  /* ========================================
+     SURFACE COLORS - THEME FOUNDATION
+     ======================================== */
+  
+  /* Default Surface Colors - Will be overridden by themes */
+  --color-surface: #F5F5F5;        /* Default light surface */
+  --color-surface-elevated: #E8E8E8; /* Default elevated surface */
+  --color-surface-hover: #f1f5f9;   /* Default hover surface */
+  --color-surface-active: #e2e8f0;  /* Default active surface */
+  
+  /* Card Colors - Will be overridden by themes */
+  --color-card: #F5F5F5;            /* Default card background */
+  --color-card-hover: #E8E8E8;      /* Default card hover */
+  --color-card-border: #444;         /* Default card border */
+
+} /* End of :root */
