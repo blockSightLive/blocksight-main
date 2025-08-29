@@ -6,7 +6,11 @@ describe('Electrum Routes (fake adapter)', () => {
     const app = createApp();
     const res = await request(app).get('/v1/health');
     expect(res.status).toBe(200);
-    expect(res.body).toEqual({ ok: true });
+    expect(res.body).toHaveProperty('ok', true);
+    expect(res.body).toHaveProperty('ts');
+    expect(res.body).toHaveProperty('details');
+    expect(res.body.details).toHaveProperty('electrum');
+    expect(res.body.details).toHaveProperty('core');
   });
 
   it('GET /v1/fee/estimates returns three tiers', async () => {
@@ -18,5 +22,3 @@ describe('Electrum Routes (fake adapter)', () => {
     expect(res.body).toHaveProperty('slow');
   });
 });
-
-

@@ -3,7 +3,7 @@
  * @version 1.0.0
  * @author Development Team
  * @since 2025-08-19
- * @lastModified 2025-08-19
+ * @lastModified 2025-08-11
  * 
  * @description
  * Basic tests for the simplified Bitcoin reducer to ensure core functionality works
@@ -44,7 +44,8 @@ import {
   BLOCK_ACTIONS, 
   TX_ACTIONS, 
   ADDRESS_ACTIONS, 
-  UI_ACTIONS 
+  UI_ACTIONS,
+  UTILITY_ACTIONS
 } from '../../constants/action-types';
 import type { BitcoinAction, BitcoinState } from '../../types/bitcoin';
 import { BitcoinBlock, BitcoinTransaction, BitcoinAddress, BlockStatus, ScriptType } from '../../types/bitcoin';
@@ -282,7 +283,7 @@ describe('Bitcoin Reducer', () => {
       expect(state.ui.error).toBe('Test error');
 
       // Reset state
-      const resetAction = { type: UI_ACTIONS.CLEAR_ERROR };
+      const resetAction = { type: UTILITY_ACTIONS.RESET };
       const result = bitcoinReducer(state, resetAction);
 
       // Verify state is reset
