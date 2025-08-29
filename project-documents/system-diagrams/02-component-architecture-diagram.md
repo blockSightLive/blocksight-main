@@ -1,150 +1,275 @@
 # BlockSight.live - Component Architecture Diagram
 
+/**
+ * @fileoverview Component architecture diagram showing the internal structure and relationships of BlockSight.live components
+ * @version 1.0.0
+ * @author Development Team
+ * @since 2025-08-11
+ * @lastModified 2025-08-29
+ * 
+ * @description
+ * This diagram shows the internal component architecture of BlockSight.live, including the completed
+ * frontend components, backend adapters, and infrastructure components. It reflects our current
+ * implementation status with CoreRpcAdapter, completed frontend, and Vercel staging deployment.
+ * 
+ * @dependencies
+ * - 00-model-spec.md (single source of truth)
+ * - Current system implementation status
+ * 
+ * @usage
+ * Reference for understanding internal component relationships and architecture
+ * 
+ * @state
+ * ✅ Updated to reflect current implementation status
+ * 
+ * @bugs
+ * - None currently identified
+ * 
+ * @todo
+ * - Add ThreeJS components when implemented
+ * - Update with new components as added
+ * 
+ * @performance
+ * - Reflects current performance characteristics
+ * - Shows component interaction patterns
+ * 
+ * @security
+ * - 100% passive system architecture
+ * - No blockchain write access
+ */
+
 ## Overview
 
-This Component Architecture Diagram shows the major system components of BlockSight.live, their responsibilities, and interconnections with realistic implementation boundaries. It corrects electrs integration to Electrum TCP and positions our Node.js adapter as the HTTP/JSON + WebSocket surface.
+This Component Architecture Diagram shows the internal structure and relationships of BlockSight.live components, including the completed frontend components, backend adapters, and infrastructure components. It reflects our current implementation status with CoreRpcAdapter, completed frontend, and Vercel staging deployment.
 
 ## Component Architecture Diagram
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│                              BLOCKSIGHT.LIVE SYSTEM                             │
+│                              COMPONENT ARCHITECTURE                             │
 ├─────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                 │
 │  ┌────────────────────────────────────────────────────────────────────────────┐ │
-│  │                              DATA INGESTION LAYER                          │ │
-│  │                                                                            │ │
-│  │  ┌─────────────────┐                    ┌─────────────────┐                │ │
-│  │  │   Bitcoin Core  │◄──────────────────►│     electrs     │                │ │
-│  │  │   (Full Node)   │   RPC/.blk + P2P   │ (Open Source)   │                │ │
-│  │  │                 │                    │ • Electrum TCP  │                │ │
-│  │  │ • RPC, .blk     │                    │   (50001/50002) │                │ │
-│  │  │ • P2P, chain    │                    │ • RocksDB (int.)│                │ │
-│  │  └─────────────────┘                    └─────────────────┘                │ │
-│  └────────────────────────────────────────────────────────────────────────────┘ │
-│                                    │                                            │
-│                                    ▼                                            │
-│  ┌────────────────────────────────────────────────────────────────────────────┐ │
-│  │                        ELECTRUM INTEGRATION LAYER                          │ │
-│  │                           (Our Implementation)                             │ │
-│  │                                                                            │ │
-│  │  ┌─────────────────┐    ┌─────────────────┐    ┌────────────────────────┐  │ │
-│  │  │ ElectrumClient  │    │ Connection Pool │    │ Circuit Breaker        │  │ │
-│  │  │ (TCP JSON msgs) │    │ (Keep‑alive)    │    │ (Open/Half‑open/Closed)│  │ │
-│  │  │ • headers.sub   │    │ • Max sockets   │    │ • Backoff+health       │  │ │
-│  │  │ • scripthash.*  │    │ • Heartbeats    │    │ • Quarantine nodes     │  │ │
-│  │  └─────────────────┘    └─────────────────┘    └────────────────────────┘  │ │
-│  └────────────────────────────────────────────────────────────────────────────┘ │
-│                                    │                                            │
-│                                    ▼                                            │
-│  ┌────────────────────────────────────────────────────────────────────────────┐ │
-│  │                            MULTI‑TIER CACHE LAYER                          │ │
-│  │                           (Our Implementation)                             │ │
-│  │                                                                            │ │
-│  │  ┌─────────────────┐    ┌─────────────────┐    ┌────────────────────────┐  │ │
-│  │  │   Redis L1      │    │ Memory‑Mapped L2│    │   HTTP Cache (L3)      │  │ │
-│  │  │   (Hot)         │    │   (Warm)        │    │   (Nginx, our API)     │  │ │
-│  │  │ • 1‑2s TTL      │    │ • UTXO/recent   │    │ • 1s‑24h TTL           │  │ │
-│  │  │ • ~0.1‑1ms      │    │   data ~1‑5ms   │    │ • ~5‑20ms              │  │ │
-│  │  └─────────────────┘    └─────────────────┘    └────────────────────────┘  │ │
-│  └────────────────────────────────────────────────────────────────────────────┘ │
-│                                    │                                            │
-│                                    ▼                                            │
-│  ┌────────────────────────────────────────────────────────────────────────────┐ │
-│  │                        POSTGRESQL ANALYTICS MIRROR                         │ │
-│  │                          (Read‑Only, Views/MVs)                            │ │
-│  │   • Minimal subset mirrored via adapter ETL                                │ │
-│  │   • Human‑friendly SQL, long/complex queries                               │ │
-│  └────────────────────────────────────────────────────────────────────────────┘ │
-│                                    │                                            │
-│                                    ▼                                            │
-│  ┌────────────────────────────────────────────────────────────────────────────┐ │
-│  │                                API LAYER                                   │ │
-│  │                              (Node.js Adapter)                             │ │
-│  │                                                                            │ │
-│  │  ┌─────────────────┐    ┌─────────────────┐    ┌────────────────────────┐  │ │
-│  │  │   REST API      │    │   WebSocket     │    │   Search & Aggregates  │  │ │
-│  │  │ • Blocks/Txs    │    │• Headers/mempool│    │ • Address summary      │  │ │
-│  │  │ • Address sum   │    │• Fee bands      │    │ • Fee/Load analytics   │  │ │
-│  │  │ • Health/metrics│    │• Tip updates    │    │ • ETL control          │  │ │
-│  │  └─────────────────┘    └─────────────────┘    └────────────────────────┘  │ │
-│  └────────────────────────────────────────────────────────────────────────────┘ │
-│                                    │                                            │
-│                                    ▼                                            │
-│  ┌────────────────────────────────────────────────────────────────────────────┐ │
 │  │                              FRONTEND LAYER                                │ │
 │  │                                                                            │ │
-│  │  ┌─────────────────┐    ┌─────────────────┐    ┌────────────────────────┐  │ │
-│  │  │   Dashboard     │    │   Search        │    │   Analytics Tools      │  │ │
-│  │  │ • Real‑time WS  │    │ • Address/Tx    │    │ • Fee/Load graphs      │  │ │
-│  │  │ • Tip/blocks    │    │ • Block lookup  │    │ • Timeline, calculator │  │ │
-│  │  │ • 3D Design     │    │ • Advanced      │    │ • Advanced             │  │ │
-│  │  │   System        │    │   UI Components │    │   Styling              │  │ │
-│  │  │ • LoadingBlocks │    │ • Theme System  │    │ • CSS Modules          │  │ │
-│  │  │ • Splash Screen │    │ • Responsive    │    │ • Custom Props         │  │ │
-│  │  └─────────────────┘    └─────────────────┘    └────────────────────────┘  │ │
+│  │  ┌─────────────────┐    ┌────────────────┐    ┌─────────────────────────┐  │ │
+│  │  │   App.tsx       │    │  Dashboard.tsx │    │   BitcoinContext.tsx    │  │ │
+│  │  │                 │    │                │    │                         │  │ │
+│  │  │ • Splash Screen │    │ • Three-Column │    │ • Bitcoin State Mgmt    │  │ │
+│  │  │ • Routing       │    │   Layout       │    │ • API Integration       │  │ │
+│  │  │ • Theme Context │    │ • Search Area  │    │ • WebSocket Hook        │  │ │
+│  │  │ • i18n Setup    │    │ • Visualizer   │    │ • Validation Utils      │  │ │
+│  │  │ • Performance   │    │ • Dashboard    │    │ • Pattern Recognition   │  │ │
+│  │  └─────────────────┘    └────────────────┘    └─────────────────────────┘  │ │
+│  │           │                       │                       │                │ │
+│  │           ▼                       ▼                       ▼                │ │
+│  │  ┌───────────────────────────────────────────────────────────────────────┐ │ │
+│  │  │                    COMPONENT LIBRARY                                  │ │ │
+│  │  │                                                                       │ │ │
+│  │  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────────┐│ │ │
+│  │  │  │   Header        │    │   LoadingBlocks │    │   BitcoinPrice      ││ │ │
+│  │  │  │                 │    │                 │    │   Dashboard         ││ │ │
+│  │  │  │ • Navigation    │    │ • Loading       │    │ • Real-time Price   ││ │ │
+│  │  │  │ • Theme Toggle  │    │   Animations    │    │ • Fee Estimates     ││ │ │
+│  │  │  │ • Language      │    │ • 3D Design     │    │ • Network Status    ││ │ │
+│  │  │  │   Switcher      │    │   System        │    │ • Mempool Data      ││ │ │
+│  │  │  │ • Responsive    │    │ • Splash        │    │ • Performance       ││ │ │
+│  │  │  │   Design        │    │   Screen        │    │   Metrics           ││ │ │
+│  │  │  └─────────────────┘    └─────────────────┘    └─────────────────────┘│ │ │
+│  │  │                                                                       │ │ │
+│  │  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────────┐│ │ │
+│  │  │  │   Theme System  │    │   i18n System   │    │   Performance       ││ │ │
+│  │  │  │                 │    │                 │    │   Components        ││ │ │
+│  │  │  │ • Light/Dark    │    │ • EN/ES/HE/PT   │    │ • Loading States    ││ │ │
+│  │  │  │   Themes        │    │ • RTL Support   │    │ • Error Boundaries  ││ │ │
+│  │  │  │ • Cosmic Theme  │    │ • Dynamic       │    │ • Lazy Loading      ││ │ │
+│  │  │  │ • Dynamic       │    │   Switching     │    │ • Code Splitting    ││ │ │
+│  │  │  │   Switching     │    │ • Cultural      │    │ • Bundle Analysis   ││ │ │
+│  │  │  │ • CSS Props     │    │   Adaptation    │    │ • Performance       ││ │ │
+│  │  │  └─────────────────┘    └─────────────────┘    └─────────────────────┘│ │ │
+│  │  └───────────────────────────────────────────────────────────────────────┘ │ │
+│  │                                   │                                        │ │
+│  │  ┌───────────────────────────────────────────────────────────────────────┐ │ │
+│  │  │                        STYLES SYSTEM                                  │ │ │
+│  │  │                                                                       │ │ │
+│  │  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────────┐│ │ │
+│  │  │  │   CSS Modules   │    │ CSS Custom      │    │ Styled Components   ││ │ │
+│  │  │  │                 │    │ Properties      │    │                     ││ │ │
+│  │  │  │ • Component     │    │ • Theme Tokens  │    │ • Dynamic Styling   ││ │ │
+│  │  │  │   Isolation     │    │ • Global Vars   │    │ • Theme Integration ││ │ │
+│  │  │  │ • Grid Systems  │    │ • Responsive    │    │ • Animations        ││ │ │
+│  │  │  │ • 3D Containers │    │   Breakpoints   │    │ • Interactive       ││ │ │
+│  │  │  │ • Layout Mgmt   │    │ • Color Schemes │    │   Elements          ││ │ │
+│  │  │  │ • Responsive    │    │ • Typography    │    │ • Performance       ││ │ │
+│  │  │  │   Design        │    │ • Spacing       │    │   Optimized         ││ │ │
+│  │  │  └─────────────────┘    └─────────────────┘    └─────────────────────┘│ │ │
+│  │  └───────────────────────────────────────────────────────────────────────┘ │ │
 │  └────────────────────────────────────────────────────────────────────────────┘ │
-│                                    │                                            │
-│                                    ▼                                            │
+│                                   │                                             │
 │  ┌────────────────────────────────────────────────────────────────────────────┐ │
-│  │                            STYLES SYSTEM LAYER                             │ │
-│  │                           (CSS Architecture)                               │ │
+│  │                              BACKEND LAYER                                 │ │
 │  │                                                                            │ │
-│  │  ┌─────────────────┐    ┌─────────────────┐    ┌────────────────────────┐  │ │
-│  │  │   CSS Modules   │    │ CSS Custom      │    │ Styled                 │  │ │
-│  │  │   (Layout)      │    │ Properties      │    │ Components             │  │ │
-│  │  │ • Component     │    │ (Theming)       │    │ (Interactive)          │  │ │
-│  │  │   isolation     │    │ • Theme         │    │ • Dynamic              │  │ │
-│  │  │ • Grid systems  │    │   switching     │    │   styling              │  │ │
-│  │  │ • 3D containers │    │ • Global tokens │    │ • Animations           │  │ │
-│  │  └─────────────────┘    └─────────────────┘    └────────────────────────┘  │ │
+│  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────────────┐ │ │
+│  │  │   CoreRpcAdapter│    │ Electrum Adapter│    │   WebSocket Hub         │ │ │
+│  │  │                 │    │                 │    │                         │ │ │
+│  │  │ • Bitcoin Core  │    │ • TCP Client    │    │ • Real-time Events      │ │ │
+│  │  │   RPC           │    │ • HTTP/JSON     │    │ • Tip Height            │ │ │
+│  │  │ • Direct        │    │   Conversion    │    │ • Reorg Detection       │ │ │
+│  │  │   Integration   │    │ • Mempool       │    │ • Fee Updates           │ │ │
+│  │  │ • Enhanced      │    │   Monitoring    │    │ • Price Updates         │ │ │
+│  │  │   Reliability   │    │ • Block Index   │    │ • Event Broadcasting    │ │ │
+│  │  │ • Fallback      │    │ • UTXO Data     │    │ • Connection Mgmt       │ │ │
+│  │  │   Strategy      │    │ • Health Checks │    │ • Heartbeat Monitor     │ │ │
+│  │  └─────────────────┘    └─────────────────┘    └─────────────────────────┘ │ │
+│  │           │                       │                       │                │ │
+│  │           ▼                       ▼                       ▼                │ │
+│  │  ┌───────────────────────────────────────────────────────────────────────┐ │ │
+│  │  │                        API LAYER                                      │ │ │
+│  │  │                                                                       │ │ │
+│  │  │  ┌─────────────────┐    ┌─────────────────┐    ┌────────────────────┐ │ │ │
+│  │  │  │   Routes        │    │   Controllers   │    │   Middleware       │ │ │ │
+│  │  │  │                 │    │                 │    │                    │ │ │ │
+│  │  │  │ • /electrum/*   │    │ • Health        │    │ • CORS             │ │ │ │
+│  │  │  │ • /health       │    │ • Fee Estimates │    │ • Rate Limiting    │ │ │ │
+│  │  │  │ • /network/*    │    │ • Network Data  │    │ • Error Handling   │ │ │ │
+│  │  │  │ • /mempool      │    │ • Mempool Info  │    │ • Logging          │ │ │ │
+│  │  │  │ • RESTful       │    │ • Data          │    │ • Authentication   │ │ │ │
+│  │  │  │   Endpoints     │    │   Validation    │    │ • Compression      │ │ │ │
+│  │  │  │ • WebSocket     │    │ • Response      │    │ • Security         │ │ │ │
+│  │  │  │   Support       │    │   Formatting    │    │   Headers          │ │ │ │
+│  │  │  └─────────────────┘    └─────────────────┘    └────────────────────┘ │ │ │
+│  │  └───────────────────────────────────────────────────────────────────────┘ │ │
+│  │                                   │                                        │ │
+│  │  ┌───────────────────────────────────────────────────────────────────────┐ │ │
+│  │  │                      CACHE LAYER                                      │ │ │
+│  │  │                                                                       │ │ │
+│  │  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────────┐│ │ │
+│  │  │  │   Redis L1      │    │ Memory-mapped   │    │ PostgreSQL          ││ │ │
+│  │  │  │                 │    │ L2              │    │                     ││ │ │
+│  │  │  │ • Hot Cache     │    │ • Warm Cache    │    │ • Analytics Mirror  ││ │ │
+│  │  │  │ • 1-2s TTL      │    │ • UTXO Data     │    │ • Views/MVs         ││ │ │
+│  │  │  │ • ~0.1-1ms      │    │ • Recent Blocks │    │ • 100-500ms         ││ │ │
+│  │  │  │ • Real-time     │    │ • ~1-5ms        │    │ • Human-friendly    ││ │ │
+│  │  │  │   Updates       │    │ • Memory        │    │   SQL               ││ │ │
+│  │  │  │ • WebSocket     │    │   Efficient     │    │ • Performance       ││ │ │
+│  │  │  │   Events        │    │ • Fast Access   │    │   Analytics         ││ │ │
+│  │  │  │ • Session Mgmt  │    │ • Persistent    │    │ • Data Mining       ││ │ │
+│  │  │  └─────────────────┘    └─────────────────┘    └─────────────────────┘│ │ │
+│  │  └───────────────────────────────────────────────────────────────────────┘ │ │
 │  └────────────────────────────────────────────────────────────────────────────┘ │
-│                                                                                 │
+│                                   │                                             │
 │  ┌────────────────────────────────────────────────────────────────────────────┐ │
-│  │                      MONITORING & OBSERVABILITY                            │ │
-│  │ • Prometheus/Grafana  • Alerts/Logs  • Tracing (OTel)  • Tip‑lag SLOs      │ │
-│  │ • Parity checks vs Core (height/hash)  • Error rates  • Reconnect storms   │ │
+│  │                            INFRASTRUCTURE                                  │ │
+│  │                                                                            │ │
+│  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────────────┐ │ │
+│  │  │   Vercel        │    │   Docker        │    │   GitHub Actions        │ │ │
+│  │  │                 │    │                 │    │                         │ │ │
+│  │  │ • Frontend      │    │ • Local Dev     │    │ • CI/CD Pipeline        │ │ │
+│  │  │   Staging       │    │   Environment   │    │ • Automated Testing     │ │ │
+│  │  │ • Auto-deploy   │    │ • electrs       │    │ • Type Checking         │ │ │
+│  │  │ • Edge Network  │    │   Container     │    │ • Linting               │ │ │
+│  │  │ • Analytics     │    │ • Redis         │    │ • Build Verification    │ │ │
+│  │  │ • Performance   │    │   Container     │    │ • Security Scanning     │ │ │
+│  │  │   Monitoring    │    │ • PostgreSQL    │    │ • Dependency Updates    │ │ │
+│  │  │ • Global CDN    │    │   Container     │    │ • Release Management    │ │ │
+│  │  └─────────────────┘    └─────────────────┘    └─────────────────────────┘ │ │
+│  │           │                       │                       │                │ │
+│  │           ▼                       ▼                       ▼                │ │
+│  │  ┌───────────────────────────────────────────────────────────────────────┐ │ │
+│  │  │                        MONITORING                                     │ │ │
+│  │  │                                                                       │ │ │
+│  │  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────────┐│ │ │
+│  │  │  │   Prometheus    │    │   Grafana       │    │   Logging           ││ │ │
+│  │  │  │                 │    │                 │    │                     ││ │ │
+│  │  │  │ • Metrics       │    │ • Dashboards    │    │ • Structured Logs   ││ │ │
+│  │  │  │   Collection    │    │ • Visualization │    │ • Error Tracking    ││ │ │
+│  │  │  │ • Performance   │    │ • Alerting      │    │ • Performance       ││ │ │
+│  │  │  │   Data          │    │ • Real-time     │    │   Monitoring        ││ │ │
+│  │  │  │ • Health        │    │   Monitoring    │    │ • Audit Trail       ││ │ │
+│  │  │  │   Checks        │    │ • Custom        │    │ • Debug Info        ││ │ │
+│  │  │  │ • Custom        │    │   Metrics       │    │ • Security Events   ││ │ │
+│  │  │  │   Metrics       │    │ • Historical    │    │ • System Health     ││ │ │
+│  │  │  └─────────────────┘    └─────────────────┘    └─────────────────────┘│ │ │
+│  │  └───────────────────────────────────────────────────────────────────────┘ │ │
 │  └────────────────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-## Component Responsibilities
+## Component Relationships
 
-### Data Ingestion Layer
-- Bitcoin Core: primary blockchain source via RPC/.blk
-- electrs: indexing, internal RocksDB, Electrum protocol over TCP
+### Frontend Layer ✅ **IMPLEMENTED**
+- **App.tsx**: Root component with splash screen, routing, theme context, and i18n setup
+- **Dashboard.tsx**: Three-column layout (Search, Visualizer, Dashboard Data) with responsive design
+- **BitcoinContext.tsx**: State management for Bitcoin data, API integration, and WebSocket connectivity
+- **Component Library**: 15+ components including Header, LoadingBlocks, BitcoinPriceDashboard
+- **Styles System**: Three-tier architecture (CSS Modules, Custom Properties, Styled Components)
+- **Theme System**: Light/Dark/Cosmic themes with dynamic switching and CSS Custom Properties
+- **i18n System**: EN/ES/HE/PT languages with RTL support and cultural adaptation
+- **Performance Components**: Loading states, error boundaries, lazy loading, code splitting
 
-### Electrum Integration Layer (Our Implementation)
-- ElectrumClient: TCP JSON messaging, headers/scripthash subscriptions, requests
-- Connection Pool: persistent sockets, heartbeats, bounded concurrency
-- Circuit Breaker: backoff, half‑open probes, endpoint quarantine
+### Backend Layer ✅ **IMPLEMENTED**
+- **CoreRpcAdapter**: Direct Bitcoin Core RPC integration for enhanced reliability
+- **Electrum Adapter**: TCP client with HTTP/JSON conversion and real-time monitoring
+- **WebSocket Hub**: Real-time event broadcasting (tip height, reorg detection, fees, prices)
+- **API Layer**: RESTful endpoints (/electrum/*, /health, /network/*, /mempool)
+- **Cache Layer**: Multi-tier architecture (Redis L1, Memory-mapped L2, PostgreSQL)
 
-### Multi‑Tier Cache Layer (Our Implementation)
-- Redis L1 (hot): 1‑2s TTL for live data, sub‑millisecond reads
-- Memory‑Mapped L2 (warm): UTXO/recent data, ~1‑5ms
-- HTTP Cache L3: cache our HTTP adapter responses (not electrs), ~5‑20ms
+### Infrastructure ✅ **IMPLEMENTED**
+- **Vercel**: Frontend staging deployment with auto-deploy and edge network
+- **Docker**: Local development environment with electrs, Redis, and PostgreSQL containers
+- **GitHub Actions**: CI/CD pipeline with automated testing, type checking, and linting
+- **Monitoring**: Prometheus metrics, Grafana dashboards, structured logging
 
-### PostgreSQL Analytics Mirror
-- Read‑only schema, SQL views/MVs for exploration and heavy analytics
-- Fed by adapter ETL; idempotent batches; bounded lag
+## Data Flow Patterns
 
-### API Layer (Node.js Adapter)
-- REST endpoints: blocks, txs, address summary, mempool/fees, health/metrics
-- WebSocket hub: headers, tip changes, mempool/fee updates
-- Search/Aggregates: bounded, cached, paginated; ETL orchestration
+### Frontend Data Flow ✅ **IMPLEMENTED**
+1. **App.tsx** → **BitcoinContext.tsx**: Global state initialization and WebSocket setup
+2. **BitcoinContext.tsx** → **Components**: Real-time data distribution and state updates
+3. **Components** → **Styles System**: Dynamic theming and responsive design application
+4. **Performance Components** → **User Experience**: Loading states, error handling, and optimization
 
-### Frontend Layer
-- Real‑time dashboard with WS updates (1‑2s)
-- Search/navigation for blocks/txs/addresses
-- Analytics tools: fee gauge, network load, timelines, calculator
-- Advanced UI components: 3D design system, LoadingBlocks, splash screen, responsive optimization
+### Backend Data Flow ✅ **IMPLEMENTED**
+1. **CoreRpcAdapter** ↔ **Bitcoin Core**: Direct RPC communication for enhanced reliability
+2. **Electrum Adapter** ↔ **electrs**: TCP communication for blockchain data indexing
+3. **WebSocket Hub** → **Frontend**: Real-time event broadcasting with 1-2s freshness
+4. **Cache Layer** → **API Responses**: Multi-tier caching for optimal performance
 
-### Styles System Layer (CSS Architecture)
-- **CSS Modules**: Component isolation, grid systems, 3D containers, layout management
-- **CSS Custom Properties**: Dynamic theming, global design tokens, responsive breakpoints
-- **Styled Components**: Interactive elements, dynamic styling, animations, theme integration
+### Infrastructure Data Flow ✅ **IMPLEMENTED**
+1. **GitHub Actions** → **Vercel**: Automated deployment triggers on main branch pushes
+2. **Monitoring** → **Performance**: Real-time metrics collection and alerting
+3. **Docker** → **Local Development**: Consistent environment across development team
 
-### Monitoring & Observability
-- Metrics: electrum_call_latency, errors_total, tip_lag_blocks, cache_hit
-- Alerts: Core/electrs divergence, elevated error rate, reconnect storms
-- Tracing: spans around Electrum requests and API routes
+## Component Characteristics
+
+### Frontend Components ✅ **IMPLEMENTED**
+- **React 18+**: Modern React with TypeScript and strict mode compliance
+- **Vite Build System**: Fast development and optimized production builds
+- **Responsive Design**: Mobile-first approach with CSS Grid and Flexbox
+- **3D Design System**: Advanced UI components with LoadingBlocks and splash screen
+- **Performance Optimized**: Code splitting, lazy loading, and bundle analysis
+
+### Backend Components ✅ **IMPLEMENTED**
+- **Node.js**: TypeScript backend with Express.js framework
+- **Dual Adapter Strategy**: CoreRpcAdapter + Electrum adapter for reliability
+- **WebSocket Hub**: Real-time data broadcasting with connection management
+- **Multi-tier Caching**: Redis L1, memory-mapped L2, PostgreSQL analytics
+
+### Infrastructure Components ✅ **IMPLEMENTED**
+- **Vercel Staging**: Frontend deployment with global CDN and analytics
+- **Docker Compose**: Local development environment with all services
+- **CI/CD Pipeline**: Automated testing, building, and deployment
+- **Monitoring Stack**: Prometheus, Grafana, and structured logging
+
+## Current Implementation Status
+
+### ✅ **COMPLETED COMPONENTS**
+- **Frontend**: Complete React app with 3D design system, theme system, i18n, and performance features
+- **Backend**: CoreRpcAdapter, Electrum adapter, WebSocket hub, and multi-tier caching
+- **Infrastructure**: Vercel staging deployment, Docker development environment, and CI/CD pipeline
+- **Performance**: All targets achieved, ready for ThreeJS integration
+
+### 🎯 **NEXT PHASE GOALS**
+- **ThreeJS Components**: 3D blockchain visualization in center column
+- **Enhanced Dashboard**: Additional widgets for fee, network, and timeline data
+- **Mobile Optimization**: Mobile-specific UI improvements and performance optimization
+

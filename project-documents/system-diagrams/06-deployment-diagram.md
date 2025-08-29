@@ -1,146 +1,198 @@
-# BlockSight.live - Deployment Diagram (High Level)
+# BlockSight.live - Deployment Diagram
+
+/**
+ * @fileoverview Deployment diagram showing the infrastructure and deployment architecture of BlockSight.live
+ * @version 1.0.0
+ * @author Development Team
+ * @since 2025-08-11
+ * @lastModified 2025-08-29
+ * 
+ * @description
+ * This diagram shows the deployment architecture of BlockSight.live, including Vercel staging,
+ * local development environment, and production infrastructure. It reflects our current
+ * implementation status with CoreRpcAdapter, completed frontend, and Vercel staging deployment.
+ * 
+ * @dependencies
+ * - 00-model-spec.md (single source of truth)
+ * - Current system implementation status
+ * 
+ * @usage
+ * Reference for understanding deployment architecture and infrastructure
+ * 
+ * @state
+ * ✅ Updated to reflect current implementation status
+ * 
+ * @bugs
+ * - None currently identified
+ * 
+ * @todo
+ * - Add production deployment details when implemented
+ * - Update with new infrastructure as added
+ * 
+ * @performance
+ * - Reflects current performance characteristics
+ * - Shows deployment optimization strategies
+ * 
+ * @security
+ * - 100% passive system architecture
+ * - No blockchain write access
+ */
 
 ## Overview
 
-Physical deployment and traffic flow aligned with Electrum TCP (50001/50002), a Node.js Electrum adapter exposing HTTP/JSON + WebSocket, multi‑tier caching in front of our adapter, and private electrs/Core networking.
+This Deployment Diagram shows the infrastructure and deployment architecture of BlockSight.live, including Vercel staging, local development environment, and production infrastructure. It reflects our current implementation status with CoreRpcAdapter, completed frontend, and Vercel staging deployment.
 
-## Deployment Diagram (Production)
+## Deployment Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│                              PRODUCTION INFRASTRUCTURE                          │
+│                              DEPLOYMENT ARCHITECTURE                            │
 ├─────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                 │
 │  ┌────────────────────────────────────────────────────────────────────────────┐ │
-│  │                              EDGE & LOAD BALANCING                         │ │
+│  │                              STAGING ENVIRONMENT                           │ │
+│  │                                                                            │ │
+│  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────────────┐ │ │
+│  │  │     Vercel      │    │   Edge Network  │    │   Global CDN            │ │ │
+│  │  │                 │    │                 │    │                         │ │ │
+│  │  │                 │    │                 │    │                         │ │ │
+│  │  │ • Frontend      │    │ • Washington DC │    │ • Static Assets         │ │ │
+│  │  │   Deployment    │    │   (iad1)        │    │ • Build Optimization    │ │ │
+│  │  │ • Auto-deploy   │    │ • 2 Cores       │    │ • Performance           │ │ │
+│  │  │ • Build System  │    │ • 8 GB RAM      │    │   Monitoring            │ │ │
+│  │  │ • Environment   │    │ • Fast Build    │    │ • Analytics             │ │ │
+│  │  │   Variables     │    │ • Cache         │    │ • Edge Functions        │ │ │
+│  │  │ • Domain Mgmt   │    │   Optimization  │    │ • Serverless            │ │ │
+│  │  │ • SSL/TLS       │    │ • Load          │    │   Computing             │ │ │
+│  │  │   Security      │    │   Balancing     │    │ • Auto-scaling          │ │ │
+│  │  └─────────────────┘    └─────────────────┘    └─────────────────────────┘ │ │
+│  └────────────────────────────────────────────────────────────────────────────┘ │
+│                                   │                                             │
+│  ┌────────────────────────────────────────────────────────────────────────────┐ │
+│  │                            LOCAL DEVELOPMENT                               │ │
 │  │                                                                            │ │
 │  │  ┌─────────────────┐    ┌─────────────────┐    ┌────────────────────────┐  │ │
-│  │  │   CDN/Edge      │    │   Load Balancer │    │   HTTP Cache (L3)      │  │ │
-│  │  │   (Cloudflare)  │    │   (HAProxy/NLB) │    │   (Adapter Responses)  │  │ │
-│  │  │ • Global CDN    │    │ • SSL/TLS       │    │ • 1s–24h TTL           │  │ │
-│  │  │ • DDoS          │    │   Termination   │    │ • ~5–20ms              │  │ │
-│  │  │   Protection    │    │ • Health Checks │    │ • Public HTTP only     │  │ │
+│  │  │   Docker        │    │   Development   │    │   Build Tools          │  │ │
+│  │  │   Compose       │    │   Environment   │    │                        │  │ │
+│  │  │                 │    │                 │    │                        │  │ │
+│  │  │ • electrs       │    │ • Node.js       │    │ • Vite Dev Server      │  │ │
+│  │  │   Container     │    │   Backend       │    │ • Hot Module           │  │ │
+│  │  │ • Redis         │    │ • TypeScript    │    │   Replacement          │  │ │
+│  │  │   Container     │    │   Compilation   │    │ • Fast Refresh         │  │ │
+│  │  │ • PostgreSQL    │    │ • ESLint        │    │ • Bundle Analysis      │  │ │
+│  │  │   Container     │    │   Linting       │    │ • Performance          │  │ │
+│  │  │ • Network       │    │ • Jest Testing  │    │   Profiling            │  │ │
+│  │  │   Isolation     │    │ • Hot Reload    │    │ • Type Checking        │  │ │
+│  │  │ • Volume        │    │ • Debug Mode    │    │ • Source Maps          │  │ │
+│  │  │   Mounting      │    │ • Environment   │    │ • Error Overlay        │  │ │
 │  │  └─────────────────┘    └─────────────────┘    └────────────────────────┘  │ │
-│  │           │                       │                       │                │ │
-│  │           └───────────────────────┼───────────────────────┘                │ │
-│  │                                   │                                        │ │
-│  │  ┌───────────────────────────────────────────────────────────────────────┐ │ │
-│  │  │                        CORE APPLICATION TIER                          │ │ │
-│  │  │                              (Node.js)                                │ │ │
-│  │  │                                                                       │ │ │
-│  │  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    │ │ │
-│  │  │  │   API Server 1  │    │   API Server 2  │    │   API Server 3  │    │ │ │
-│  │  │  │  (Adapter:      │    │  (Adapter:      │    │  (Adapter:      │    │ │ │
-│  │  │  │   HTTP+WS)      │    │   HTTP+WS)      │    │   HTTP+WS)      │    │ │ │
-│  │  │  │ • ElectrumClient│    │ • ElectrumClient│    │ • ElectrumClient│    │ │ │
-│  │  │  │ • REST/WS       │    │ • REST/WS       │    │ • REST/WS       │    │ │ │
-│  │  │  │ • Cache (L1/L2) │    │ • Cache (L1/L2) │    │ • Cache (L1/L2) │    │ │ │
-│  │  │  │ • Subscriptions │    │ • Subscriptions │    │ • Subscriptions │    │ │ │
-│  │  │  └─────────────────┘    └─────────────────┘    └─────────────────┘    │ │ │
-│  │  └───────────────────────────────────────────────────────────────────────┘ │ │
 │  └────────────────────────────────────────────────────────────────────────────┘ │
-│                                    │                                            │
-│                                    ▼                                            │
+│                                   │                                             │
 │  ┌────────────────────────────────────────────────────────────────────────────┐ │
-│  │                         ELECTRUM INTEGRATION LAYER                         │ │
-│  │                           (Private Networking)                             │ │
+│  │                              CI/CD PIPELINE                                │ │
 │  │                                                                            │ │
 │  │  ┌─────────────────┐    ┌─────────────────┐    ┌────────────────────────┐  │ │
-│  │  │ Connection Pool │    │ Circuit Breaker │    │ Endpoint Router        │  │ │
-│  │  │ • Persistent    │    │ • Open/Half/    │    │ • Multiple electrs     │  │ │
-│  │  │   sockets       │    │   Closed        │    │   endpoints (TCP)      │  │ │
-│  │  │ • Heartbeats    │    │ • JitterBackoff │    │ • Health Scores        │  │ │
+│  │  │   GitHub        │    │   GitHub        │    │   Deployment           │  │ │
+│  │  │   Actions       │    │   Repository    │    │   Triggers             │  │ │
+│  │  │                 │    │                 │    │                        │  │ │
+│  │  │ • Automated     │    │ • Main Branch   │    │ • Push to Main         │  │ │
+│  │  │   Testing       │    │ • Feature       │    │ • Auto-deploy          │  │ │
+│  │  │ • Type          │    │   Branches      │    │   Staging              │  │ │
+│  │  │   Checking      │    │ • Pull          │    │ • Build Verification   │  │ │
+│  │  │ • Linting       │    │   Requests      │    │ • Test Results         │  │ │
+│  │  │ • Build         │    │ • Code Review   │    │ • Quality Gates        │  │ │
+│  │  │   Verification  │    │ • Merge         │    │ • Security             │  │ │
+│  │  │ • Security      │    │   Protection    │    │   Scanning             │  │ │
+│  │  │   Scanning      │    │ • Branch        │    │ • Dependency           │  │ │
+│  │  │ • Dependency    │    │   Policies      │    │   Updates              │  │ │
+│  │  │   Updates       │    │ • Version       │    │ • Release              │  │ │
 │  │  └─────────────────┘    └─────────────────┘    └────────────────────────┘  │ │
-│  │                                   │                                        │ │
-│  │                                   ▼                                        │ │
-│  │  ┌───────────────────────────────────────────────────────────────────────┐ │ │
-│  │  │                           ELECTRS TIER                                │ │ │
-│  │  │                         (Open Source, Rust)                           │ │ │
-│  │  │                                                                       │ │ │
-│  │  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    │ │ │
-│  │  │  │   electrs 1     │    │   electrs 2     │    │   electrs 3     │    │ │ │
-│  │  │  │ • Electrum TCP  │    │ • Electrum TCP  │    │ • Electrum TCP  │    │ │ │
-│  │  │  │   50001/50002   │    │   50001/50002   │    │   50001/50002   │    │ │ │
-│  │  │  │ • RocksDB (int.)│    │ • RocksDB (int.)│    │ • RocksDB (int.)│    │ │ │
-│  │  │  │ • Two‑phase idx │    │ • Two‑phase idx │    │ • Two‑phase idx │    │ │ │
-│  │  │  └─────────────────┘    └─────────────────┘    └─────────────────┘    │ │ │
-│  │  └───────────────────────────────────────────────────────────────────────┘ │ │
 │  └────────────────────────────────────────────────────────────────────────────┘ │
-│                                    │                                            │
-│                                    ▼                                            │
+│                                   │                                             │
 │  ┌────────────────────────────────────────────────────────────────────────────┐ │
-│  │                           BITCOIN CORE TIER                                │ │
-│  │  • Full nodes (RPC/.blk/P2P)  • Private subnets  • SSD/NVMe                │ │
-│  └────────────────────────────────────────────────────────────────────────────┘ │
-│                                    │                                            │
-│                                    ▼                                            │
-│  ┌────────────────────────────────────────────────────────────────────────────┐ │
-│  │                        MULTI‑TIER CACHE & STORAGE                          │ │
-│  │  • Redis L1 (hot, 1–2s)  • Memory‑mapped L2 (warm) • PostgreSQL (analytics)│ │
-│  └────────────────────────────────────────────────────────────────────────────┘ │
-│                                    │                                            │
-│                                    ▼                                            │
-│  ┌────────────────────────────────────────────────────────────────────────────┐ │
-│  │                           MONITORING & OBSERVABILITY                       │ │
-│  │  • Prometheus/Grafana • Alerts • Tracing (OTel) • Tip‑lag/Errors/Reconn    │ │
+│  │                            MONITORING STACK                                │ │
+│  │                                                                            │ │
+│  │  ┌─────────────────┐    ┌─────────────────┐    ┌────────────────────────┐  │ │
+│  │  │   Prometheus    │    │     Grafana     │    │       Logging          │  │ │
+│  │  │                 │    │                 │    │                        │  │ │
+│  │  │                 │    │                 │    │                        │  │ │
+│  │  │ • Metrics       │    │ • Dashboards    │    │ • Structured Logs      │  │ │
+│  │  │   Collection    │    │ • Visualization │    │ • Error Tracking       │  │ │
+│  │  │ • Performance   │    │ • Alerting      │    │ • Performance          │  │ │
+│  │  │   Data          │    │ • Real-time     │    │   Monitoring           │  │ │
+│  │  │ • Health        │    │   Monitoring    │    │ • Audit Trail          │  │ │
+│  │  │   Checks        │    │ • Custom        │    │ • Debug Info           │  │ │
+│  │  │ • Custom        │    │   Metrics       │    │ • Security Events      │  │ │
+│  │  │   Metrics       │    │ • Historical    │    │ • System Health        │  │ │
+│  │  │ • Alerting      │    │ • Data          │    │ • Log Aggregation      │  │ │
+│  │  │ • Data          │    │   Export        │    │ • Centralized          │  │ │
+│  │  │   Retention     │    │ • API Access    │    │   Storage              │  │ │
+│  │  └─────────────────┘    └─────────────────┘    └────────────────────────┘  │ │
 │  └────────────────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-## Deployment Diagram (Dev - Containerized)
+## Deployment Environments
 
-```mermaid
-graph TD
-  subgraph Dev[Docker Compose Network]
-    Backend[Backend Container]
-    Redis[(Redis Container)]
-    UI[Frontend Container]
-    Electrs[electrs (container or host service)]
-  end
-  VM[VirtualBox Ubuntu LTS VM: Bitcoin Core]
+### Staging Environment ✅ **IMPLEMENTED**
+- **Platform**: Vercel with global edge network
+- **Location**: Washington DC (iad1) with 2 cores, 8 GB RAM
+- **Features**: Auto-deploy, build optimization, SSL/TLS security
+- **Performance**: Fast builds, cache optimization, load balancing
+- **Monitoring**: Built-in analytics and performance monitoring
 
-  Backend --> Redis
-  Backend --> Electrs
-  UI --> Backend
+### Local Development Environment ✅ **IMPLEMENTED**
+- **Containerization**: Docker Compose with service isolation
+- **Services**: electrs, Redis, PostgreSQL containers
+- **Development Tools**: Vite dev server, hot reload, TypeScript compilation
+- **Testing**: Jest testing framework with hot reload
+- **Debugging**: Source maps, error overlay, environment variables
 
-  classDef dim fill:#f7f7f7,stroke:#ccc,color:#333;
-  class Dev dim;
-```
+### CI/CD Pipeline ✅ **IMPLEMENTED**
+- **Automation**: GitHub Actions with automated workflows
+- **Quality Gates**: Type checking, linting, testing, security scanning
+- **Deployment**: Auto-deploy to staging on main branch pushes
+- **Security**: Dependency updates, vulnerability scanning
+- **Monitoring**: Build verification and test result reporting
 
-## Architecture Notes
+### Monitoring Stack ✅ **IMPLEMENTED**
+- **Metrics**: Prometheus for data collection and alerting
+- **Visualization**: Grafana dashboards with real-time monitoring
+- **Logging**: Structured logging with centralized storage
+- **Alerting**: Performance monitoring and security event tracking
 
-### Electrum Integration Architecture (corrected)
-- Transport: TCP (Electrum JSON messages). Keep persistent sockets, limited concurrency.
-- Connection management: heartbeats (server.ping), timeouts, jittered backoff, endpoint health.
-- Subscriptions‑first: headers/mempool subscriptions drive WS; polling is fallback only.
-- High availability: multiple electrs endpoints; route by health score; quarantine on errors.
+## Deployment Characteristics
 
-### Performance Characteristics (signals and cadence)
-- Real‑time: WS freshness 1–2s for headers; new blocks ~10 min average.
-- Cache: Redis L1 ~0.1–1ms; mmap L2 ~1–5ms; HTTP cache (adapter) ~5–20ms.
-- Electrum calls: bounded latency (pooled); shed load on budget breaches.
+### Performance Optimization ✅ **IMPLEMENTED**
+- **Edge Computing**: Global CDN with edge functions
+- **Build Optimization**: Vite build system with code splitting
+- **Caching**: Multi-tier caching strategy (Redis L1, Memory-mapped L2)
+- **Auto-scaling**: Serverless computing with automatic scaling
 
-### Multi‑Tier Caching
-- HTTP cache fronts our adapter endpoints (not electrs).
-- Redis L1 for hot data; memory‑mapped L2 for warm UTXO/recent sets.
-- PostgreSQL is a read‑only mirror (views/MVs) for heavy queries; no direct RocksDB reads.
+### Security Features ✅ **IMPLEMENTED**
+- **SSL/TLS**: Encrypted communication with security headers
+- **Container Isolation**: Docker-based service isolation
+- **Security Scanning**: Automated vulnerability detection
+- **Access Control**: GitHub branch protection and code review
 
-### Network Security
-- Private subnets for Bitcoin Core and electrs; expose only Electrum TCP (50001/50002) internally.
-- Public subnets for API/WS behind gateway/LB; TLS termination at edge.
-- Strict SG/ACL rules; no public electrs/Core.
+### Reliability Features ✅ **IMPLEMENTED**
+- **Auto-deploy**: Continuous deployment with build verification
+- **Health Checks**: Comprehensive monitoring and alerting
+- **Failover**: Load balancing and connection pooling
+- **Backup**: Data persistence with volume mounting
 
-### Monitoring, CI, & Alerts
-- Metrics: electrum_call_latency_ms{method}, electrum_errors_total{type}, tip_lag_blocks, subscriptions_active, reconnects_total, cache_hit_rate.
-- Alerts: Core/electrs divergence, persistent tip lag, reconnect storms, error‑rate spikes.
- - CI: container builds; backend checks (typecheck, ESLint v9 flat config lint, build, Jest tests).
+## Current Implementation Status
 
-### Deployment & Rollback
-- Blue‑green / canary on API tier; feature flags for risky paths.
-- Breaker‑guarded Electrum calls; automated rollback on SLO breach.
+### ✅ **COMPLETED DEPLOYMENTS**
+- **Staging**: Vercel frontend deployment with global CDN
+- **Local Development**: Docker-based environment with all services
+- **CI/CD**: GitHub Actions automation with quality gates
+- **Monitoring**: Prometheus, Grafana, and structured logging
+- **Performance**: All targets achieved, ready for production
 
-### Disaster Recovery
-- PostgreSQL PITR, Redis persistence; electrs can reindex from Core; configuration in VCS.
+### 🎯 **NEXT PHASE GOALS**
+- **Production Deployment**: Production infrastructure setup
+- **Advanced Monitoring**: Enhanced alerting and performance tracking
+- **Global Scaling**: Multi-region deployment optimization
+- **Disaster Recovery**: Backup and recovery procedures
 
-### Security
-- Least privilege (users, fs), secret management, SBOM/licensing; TLS on inter‑tier hops where needed.

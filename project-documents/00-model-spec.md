@@ -6,6 +6,8 @@ BlockSight.live is a cutting-edge Bitcoin-exclusive blockchain analysis platform
 
 **Scope**: This specification defines the desired behavior, architecture, and implementation standards for BlockSight.live, focusing exclusively on Bitcoin while developing innovative tools that enhance privacy, security, and usability.
 
+**Last Updated**: 2025-08-29
+
 ---
 
 ## Core Principles
@@ -19,6 +21,7 @@ BlockSight.live is a cutting-edge Bitcoin-exclusive blockchain analysis platform
 7. **Open Source Foundation** - Respect MIT licenses while maintaining commercial viability
 8. **DevOps-First Approach** - Automated CI/CD, versioning, and deployment from day one
 9. **Internationalization (i18n) by Design** - All user-visible strings are translation keys; no hardcoded UI text. RTL support and per-locale formatting are first-class.
+10. **Passive System Architecture** - **READ-ONLY VISUALIZATION ONLY** - This system NEVER writes to the Bitcoin blockchain. Users cannot create transactions, send Bitcoin, or perform any active blockchain operations. The system is purely a passive visualizer and analytics platform.
 
 ---
 
@@ -28,6 +31,8 @@ BlockSight.live is a cutting-edge Bitcoin-exclusive blockchain analysis platform
 ```
 Bitcoin Core → electrs (Indexer) → HTTP REST API → NodeJS Backend → Multi-Tier Cache → WebSocket Events → BlockSight Frontend
 ```
+
+**⚠️ CRITICAL SECURITY MODEL**: This system is **100% PASSIVE** and **READ-ONLY**. No user can ever write data to the Bitcoin blockchain through our platform. All data flows are inbound only - from blockchain to user interface.
 
 - **Single-machine development (Current - Validated)**: Windows host runs backend/frontend in Docker containers; Bitcoin Core runs in VirtualBox Ubuntu LTS VM (192.168.1.67); electrs runs natively on Windows host. Backend connects to electrs over TCP (50001) via `host.docker.internal:50001`. Bitcoin Core accessible via VM IP (192.168.1.67:8332). Shared folder `B:\bitcoin-data` mounted to `/media/sf_bitcoin-data` in VM. Network: Windows host (192.168.1.3) → VM (192.168.1.67) via home network (192.168.1.0/24). Status: Bitcoin Core synced to block 910,659 (100% complete), electrs running and indexing.
 - **Containerized development (Current - Working)**: Docker compose with backend and Redis containers. Backend reaches electrs via `host.docker.internal:50001`. Service DNS names (e.g., `redis`, `backend`) used within compose network. External access via mapped host ports (backend:8000, Redis:6379).
@@ -57,7 +62,22 @@ Bitcoin Core → electrs (Indexer) → HTTP REST API → NodeJS Backend → Mult
 - Tip-lag SLOs and reindex SLAs tracked in monitoring.
  - WSL2 guidance (dev): prefer ext4 for `db_dir`, conservative parallelism, periodic clean exits to persist progress.
 
-#### 2. HTTP API Integration Layer
+#### 2. Bitcoin Core RPC Adapter
+- **Purpose**: Direct communication with Bitcoin Core node for authoritative blockchain data
+- **Technology**: Complete CoreRpcAdapter implementation with HTTP/JSON-RPC over fetch
+- **Status**: ✅ **PRODUCTION READY** - 100% implemented and tested
+- **Capabilities**: 
+  - Generic RPC call method supporting all Bitcoin Core RPC methods
+  - Comprehensive mempool data via `getmempoolinfo`
+  - Real-time blockchain height via `getblockcount`
+  - Full authentication and timeout handling
+- **Integration**: Used alongside electrs for data validation and fallback scenarios
+- **Benefits**: 
+  - Direct access to authoritative Bitcoin Core data
+  - Redundant data sources for reliability
+  - Real-time mempool and network statistics
+
+#### 3. HTTP API Integration Layer
 - **Technology**: NodeJS backend with 1-2s polling
 - **Purpose**: Bridge between electrs and application layer
 
@@ -84,6 +104,11 @@ Bitcoin Core → electrs (Indexer) → HTTP REST API → NodeJS Backend → Mult
 #### 5. BlockSight Frontend
 - **Technology**: React with real-time capabilities
 - **Components**: Dashboard, block viewer, search, price display, fee gauge, network load, timeline, calculator, settings
+- **bitcoinValidation Scope**: Pattern recognition for UI display only, NOT blockchain validation
+  - **Purpose**: Lightweight utilities for recognizing Bitcoin data patterns (addresses, transaction IDs, block hashes)
+  - **Trust Model**: We trust our backend (Bitcoin Core + electrs) for data integrity
+  - **Implementation**: Regex patterns for address type recognition, format validation for display purposes
+  - **Security**: No validation logic - only pattern matching for meaningful UI presentation
 
 ##### Internationalization & Localization
 - i18n framework: i18next with react-i18next bindings
@@ -262,6 +287,16 @@ Bitcoin Core → electrs (Indexer) → HTTP REST API → NodeJS Backend → Mult
 - **Helm Charts**: Application deployment and configuration
 - **ArgoCD**: GitOps continuous deployment
 
+#### Current Deployment Status
+- **Frontend Staging**: ✅ **VERCEL STAGING ENVIRONMENT DEPLOYED**
+  - **Platform**: Vercel with automatic deployments from main branch
+  - **URL**: Staging environment accessible via Vercel dashboard
+  - **Status**: Frontend successfully deployed and accessible
+  - **Integration**: Ready for ThreeJS development and testing
+- **Backend Development**: ✅ **LOCAL DOCKER ENVIRONMENT RUNNING**
+  - **Status**: Backend + Redis containers operational
+  - **Integration**: Full electrs + Bitcoin Core connectivity
+
 #### Deployment Patterns
 - **Blue-Green**: Zero-downtime deployments with instant rollback
 - **Canary**: Gradual rollout with automated rollback on issues
@@ -429,9 +464,9 @@ struct CircuitBreaker {
 - **Real-Time Data Flow**: All phases benefit from continuous blockchain updates, not just historical data
 
 ### Development Phases
-- **Phase 1** (Weeks 2-4): Foundation - API integration, caching, WebSocket
-- **Phase 2** (Weeks 5-8): Performance - Connection pooling, optimization
-- **Phase 3** (Weeks 9-12): Testing - Comprehensive test suite, validation
+- **Phase 1** (Weeks 1-4): Foundation - API integration, caching, WebSocket ✅ **COMPLETED**
+- **Phase 2** (Weeks 5-8): Frontend - React app, ThreeJS integration, dashboard widgets (CURRENT)
+- **Phase 3** (Weeks 9-12): Performance - Connection pooling, optimization, testing
 - **Phase 4** (Weeks 13-16): Production - Monitoring, security, deployment
 
 ---
@@ -456,7 +491,7 @@ struct CircuitBreaker {
 ## Future Considerations
 
 ### Advanced Bitcoin Protocol Features
-The following features will be evaluated for future implementation phases after core system stability is achieved. Comprehensive technical specifications and implementation details are documented in [03-future-considerations.md](additional/03-future-considerations.md).
+The following features will be evaluated for future implementation phases after core system stability is achieved. Comprehensive technical specifications and implementation details are documented in [FUTURE-PLANNING-CONSOLIDATED.md](FUTURE-PLANNING-CONSOLIDATED.md).
 
 #### **Transaction Enhancement Features**
 - **Replace-by-Fee (RBF) Tracking**: Monitor transaction replacement chains and fee optimization
@@ -480,18 +515,18 @@ The following features will be evaluated for future implementation phases after 
 - **Milestone Tracking**: Protocol firsts, halving events, soft fork activations
 
 ##### Additional Data Collection Blueprint (non-MVP)
-- Reference: `project-documents/additional/04-additional-data-collection.md`.
+- Reference: `project-documents/FUTURE-PLANNING-CONSOLIDATED.md`.
 - Strategy: mirror a minimal subset from Electrum adapter into PostgreSQL; build SQL views/materialized views; no direct RocksDB reads in production.
 - Scope: ordinals/BRC‑20 detection, anomaly scaffolding, curated milestone calendar, per‑era rollups, developer exploration views.
 - Access: read‑only analytics role; batch, idempotent ETL with reconciliation and backpressure.
 
 ### **Strategic Implementation Approach**
-- **Phase 1**: Core Bitcoin analysis platform with electrs integration (Current)
-- **Phase 2**: Advanced transaction features (RBF, CoinJoin, privacy protocols)
-- **Phase 3**: Extended analytics and economic metrics
-- **Phase 4**: Multi-protocol support and advanced data collection
+- **Phase 1**: Core Bitcoin analysis platform with electrs integration ✅ **COMPLETED**
+- **Phase 2**: Frontend platform with ThreeJS visualization and dashboard widgets (CURRENT)
+- **Phase 3**: Advanced transaction features (RBF, CoinJoin, privacy protocols)
+- **Phase 4**: Extended analytics and economic metrics
 
-**Note**: All future features will be evaluated against core mission alignment, implementation complexity, and user value to ensure they enhance rather than complicate the primary system objectives. Detailed technical specifications, implementation requirements, and development timelines are available in the comprehensive [Future Considerations Document](additional/03-future-considerations.md).
+**Note**: All future features will be evaluated against core mission alignment, implementation complexity, and user value to ensure they enhance rather than complicate the primary system objectives. Detailed technical specifications, implementation requirements, and development timelines are available in the comprehensive [Future Planning & Advanced Features Document](FUTURE-PLANNING-CONSOLIDATED.md).
 
 ---
 

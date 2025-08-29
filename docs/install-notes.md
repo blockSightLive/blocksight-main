@@ -1,12 +1,38 @@
 # Install Notes (Do Not Run Automatically)
 
+/**
+ * @fileoverview Installation and setup notes for BlockSight.live development
+ * @version 1.0.0
+ * @author Development Team
+ * @since 2025-08-29
+ * @lastModified 2025-08-29
+ * 
+ * @description
+ * This document provides installation notes and setup instructions for developers.
+ * Note that the frontend is already fully implemented and deployed.
+ * 
+ * @dependencies
+ * - 00-model-spec.md (system overview)
+ * - 01-development-roadmap.md (development strategy)
+ * - docs/developer-handbook.md (development guidance)
+ * 
+ * @state
+ * ✅ CURRENT - Updated to reflect current system state and consolidated installation info
+ * 
+ * @todo
+ * - Monitor for new dependencies or configuration changes
+ * - Keep installation steps current with system changes
+ */
+
 Follow these steps after initial commit/push.
 
 ## Prereqs
 - Node >= 20, npm >= 9
 - From repo root
 
-## Backend (Express + ws)
+## Backend (Express + ws) - PARTIALLY IMPLEMENTED ✅
+
+**Current Status**: CoreRpcAdapter implemented, Express server partially implemented, WebSocket hub operational
 
 Add dependencies (runtime + dev):
 
@@ -46,17 +72,45 @@ Replace the current `overrides` section with this:
 }
 ```
 
-## Frontend (Vite + React + TS + i18n)
+## Frontend (Vite + React + TS + i18n) - FULLY IMPLEMENTED ✅
 
-Add dependencies:
+**Current Status**: Complete React application deployed to Vercel staging, all features operational
+
+**Note**: Frontend is production-ready and deployed. Dependencies are already installed and configured.
+
+Add dependencies (if needed for development):
 
 ```bash
 # Runtime deps
-npm --workspace frontend install react react-dom i18next react-i18next
+npm --workspace frontend install react react-dom i18next react-i18next styled-components@^6.1.0 @types/styled-components@^5.1.34
 
 # Dev deps
 npm --workspace frontend install -D @types/react @types/react-dom @vitejs/plugin-react eslint eslint-config-prettier @typescript-eslint/eslint-plugin @typescript-eslint/parser jest prettier typescript vite
 ```
+
+### Styled Components Setup ✅
+
+**Purpose**: Enables cosmic background and advanced theming system
+
+**Installation**: The styled-components dependency is already included in the runtime deps above.
+
+**What This Enables**:
+- Cosmic background system with animated starfield
+- Dynamic theme switching (dark = cosmic background, light = no background)
+- Advanced component styling with theme integration
+- BackgroundSystem component rendering behind all content
+
+**Verification**: After installation, you should see:
+- Deep space gradient background in dark theme
+- Animated starfield with stars and nebulae
+- Proper layering behind content
+- Smooth theme switching between light and dark modes
+
+**Troubleshooting**: If the background doesn't appear:
+1. Check browser console for errors
+2. Verify styled-components is installed: `npm list styled-components`
+3. Ensure BackgroundSystem component is imported in App.tsx
+4. Check that dark theme is active (cosmic background only shows in dark mode)
 
 Post-install (frontend):
 - Run: `npm run typecheck -w frontend && npm run lint -w frontend && npm run build -w frontend && npm test -w frontend`
@@ -65,6 +119,19 @@ Post-install (frontend):
 ### Frontend Vite scaffolding (later step)
 - Create `frontend/index.html`, `frontend/src/main.tsx`, `frontend/src/App.tsx`, and `frontend/vite.config.ts`
 - Update Dockerfile to COPY and build the frontend, and add frontend service to compose files
+
+## Current Package Scripts (Already Configured)
+
+**Root Scripts Available:**
+```bash
+npm run dev          # Start both backend and frontend development servers
+npm run build        # Build both backend and frontend
+npm run typecheck    # Type check both workspaces
+npm run lint         # Lint both workspaces
+npm run test         # Run tests for both workspaces
+npm run services:redis:start  # Start Redis service
+npm run services:redis:stop   # Stop Redis service
+```
 
 ## Optional: Root scripts
 - Run both workspace installs in one go later:

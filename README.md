@@ -112,8 +112,7 @@ blocksight-main/
 │   ├── 01-development-roadmap.md      # High-level roadmap with DevOps strategy
 │   ├── 02-technical-implementation.md # ALL technical details
 │   ├── additional/                # Additional planning and future considerations
-│   │   ├── 03-future-considerations.md   # Advanced features for future phases
-│   │   └── 04-additional-data-collection.md # Additional data collection details
+│   └── FUTURE-PLANNING-CONSOLIDATED.md   # Comprehensive future planning and advanced features
 │   └── system-diagrams/          # Technical architecture diagrams
 ├── electrs/                       # Bitcoin indexing engine (Git submodule)
 │   ├── src/                      # Rust source code
@@ -449,7 +448,7 @@ docker-compose up -d --scale backend=3
 4. **Build**: Create production artifacts
 5. **Deploy**: Deploy to staging/production environments
 
-See `docs/automation-playbook.md` for the end-to-end automation model (one-time repo setup vs per-developer tasks) and recommended GitHub workflows.
+See `docs/developer-handbook.md` for development workflow and automation guidance.
 
 ### Quality Gates
 - All tests must pass
@@ -527,11 +526,12 @@ const securityHeaders = {
 
 **⚙️ [Technical Implementation](project-documents/02-technical-implementation.md)** - Complete technical specifications, database schemas, code examples, and implementation patterns
 
-**🔮 [Future Considerations](project-documents/additional/03-future-considerations.md)** - Advanced features and technical specifications for future development phases
+**🔮 [Future Planning & Advanced Features](project-documents/FUTURE-PLANNING-CONSOLIDATED.md)** - Comprehensive roadmap for advanced features, analytics, and data collection
 
-**🔮 [Additional Data Collection](project-documents/additional/04-additional-data-collection.md)** - Details on additional data collection methods and strategies
-
-- Developer Docs Index: `docs/README.md` (links to handbook, standards, automation, onboarding)
+- **Developer Docs Index**: `docs/README.md` (links to handbook, standards, automation, onboarding)
+- **Documentation Navigation**: `docs/DOCUMENTATION-NAVIGATION.md` - **Start here** for complete documentation overview
+- **Frontend Documentation**: `docs/frontend/` - Complete frontend architecture and development guides
+- **Infrastructure & Deployment**: `docs/infrastructure/` - Infrastructure setup and deployment guides
 
 ### API Documentation
 - **OpenAPI/Swagger**: Interactive API documentation
@@ -576,7 +576,7 @@ const securityHeaders = {
 - Follow semantic versioning guidelines
 
 ### Future Development
-- Review [Future Considerations](project-documents/additional/03-future-considerations.md) for comprehensive technical specifications
+- Review [Future Planning & Advanced Features](project-documents/FUTURE-PLANNING-CONSOLIDATED.md) for comprehensive technical specifications
 - Evaluate implementation complexity against core mission objectives
 - Prioritize features based on user value and technical feasibility
 - Reference detailed implementation requirements and development timelines

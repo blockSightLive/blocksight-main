@@ -4,7 +4,7 @@ This runbook makes electrs indexing stable on WSL2 while keeping Bitcoin Core da
 
 Last updated: 2025-08-14
 
-> **Note**: This document describes the previous WSL2/Kali setup. The current production setup uses **VirtualBox Ubuntu LTS VM** with shared folder access to external drive. See `docs/bitcoin-core-virtualbox-setup.md` and `docs/electrs-windows-setup.md` for current configuration.
+> **Note**: This document describes the previous WSL2/Kali setup. The current production setup uses **VirtualBox Ubuntu LTS VM** with shared folder access to external drive. See `docs/install-notes.md` for current configuration.
 
 ## Symptoms we’re fixing
 - WSL distro exits/crashes during heavy electrs indexing

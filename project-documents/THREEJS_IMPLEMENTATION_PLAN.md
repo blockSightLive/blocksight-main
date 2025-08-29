@@ -3,8 +3,9 @@
 **Document Type:** Implementation Roadmap  
 **Version:** 1.0.0  
 **Created:** 2025-08-27  
-**Status:** Planning Phase  
+**Status:** Ready for Implementation  
 **Architecture:** Center Column + Component Hybrid  
+**Last Modified:** 2025-08-29
 
 ---
 
@@ -81,7 +82,144 @@ npm install three @types/three @react-three/fiber @react-three/drei
 
 ---
 
-## ⚡ **PHASE 4: PERFORMANCE OPTIMIZATION**
+## 🔌 **PHASE 3.5: WEBSOCKET INTEGRATION & REAL-TIME UPDATES**
+
+### **WebSocket Event Integration:**
+- **Real-Time Block Updates**: Subscribe to `block.new` events from existing WebSocket Hub
+- **Mempool Changes**: Listen to `mempool.update` events for transaction flow visualization
+- **Network Status**: Receive `network.status` updates for fee and congestion indicators
+- **Reorg Detection**: Handle `chain.reorg` events for blockchain reorganization visualization
+
+### **Event Processing Architecture:**
+```typescript
+// WebSocket event handler for 3D visualization
+const handleWebSocketEvent = (event: WebSocketEvent) => {
+  switch (event.type) {
+    case 'block.new':
+      addNewBlockToVisualization(event.data);
+      break;
+    case 'mempool.update':
+      updateMempoolVisualization(event.data);
+      break;
+    case 'chain.reorg':
+      handleReorgVisualization(event.data);
+      break;
+    case 'network.status':
+      updateNetworkStatusVisualization(event.data);
+      break;
+  }
+};
+```
+
+### **Real-Time Data Flow:**
+1. **WebSocket Hub** → **ThreeJS Event Handler** → **3D Scene Updates**
+2. **Blockchain Data** → **Visualization State** → **ThreeJS Geometry Updates**
+3. **Performance Optimization**: Debounced updates to maintain 60fps rendering
+4. **Fallback Handling**: Graceful degradation when WebSocket unavailable
+
+### **State Synchronization:**
+- **React Context Integration**: Use existing `BitcoinContext` for WebSocket state
+- **ThreeJS State Management**: Synchronize 3D scene with React state
+- **Performance Monitoring**: Track WebSocket event processing time
+- **Error Recovery**: Automatic reconnection and state restoration
+
+---
+
+## 🎨 **PHASE 4: THEME SYSTEM INTEGRATION**
+
+### **Dynamic Theme Adaptation:**
+- **Light Theme**: Bright, high-contrast 3D elements with subtle shadows
+- **Dark Theme**: Low-brightness elements with enhanced glow effects
+- **Cosmic Theme**: Enhanced 3D effects with particle systems and cosmic colors
+
+### **Theme-Aware 3D Materials:**
+```typescript
+// Theme-aware material system
+const createThemeAwareMaterial = (theme: ThemeType) => {
+  const baseMaterial = new THREE.MeshStandardMaterial();
+  
+  switch (theme) {
+    case 'light':
+      baseMaterial.color.setHex(0x7B2F9B); // Light purple
+      baseMaterial.metalness = 0.1;
+      baseMaterial.roughness = 0.8;
+      break;
+    case 'dark':
+      baseMaterial.color.setHex(0x4A1F); // Dark purple
+      baseMaterial.metalness = 0.3;
+      baseMaterial.roughness = 0.6;
+      baseMaterial.emissive.setHex(0x1A0F35); // Subtle glow
+      break;
+    case 'cosmic':
+      baseMaterial.color.setHex(0xFC7A99); // Cosmic red
+      baseMaterial.metalness = 0.8;
+      baseMaterial.roughness = 0.2;
+      baseMaterial.emissive.setHex(0x502168); // Enhanced glow
+      break;
+  }
+  
+  return baseMaterial;
+};
+```
+
+### **CSS Custom Properties Integration:**
+- **Theme Variables**: Use existing CSS custom properties for 3D element styling
+- **Dynamic Updates**: Real-time theme switching without 3D scene recreation
+- **Performance**: Efficient theme updates using ThreeJS material properties
+- **Consistency**: Maintain visual harmony with existing UI components
+
+### **Theme-Specific 3D Effects:**
+- **Light Theme**: Subtle ambient occlusion and soft shadows
+- **Dark Theme**: Enhanced bloom effects and volumetric lighting
+- **Cosmic Theme**: Particle systems, lens flares, and atmospheric effects
+
+---
+
+## 🌍 **PHASE 4.5: INTERNATIONALIZATION & RTL SUPPORT**
+
+### **RTL Language Support:**
+- **Hebrew RTL**: Mirror 3D scene layout for right-to-left reading
+- **Text Direction**: Adjust 3D text elements based on language direction
+- **Layout Adaptation**: Mirror dashboard column positioning for RTL languages
+- **Cultural Considerations**: Adapt 3D color schemes for cultural preferences
+
+### **3D Text Internationalization:**
+```typescript
+// RTL-aware 3D text positioning
+const createInternationalizedText = (text: string, language: string) => {
+  const textGeometry = new THREE.TextGeometry(text, {
+    font: getFontForLanguage(language),
+    size: 0.1,
+    height: 0.02
+  });
+  
+  const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+  
+  // Adjust position for RTL languages
+  if (isRTLLanguage(language)) {
+    textMesh.position.x = -textMesh.position.x;
+    textMesh.rotation.y = Math.PI; // Flip text direction
+  }
+  
+  return textMesh;
+};
+```
+
+### **i18n Integration:**
+- **Translation Keys**: Use existing i18next framework for 3D text elements
+- **Dynamic Language Switching**: Update 3D scene text without recreation
+- **Resource Management**: Lazy-load language-specific 3D assets
+- **Performance**: Efficient text updates using ThreeJS text geometry
+
+### **Cultural Adaptation:**
+- **Color Preferences**: Adjust 3D color schemes based on cultural context
+- **Layout Preferences**: Modify 3D scene organization for different regions
+- **Accessibility**: Ensure 3D elements meet WCAG 2.1 AA standards
+- **Localization**: Support for regional number and date formats
+
+---
+
+## ⚡ **PHASE 5: PERFORMANCE OPTIMIZATION**
 
 ### **Rendering Optimization:**
 - **Object Pooling**: Reuse block geometries and materials
@@ -97,7 +235,7 @@ npm install three @types/three @react-three/fiber @react-three/drei
 
 ---
 
-## 🎨 **PHASE 5: INTERACTIVE FEATURES**
+## 🎨 **PHASE 6: INTERACTIVE FEATURES**
 
 ### **User Controls:**
 - **Camera Movement**: Orbit, pan, zoom controls
@@ -124,41 +262,55 @@ frontend/src/components/dashboard-columns/
     ├── Block.tsx (Individual block component)
     ├── Blockchain.tsx (Blockchain structure)
     ├── Camera.tsx (Camera controls)
-    └── Lighting.tsx (Lighting system)
+    ├── Lighting.tsx (Lighting system)
+    ├── ThemeManager.tsx (Theme-aware 3D elements)
+    ├── WebSocketHandler.tsx (Real-time updates)
+    └── I18nSupport.tsx (Internationalization)
 ```
 
 ### **CSS Integration:**
 - **3D Properties**: `perspective`, `transform-style`, `backface-visibility`
 - **Performance**: `will-change: transform`, `contain: layout style paint`
 - **Responsive**: Media queries for 3D viewport adjustments
+- **Theme Integration**: CSS custom properties for dynamic theming
 
 ### **State Management:**
 - **ThreeJS State**: Scene, camera, renderer instances
 - **Blockchain Data**: Block information and relationships
 - **UI State**: Selection, hover, focus states
 - **Performance State**: FPS, memory, render metrics
+- **Theme State**: Current theme and 3D material properties
+- **Language State**: Current language and RTL settings
 
 ---
 
-## 🧪 **PHASE 6: TESTING & VALIDATION**
+## 🧪 **PHASE 7: TESTING & VALIDATION**
 
 ### **Unit Tests:**
 - ThreeJS component rendering
 - Block creation and destruction
 - Camera movement and controls
 - Performance optimization functions
+- Theme switching functionality
+- WebSocket event handling
+- Internationalization support
 
 ### **Integration Tests:**
 - Dashboard column integration
 - Theme system compatibility
 - Responsive design validation
 - Performance benchmarks
+- WebSocket integration testing
+- i18n system validation
 
 ### **User Acceptance Tests:**
 - 3D visualization clarity
 - Interactive feature functionality
 - Performance on various devices
 - Accessibility compliance
+- Theme switching experience
+- Language switching experience
+- RTL layout validation
 
 ---
 
@@ -175,6 +327,9 @@ frontend/src/components/dashboard-columns/
 - **User Experience**: Interaction success rates, error rates
 - **Accessibility**: Screen reader compatibility, keyboard navigation
 - **Device Support**: WebGL capability, mobile performance
+- **WebSocket**: Connection stability, event processing time
+- **Theme System**: Theme switching performance, material updates
+- **Internationalization**: Language switching, RTL support
 
 ---
 
@@ -190,16 +345,16 @@ frontend/src/components/dashboard-columns/
 - Basic blockchain structure
 - Camera and lighting setup
 
-### **Week 3: Interactivity**
+### **Week 3: Integration & Theming**
+- WebSocket integration for real-time updates
+- Theme system integration
+- Internationalization support
+
+### **Week 4: Interactivity & Polish**
 - User controls implementation
 - Hover and selection effects
 - Performance optimization
-
-### **Week 4: Polish & Testing**
-- Animation refinement
 - Comprehensive testing
-- Performance tuning
-- Documentation updates
 
 ---
 
@@ -209,12 +364,18 @@ frontend/src/components/dashboard-columns/
 1. **Performance Impact**: Mobile device rendering performance
 2. **Browser Compatibility**: WebGL support variations
 3. **State Complexity**: 3D + React state synchronization
+4. **WebSocket Integration**: Real-time data synchronization
+5. **Theme Switching**: 3D material updates performance
+6. **RTL Support**: Layout mirroring complexity
 
 ### **Mitigation Strategies:**
 1. **Progressive Enhancement**: Fallback to 2D visualization
 2. **Performance Monitoring**: Real-time performance tracking
 3. **Comprehensive Testing**: Cross-browser and device testing
 4. **Code Splitting**: Lazy load ThreeJS components
+5. **WebSocket Fallbacks**: Polling fallback for real-time data
+6. **Theme Optimization**: Efficient material property updates
+7. **RTL Testing**: Comprehensive RTL language validation
 
 ---
 
@@ -230,6 +391,11 @@ frontend/src/components/dashboard-columns/
 - Three.js optimization techniques
 - React performance optimization
 
+### **Integration Resources:**
+- WebSocket Hub documentation
+- Theme system architecture
+- Internationalization patterns
+
 ---
 
 ## ✅ **SUCCESS CRITERIA**
@@ -239,13 +405,20 @@ frontend/src/components/dashboard-columns/
 - [ ] Interactive controls work smoothly
 - [ ] Performance maintains 60fps on target devices
 - [ ] Responsive design adapts to all screen sizes
+- [ ] WebSocket integration provides real-time updates
+- [ ] Theme switching works seamlessly with 3D elements
+- [ ] Internationalization supports all target languages
+- [ ] RTL layout works correctly for Hebrew
 
 ### **Quality Requirements:**
 - [ ] Code coverage ≥ 85%
 - [ ] Performance benchmarks met
 - [ ] Accessibility compliance verified
 - [ ] Cross-browser compatibility confirmed
+- [ ] WebSocket reliability ≥ 99.9%
+- [ ] Theme switching performance < 100ms
+- [ ] Language switching performance < 200ms
 
 ---
 
-**Next Action**: Execute GitHub workflow to preserve current codebase, then begin ThreeJS implementation per this plan.
+**Next Action**: Begin ThreeJS implementation following this enhanced plan, starting with WebSocket integration and theme system setup.

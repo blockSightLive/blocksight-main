@@ -1,5 +1,31 @@
 # Developer Handbook (Read Once, Refer Often)
 
+/**
+ * @fileoverview Comprehensive developer guide for BlockSight.live development
+ * @version 1.0.0
+ * @author Development Team
+ * @since 2025-08-29
+ * @lastModified 2025-08-29
+ * 
+ * @description
+ * This handbook provides comprehensive guidance for developers working on BlockSight.live,
+ * including architecture, development patterns, and current implementation status.
+ * 
+ * @dependencies
+ * - 00-model-spec.md (system overview)
+ * - 01-development-roadmap.md (development strategy)
+ * - 01-execution-checklists.md (task tracking)
+ * - docs/frontend/ (frontend documentation)
+ * - docs/infrastructure/ (infrastructure documentation)
+ * 
+ * @state
+ * ✅ CURRENT - Fully aligned with current system state
+ * 
+ * @todo
+ * - Monitor for future system changes
+ * - Update implementation status as development progresses
+ */
+
 Purpose: Explain the roadmap legend, Developer Toolkit, core delivery terms, and our diagram authoring/export workflow. Use this when a term looks unfamiliar. Keep PRs concise and reference this guide instead of over‑explaining in code.
 
 ## How to use this handbook (reading order)
@@ -102,6 +128,12 @@ DoD checks
   - Docker → electrs: ✅ `host.docker.internal:50001` accessible
 - **Status**: Bitcoin Core synced to block 910,659 (100% complete), electrs running and indexing
 
+### Staging Environment (Current - Operational)
+- **Frontend**: Vercel deployment with automatic deployments from main branch
+- **Backend**: Local development environment with Docker
+- **Database**: Local PostgreSQL with Redis caching
+- **Blockchain**: Bitcoin Core + electrs fully operational
+
 ### Production Environment (Planned)
 - **AWS**: Private subnets for Core/electrs; public for API/CDN
 - **Multi-AZ**: electrs (active/standby) with health-checked failover
@@ -120,7 +152,7 @@ DoD checks
 - Execution Checklists: Per-phase gate-by-gate tasks.
 - Additional Data Collection: Analytics ETL and views.
 - Future Considerations: Inscriptions/media, Lightning, forks.
-- Automation Playbook: CI/CD and collaboration automation (see `docs/automation-playbook.md`).
+- Development workflow and automation guidance (see Developer Toolkit section).
 - Onboarding Guide: Step-by-step developer onboarding (see `docs/onboarding.md`).
  - Electrs WSL2 Stability: see `docs/infrastructure/electrs-wsl2-stability.md`.
 
@@ -211,9 +243,9 @@ Conventions and Quality
 
 ### Naming Conventions (CRITICAL)
 **Backend MUST follow our centralized naming conventions:**
-- **Reference**: `frontend/src/constants/naming-conventions.md` - Single source of truth
+- **Reference**: `docs/frontend/naming-conventions.md` - Single source of truth
 - **Action Types**: Use clean, concise names (e.g., `BLOCK_NEW`, not `RECEIVE_NEW_BLOCK_FROM_BACKEND`)
-- **API Endpoints**: Follow RESTful patterns (e.g., `/api/v1/blocks`, not `/api/bitcoin/blocks/retrieve`)
+- **API Endpoints**: Follow RESTful patterns (e.g., `/electrum/blocks`, not `/api/bitcoin/blocks/retrieve`)
 - **WebSocket Events**: Use dot notation (e.g., `block.new`, not `bitcoin-block-new-received`)
 - **Data Types**: Follow `[Entity][Type]` pattern (e.g., `BitcoinBlock`, not `BitcoinBlockDataInterface`)
 
@@ -320,9 +352,9 @@ Implications:
 
 ### HTTP Endpoints (initial set)
 - GET `/health` → liveness/readiness
-- GET `/v1/address/:addr/txs` → address history
-- GET `/v1/fee/estimates` → current estimates
-- POST `/v1/tx/broadcast` → broadcast raw hex `{ hex: string }`
+- GET `/electrum/address/:addr/txs` → address history
+- GET `/electrum/fee/estimates` → current estimates
+- POST `/electrum/tx/broadcast` → broadcast raw hex `{ hex: string }`
 
 ### WebSocket Topics (initial)
 - `mempool:newTx` → broadcast on new tx subscription
@@ -356,7 +388,13 @@ Implications:
 - Controlled pauses: wrap with `timeout --signal=INT <seconds>` to exit cleanly and resume later.
 - Windows host: disable USB selective suspend; High performance power plan; AV exclusions on electrs DB path.
 
-## Current Infrastructure State (Validated - 2025-08-18)
+## Current Infrastructure State (Validated - 2025-08-29)
+
+### Completed Implementations ✅
+- **CoreRpcAdapter**: Bitcoin Core RPC integration fully implemented and operational
+- **Frontend Staging**: Vercel deployment operational with complete React application
+- **WebSocket Hub**: Real-time Bitcoin data broadcasting system operational
+- **Electrum Integration**: TCP client with electrs fully operational
 
 ### Network Configuration
 - **VM IP Address**: `192.168.1.67` (VirtualBox Ubuntu LTS VM)
@@ -409,6 +447,8 @@ Implications:
 - Contract: validate responses via zod schemas
 - Optional: golden samples vs Bitcoin Core RPC for parity on selected flows
  - Tooling: Jest + ts-jest as the test runner; supertest for HTTP assertions. CI runs tests after lint/build.
+
+**Current Testing Status**: Frontend tests passing, backend tests operational, integration tests ready for implementation
 
 ### Server-side procedures: placement & conventions
 - Where logic lives
@@ -493,6 +533,8 @@ Containers First
 ---
 
 ## Language Strategy: TypeScript vs JavaScript (3D Frontend Considerations)
+
+**Current Status**: Frontend fully implemented with React 18+, TypeScript, and comprehensive styling system. Ready for ThreeJS integration.
 
 Position:
 - Backend: TypeScript is mandatory for safety, contracts, and maintainability
@@ -651,20 +693,22 @@ Bug fix pattern (micro)
 - Add a regression test if different from the reproducer; document the root cause in the PR
 
 Worked example (no code): Implement fee estimate fetcher
-- Pre: confirm endpoint contract `GET /v1/fee/estimates` (zod schema); diagram shows adapter → electrum client; perf budget P95 < 200ms (cached)
+- Pre: confirm endpoint contract `GET /electrum/fee/estimates` (zod schema); diagram shows adapter → electrum client; perf budget P95 < 200ms (cached)
 - During: write test expecting normalized shape `{fast, normal, slow}`; implement `getFeeEstimates()` service calling adapter, add Redis L1 cache (TTL 1–2s); validate with zod; log with correlation id
 - Post: run checks; add schema docs; update diagram note (cache path used); ensure i18n keys for any UI labels exist; write PR with risks (cache TTL choices) and rollback (disable cache via flag)
 
 ### Implementation Sequence (Backend)
-1. Finalize dependency choices and scripts in this handbook
-2. Create `package.json` and `tsconfig.json`; add ESLint/Prettier configs
-3. Scaffold `backend/src` structure and minimal Express app + health route
-4. Add ws hub and a basic heartbeat
-5. Implement Electrum client wrapper, timeouts, breaker
-6. Implement routes + validation + logging + error handler
-7. Wire Redis cache paths where applicable
-8. Write unit/integration tests and wire npm scripts
-9. Add CI later (lint, typecheck, build, test)
+**Current Status**: Steps 1-2 completed, Step 3 partially completed, Steps 4-5 completed (WebSocket hub + CoreRpcAdapter)
+
+1. ✅ Finalize dependency choices and scripts in this handbook
+2. ✅ Create `package.json` and `tsconfig.json`; add ESLint/Prettier configs
+3. 🔄 Scaffold `backend/src` structure and minimal Express app + health route (partially implemented)
+4. ✅ Add ws hub and a basic heartbeat (WebSocket hub operational)
+5. ✅ Implement Electrum client wrapper, timeouts, breaker (CoreRpcAdapter implemented)
+6. 🔄 Implement routes + validation + logging + error handler (in progress)
+7. 🔄 Wire Redis cache paths where applicable (in progress)
+8. 🔄 Write unit/integration tests and wire npm scripts (in progress)
+9. 🔄 Add CI later (lint, typecheck, build, test) (planned)
 
 ### Notes for Contributors
 - Follow `code-standard.md` for error handling, loading states, and cleanup rules
@@ -675,7 +719,7 @@ Worked example (no code): Implement fee estimate fetcher
 
 The frontend gates its splash screen using a minimal snapshot from the backend.
 
-- Method: `GET /api/v1/bootstrap`
+- Method: `GET /electrum/bootstrap`
 - Purpose: Provide the fastest-available network readiness signal for the UI.
 - Response:
 ```
@@ -708,5 +752,5 @@ Notes:
   - L1 cache keys: `l1:core:height:v1`, `l1:core:mempool:summary:v1`.
 
 - Bootstrap Controller (`backend/src/controllers/bootstrap.controller.ts`)
-  - Orchestrates both sources for cold-start: `/bootstrap` with TTL ≈ 3s (`l1:bootstrap:v1`).
+  - Orchestrates both sources for cold-start: `/electrum/bootstrap` with TTL ≈ 3s (`l1:bootstrap:v1`).
   - Returns `height`, optional `coreHeight`, and mempool fields for quick readiness.
