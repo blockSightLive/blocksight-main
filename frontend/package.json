@@ -4,10 +4,11 @@
   "version": "0.0.0",
   "description": "Frontend (planned: Vite + React + TypeScript)",
   "dependencies": {
+    "i18next": "^23.7.11",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-i18next": "^13.5.0",
-    "i18next": "^23.7.11",
+    "react-router-dom": "^7.8.2",
     "styled-components": "^6.1.19"
   },
   "devDependencies": {
