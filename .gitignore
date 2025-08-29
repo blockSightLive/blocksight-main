@@ -66,3 +66,4 @@ project-documents/system-diagrams/exports/*.svg
 
 # Secrets
 btCore/
+.vercel
