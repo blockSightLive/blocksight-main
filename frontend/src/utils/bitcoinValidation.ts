@@ -3,7 +3,7 @@
  * @version 1.0.0
  * @author Development Team
  * @since 2025-08-27
- * @lastModified 2025-08-27
+ * @lastModified 2025-08-11
  * 
  * @description
  * Lightweight utilities for recognizing Bitcoin data patterns and providing meaningful display information.
@@ -278,59 +278,289 @@ export function safeGetArray(obj: Record<string, unknown>, key: string): unknown
 // Export pattern constants for external use if needed
 export { ADDRESS_PATTERNS, TXID_PATTERN, BLOCK_HASH_PATTERN, SCRIPT_PATTERN }
 
-// Legacy export compatibility - simple pattern recognition functions
+// Proper validation functions that actually validate data
 export const validateBlock = (data: unknown): { isValid: boolean; errors: string[]; warnings: string[]; confidence: number } => {
   if (!data || typeof data !== 'object') {
     return { isValid: false, errors: ['Data must be an object'], warnings: [], confidence: 0.0 }
   }
-  return { isValid: true, errors: [], warnings: [], confidence: 1.0 }
+  
+  const block = data as Record<string, unknown>
+  const errors: string[] = []
+  const warnings: string[] = []
+  
+  // Check required fields
+  if (!block.hash || typeof block.hash !== 'string') {
+    errors.push('Missing required field: hash')
+  } else if (!isBlockHashFormat(block.hash)) {
+    errors.push('Invalid block hash format')
+  }
+  
+  if (block.height === undefined || block.height === null) {
+    errors.push('Missing required field: height')
+  } else if (typeof block.height !== 'number' || block.height < 0 || !Number.isInteger(block.height)) {
+    errors.push('Block height must be a non-negative integer')
+  }
+  
+  // Check fee range if present
+  if (block.feeRange && typeof block.feeRange === 'object') {
+    const feeRange = block.feeRange as Record<string, unknown>
+    const min = feeRange.min
+    const max = feeRange.max
+    
+    if (typeof min === 'number' && typeof max === 'number' && min > max) {
+      errors.push('Fee range min cannot be greater than max')
+    }
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors,
+    warnings,
+    confidence: errors.length === 0 ? 1.0 : 0.0
+  }
 }
 
 export const validateTransaction = (data: unknown): { isValid: boolean; errors: string[]; warnings: string[]; confidence: number } => {
   if (!data || typeof data !== 'object') {
     return { isValid: false, errors: ['Data must be an object'], warnings: [], confidence: 0.0 }
   }
-  return { isValid: true, errors: [], warnings: [], confidence: 1.0 }
+  
+  const tx = data as Record<string, unknown>
+  const errors: string[] = []
+  const warnings: string[] = []
+  
+  // Check TXID
+  if (!tx.txid || typeof tx.txid !== 'string') {
+    errors.push('Missing required field: txid')
+  } else if (!isTxidFormat(tx.txid)) {
+    errors.push('Invalid transaction ID format')
+  }
+  
+  // Check inputs
+  if (!Array.isArray(tx.inputs) || tx.inputs.length === 0) {
+    errors.push('Transaction must have at least one input')
+  }
+  
+  // Check outputs
+  if (!Array.isArray(tx.outputs) || tx.outputs.length === 0) {
+    errors.push('Transaction must have at least one output')
+  }
+  
+  // Check block hash if present
+  if (tx.blockHash && typeof tx.blockHash === 'string' && !isBlockHashFormat(tx.blockHash)) {
+    errors.push('Invalid block hash format')
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors,
+    warnings,
+    confidence: errors.length === 0 ? 1.0 : 0.0
+  }
 }
 
 export const validateAddress = (data: unknown): { isValid: boolean; errors: string[]; warnings: string[]; confidence: number } => {
   if (!data || typeof data !== 'object') {
     return { isValid: false, errors: ['Data must be an object'], warnings: [], confidence: 0.0 }
   }
-  return { isValid: true, errors: [], warnings: [], confidence: 1.0 }
+  
+  const address = data as Record<string, unknown>
+  const errors: string[] = []
+  const warnings: string[] = []
+  
+  // Check address format
+  if (!address.address || typeof address.address !== 'string') {
+    errors.push('Missing required field: address')
+  } else if (!isAddressFormat(address.address)) {
+    errors.push('Invalid Bitcoin address format')
+  }
+  
+  // Check balance consistency if present
+  if (address.balance && typeof address.balance === 'object') {
+    const balance = address.balance as Record<string, unknown>
+    const confirmed = balance.confirmed
+    const unconfirmed = balance.unconfirmed
+    const total = balance.total
+    
+    if (typeof confirmed === 'number' && typeof unconfirmed === 'number' && typeof total === 'number') {
+      if (Math.abs((confirmed + unconfirmed) - total) > 0.001) {
+        warnings.push('Total balance should equal confirmed + unconfirmed')
+      }
+    }
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors,
+    warnings,
+    confidence: errors.length === 0 ? 1.0 : 0.0
+  }
 }
 
 export const validateUTXO = (data: unknown): { isValid: boolean; errors: string[]; warnings: string[]; confidence: number } => {
   if (!data || typeof data !== 'object') {
     return { isValid: false, errors: ['Data must be an object'], warnings: [], confidence: 0.0 }
   }
-  return { isValid: true, errors: [], warnings: [], confidence: 1.0 }
+  
+  const utxo = data as Record<string, unknown>
+  const errors: string[] = []
+  const warnings: string[] = []
+  
+  // Check TXID
+  if (!utxo.txid || typeof utxo.txid !== 'string') {
+    errors.push('Missing required field: txid')
+  } else if (!isTxidFormat(utxo.txid)) {
+    errors.push('Invalid transaction ID format')
+  }
+  
+  // Check vout
+  if (utxo.vout === undefined || utxo.vout === null) {
+    errors.push('Missing required field: vout')
+  } else if (typeof utxo.vout !== 'number' || utxo.vout < 0 || !Number.isInteger(utxo.vout)) {
+    errors.push('Vout must be a non-negative integer')
+  }
+  
+  // Check value
+  if (utxo.value === undefined || utxo.value === null) {
+    errors.push('Missing required field: value')
+  } else if (typeof utxo.value !== 'number' || utxo.value <= 0) {
+    errors.push('UTXO value must be a positive number')
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors,
+    warnings,
+    confidence: errors.length === 0 ? 1.0 : 0.0
+  }
 }
 
 export const validateFeeEstimates = (data: unknown): { isValid: boolean; errors: string[]; warnings: string[]; confidence: number } => {
   if (!data || typeof data !== 'object') {
     return { isValid: false, errors: ['Data must be an object'], warnings: [], confidence: 0.0 }
   }
-  return { isValid: true, errors: [], warnings: [], confidence: 1.0 }
+  
+  const fees = data as Record<string, unknown>
+  const errors: string[] = []
+  const warnings: string[] = []
+  
+  // Check fee values
+  if (fees.fast !== undefined && (typeof fees.fast !== 'number' || fees.fast < 0)) {
+    errors.push('Fast fee must be a non-negative number')
+  }
+  
+  if (fees.medium !== undefined && (typeof fees.medium !== 'number' || fees.medium < 0)) {
+    errors.push('Medium fee must be a non-negative number')
+  }
+  
+  if (fees.slow !== undefined && (typeof fees.slow !== 'number' || fees.slow < 0)) {
+    errors.push('Slow fee must be a non-negative number')
+  }
+  
+  // Check fee hierarchy
+  if (typeof fees.fast === 'number' && typeof fees.medium === 'number' && fees.fast > fees.medium) {
+    warnings.push('Fast fee should be less than or equal to medium fee')
+  }
+  
+  if (typeof fees.medium === 'number' && typeof fees.slow === 'number' && fees.medium > fees.slow) {
+    warnings.push('Medium fee should be less than or equal to slow fee')
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors,
+    warnings,
+    confidence: errors.length === 0 ? 1.0 : 0.0
+  }
 }
 
 export const validateNetworkStatus = (data: unknown): { isValid: boolean; errors: string[]; warnings: string[]; confidence: number } => {
   if (!data || typeof data !== 'object') {
     return { isValid: false, errors: ['Data must be an object'], warnings: [], confidence: 0.0 }
   }
-  return { isValid: true, errors: [], warnings: [], confidence: 1.0 }
+  
+  const status = data as Record<string, unknown>
+  const errors: string[] = []
+  const warnings: string[] = []
+  
+  // Check network load
+  if (status.load && typeof status.load === 'string') {
+    const validLoads = ['Below Average', 'Neutral', 'Load', 'Extreme Load']
+    if (!validLoads.includes(status.load)) {
+      errors.push('Invalid network load value')
+    }
+  }
+  
+  // Check pending transactions
+  if (status.pendingTransactions !== undefined && (typeof status.pendingTransactions !== 'number' || status.pendingTransactions < 0)) {
+    errors.push('Pending transactions must be a non-negative integer')
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors,
+    warnings,
+    confidence: errors.length === 0 ? 1.0 : 0.0
+  }
 }
 
 export const validatePriceData = (data: unknown): { isValid: boolean; errors: string[]; warnings: string[]; confidence: number } => {
   if (!data || typeof data !== 'object') {
     return { isValid: false, errors: ['Data must be an object'], warnings: [], confidence: 0.0 }
   }
-  return { isValid: true, errors: [], warnings: [], confidence: 1.0 }
+  
+  const price = data as Record<string, unknown>
+  const errors: string[] = []
+  const warnings: string[] = []
+  
+  // Check USD price
+  if (price.usd !== undefined && (typeof price.usd !== 'number' || price.usd <= 0)) {
+    errors.push('USD price must be a positive number')
+  }
+  
+  // Check other currency prices
+  if (price.eur !== undefined && (typeof price.eur !== 'number' || price.eur <= 0)) {
+    warnings.push('EUR price must be a positive number')
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors,
+    warnings,
+    confidence: errors.length === 0 ? 1.0 : 0.0
+  }
 }
 
 // BIP32 path utilities (simple pattern recognition)
 export const isValidBIP32Path = (path: string): boolean => {
-  return /^m(\/[0-9]+'?)*$/.test(path)
+  // Must start with 'm' and have exactly 5 parts total
+  // Pattern: m/44'/0'/0'/0/0 (5 parts total)
+  // First 3 parts after 'm' must be hardened (with '), last 2 parts can be unhardened
+  const parts = path.split('/')
+  
+  // Accept either 5 or 6 parts (in case there's a trailing slash)
+  if (parts.length !== 5 && parts.length !== 6) {
+    return false
+  }
+  if (parts[0] !== 'm') {
+    return false
+  }
+  
+  // Check that first 3 parts after 'm' are hardened (numbers followed by ')
+  for (let i = 1; i <= 3; i++) {
+    if (!/^[0-9]+'$/.test(parts[i])) {
+      return false
+    }
+  }
+  
+  // Check that last 2 parts are numbers (can be unhardened)
+  for (let i = 4; i < parts.length; i++) {
+    if (!/^[0-9]+$/.test(parts[i])) {
+      return false
+    }
+  }
+  
+  return true
 }
 
 export const parseBIP32Path = (path: string): { purpose: number; coinType: number; account: number; change: number; addressIndex: number } | null => {

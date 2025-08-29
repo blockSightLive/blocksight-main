@@ -3,7 +3,7 @@
  * @version 1.0.0
  * @author Development Team
  * @since 2025-08-19
- * @lastModified 2025-08-23
+ * @lastModified 2025-08-11
  * 
  * @description
  * Simple, minimal Bitcoin state management reducer. Starting with basic
