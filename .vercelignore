@@ -1,0 +1,19 @@
+# Ignore everything except frontend
+*
+!frontend/
+!frontend/src/
+!frontend/package.json
+!frontend/vite.config.ts
+!frontend/tsconfig.json
+!frontend/index.html
+!frontend/vercel.json
+
+# Specifically ignore backend and workspace files
+backend/
+electrs/
+btCore/
+node_modules/
+*.log
+.env
+.env.*
+package-lock.json
