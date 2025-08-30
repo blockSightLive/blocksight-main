@@ -5,12 +5,12 @@
  * @state In Development
  */
 
-import type http from 'http';
 import { WebSocketServer } from 'ws';
 import type { WebSocketHub } from './hub';
+import type { Server } from 'http';
 
 export function createWebSocketServer(params: {
-  server: http.Server;
+  server: Server;
   hub: WebSocketHub;
   path?: string;
 }) {

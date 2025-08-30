@@ -16,7 +16,7 @@ import type { Server } from 'http';
 dotenv.config();
 const port = parseInt(process.env.PORT ?? '8000', 10);
 const app = createApp();
-const server: Server = http.createServer(app);
+const server = http.createServer(app) as Server;
 
 server.listen(port, () => {
   // Minimal log; pino will be wired later
