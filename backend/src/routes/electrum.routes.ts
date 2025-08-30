@@ -17,7 +17,10 @@ export function createElectrumRouter(adapter: ElectrumAdapter, _core?: CoreRpcAd
   const c = makeElectrumController(adapter, undefined, l1);
 
   // Introspection: confirm router is mounted
-  r.get('/', (_req, res) => res.json({ ok: true, routes: ['/electrum/health', '/electrum/fee/estimates', '/electrum/network/height', '/electrum/network/mempool'] }));
+  r.get('/', (_req, res) => res.json({ ok: true, routes: ['/bootstrap', '/electrum/health', '/electrum/fee/estimates', '/electrum/network/height', '/electrum/network/mempool'] }));
+
+  // Bootstrap endpoint (frontend cold-start)
+  r.get('/bootstrap', c.bootstrap);
 
   // Namespaced Electrum endpoints
   r.get('/electrum/health', c.health);

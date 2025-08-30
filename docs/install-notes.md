@@ -148,9 +148,9 @@ npm install -w backend -w frontend
 - After installs, update ESLint overrides to use strict project references per the handbook
 
 ## Containers First (recommended dev flow)
-- Build unified image: `docker build -t blocksight/app:dev .`
-- Dev stack (backend + Redis): `docker compose -f docker-compose.dev.yml up -d --build`
-- Full stack (when frontend/electrs are wired): `docker compose -f docker-compose.stack.yml up -d --build`
+- Build unified image: `docker build -t blocksight-backend:dev .`
+- Dev stack (backend + Redis): `docker-compose -f docker-compose.dev.yml up -d --build`
+- Full stack (when frontend/electrs are wired): `docker-compose -f docker-compose.stack.yml up -d --build` *(Future implementation)*
 - Inside compose, use service DNS (e.g., `redis`, `backend`) for URLs; from host use mapped ports (`http://localhost:8000`)
 
 ## Electrs on VM (WSL2 or Linux) – Runbook

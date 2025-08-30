@@ -7,12 +7,22 @@
  */
 
 import express, { Request, Response, NextFunction, Express } from 'express';
+import cors from 'cors';
 import { FakeElectrumAdapter } from './adapters/electrum/fake.adapter';
 import { RealElectrumAdapter } from './adapters/electrum/electrum.adapter';
 import { createElectrumRouter } from './routes/electrum.routes';
+import { createWebSocketHub } from './ws/hub';
 
 export function createApp(): Express {
   const app = express();
+
+  // CORS configuration
+  const corsOptions = {
+    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    credentials: true,
+    optionsSuccessStatus: 200
+  };
+  app.use(cors(corsOptions));
 
   app.get('/health', (_req: Request, res: Response) => {
     res.json({ ok: true, ts: Date.now() });
@@ -27,7 +37,11 @@ export function createApp(): Express {
         tls: (process.env.ELECTRUM_TLS ?? 'false') === 'true'
       })
     : new FakeElectrumAdapter();
-  app.use('/v1', createElectrumRouter(electrumAdapter));
+  app.use('/api/v1', createElectrumRouter(electrumAdapter));
+
+  // Create and attach WebSocket hub
+  const wsHub = createWebSocketHub({ adapter: electrumAdapter });
+  app.locals.wsHub = wsHub;
 
   // Basic error handler placeholder
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -401,35 +401,34 @@ npm run metrics:view     # View performance metrics
 
 ## 🐳 Docker Configuration
 
-### Docker Compose Services
+### Current Development Setup
 ```yaml
-# Development environment
+# Local development (backend + Redis only)
 docker-compose.dev.yml
 
-# Production environment
-docker-compose.prod.yml
-
-# Testing environment
-docker-compose.test.yml
+# Future: Full stack with electrs (not yet implemented)
+docker-compose.stack.yml
 ```
 
-### Container Management
+### Container Management (Development)
 ```bash
-# Start all services
+# Start backend and Redis services
 docker-compose -f docker-compose.dev.yml up -d
 
 # View running containers
-docker-compose ps
+docker-compose -f docker-compose.dev.yml ps
 
 # View logs for specific service
-docker-compose logs -f backend
+docker-compose -f docker-compose.dev.yml logs -f backend
 
 # Execute commands in containers
-docker-compose exec backend npm run test
+docker-compose -f docker-compose.dev.yml exec backend npm run test
 
-# Scale services
-docker-compose up -d --scale backend=3
+# Stop services
+docker-compose -f docker-compose.dev.yml down
 ```
+
+**Note**: Frontend runs locally for fast development iteration. Backend runs in Docker with Redis.
 
 ---
 

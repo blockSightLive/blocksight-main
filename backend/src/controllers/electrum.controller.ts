@@ -16,6 +16,30 @@ import { recordCacheHit, recordCacheMiss, recordLatency } from '../metrics/metri
 
 export function makeElectrumController(adapter: ElectrumAdapter, core?: CoreRpcAdapter, l1?: L1Cache) {
   return {
+    bootstrap: async (_req: Request, res: Response) => {
+      const started = Date.now();
+      try {
+                 const [height, coreHeight] = await Promise.allSettled([
+           adapter.getTipHeight(),
+           core ? core.getBlockCount() : Promise.resolve(null)
+         ]);
+        
+        const payload = {
+          height: height.status === 'fulfilled' ? height.value : null,
+          coreHeight: coreHeight.status === 'fulfilled' ? coreHeight.value : null,
+          mempoolPending: null, // TODO: Implement when Core is ready
+          mempoolVsize: undefined, // TODO: Implement when Electrum mempool is ready
+          asOfMs: Date.now(),
+          source: 'electrum'
+        };
+        
+        recordLatency('bootstrap', Date.now() - started);
+        res.json(payload);
+      } catch (error) {
+        console.error('[bootstrap] error:', error);
+        res.status(503).json({ error: 'bootstrap_unavailable' });
+      }
+    },
     health: async (_req: Request, res: Response) => {
       const started = Date.now();
       // Ensure health check never hangs; degrade quickly on failure

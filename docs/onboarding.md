@@ -47,7 +47,7 @@ Welcome! This guide gets you productive quickly and safely.
 - Pick a “good first issue” labeled ticket
 - Follow the Micro-cycle (45–60 min) in `docs/developer-handbook.md` for each session
 - Keep diffs small; request early review if touching security/consensus/performance
- - Containers-first: after installs, prefer running via `docker compose -f docker-compose.dev.yml up -d --build`
+ - Containers-first: after installs, prefer running via `docker-compose -f docker-compose.dev.yml up -d --build`
 
 ## Workflow
 - Branching: `feature/<concise-name>`; conventional commits

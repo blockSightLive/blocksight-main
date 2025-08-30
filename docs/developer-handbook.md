@@ -508,7 +508,7 @@ How to use:
  - After installs, CI will run `typecheck`, `lint`, `build`, and `test` for all workspaces; keep diffs small to speed feedback
 
 Containers First
-- Prefer `docker compose -f docker-compose.dev.yml up -d --build` for local stack and service DNS routing
+- Prefer `docker-compose -f docker-compose.dev.yml up -d --build` for local stack and service DNS routing
 - Use service names (e.g., `redis`, `backend`) when one container talks to another; use `host.docker.internal` to reach host-only services
 - See `docs/infrastructure/docker.md` for commands and notes
 

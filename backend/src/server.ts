@@ -1,4 +1,4 @@
-// @ts-nocheck
+
 /**
  * @fileoverview HTTP server bootstrap and graceful shutdown
  * @version 1.0.0
@@ -11,11 +11,12 @@ import http from 'http';
 import dotenv from 'dotenv';
 import { createApp } from './app';
 import { createWebSocketServer } from './ws/server';
+import type { Server } from 'http';
 
 dotenv.config();
 const port = parseInt(process.env.PORT ?? '8000', 10);
 const app = createApp();
-const server = http.createServer(app);
+const server: Server = http.createServer(app);
 
 server.listen(port, () => {
   // Minimal log; pino will be wired later
@@ -23,7 +24,6 @@ server.listen(port, () => {
 });
 
 // Bind WebSocket server to the same HTTP server and attach routes
-// @ts-expect-error - wsHub was attached in app.ts
 const wsHub = app.locals.wsHub as ReturnType<typeof import('./ws/hub').createWebSocketHub>;
 if (wsHub) {
   createWebSocketServer({ server, hub: wsHub, path: '/ws' });

@@ -198,6 +198,39 @@ I never execute commands automatically. I always:
 - Access configuration details
 - Deploy or test the system
 
+### 🚨 CRITICAL GIT WORKFLOW PROTECTION (MANDATORY)
+**I MUST check Git status before ANY development work:**
+
+**Before Every Development Session:**
+1. **Confirm current branch** - Are you on the correct feature branch?
+2. **Check remote sync** - Is your local branch up-to-date with remote?
+3. **Verify recent commits** - Are your latest changes committed locally?
+
+**During Development:**
+- **Commit frequently** - Every logical change should be committed
+- **Push to remote** - Push to your feature branch after every 2-3 commits
+- **Never lose progress** - Remote branch is your backup
+
+**Before Switching Branches:**
+- **Commit all changes** - No uncommitted work
+- **Push to remote** - Ensure remote has your latest work
+- **Verify remote sync** - Check `git status` and `git log --oneline`
+
+**After Important Changes:**
+- **Immediate commit** - Don't wait to commit critical fixes
+- **Push to remote** - Protect against local loss
+- **Consider main merge** - If changes are stable, merge to main to preserve progress
+
+**Git Commands to Run Frequently:**
+```bash
+git status                    # Check current state
+git add . && git commit -m "description"  # Commit changes
+git push origin <branch>     # Push to remote
+git log --oneline -5         # Verify recent commits
+```
+
+**REMINDER**: I will ask for Git status before proceeding with any development work.
+
 ### Systematic File Editing
 My methodology:
 1. **Analyze complete file before editing**
