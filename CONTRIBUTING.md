@@ -4,7 +4,7 @@ Thanks for your interest in contributing!
 
 ## Getting Started
 - Read `README.md` and `docs/README.md` for a quick map of the docs
-- Follow `docs/onboarding.md` to set up your environment
+- Follow `docs/developer-handbook.md` and `docs/ENVIRONMENT-SETUP.md` to set up your environment
 - Skim `docs/developer-handbook.md` and `docs/code-standard.md`
 
 ## Workflow

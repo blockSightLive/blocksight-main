@@ -14,9 +14,9 @@ export function createCoreRouter(core: CoreRpcAdapter, l1?: L1Cache): Router {
   const r = Router()
   const c = makeCoreController(core, l1)
 
-  r.get('/', (_req, res) => res.json({ ok: true, routes: ['/core/height', '/core/mempool'] }))
-  r.get('/core/height', c.height)
-  r.get('/core/mempool', c.mempool)
+  r.get('/', (_req, res) => res.json({ ok: true, routes: ['/height', '/mempool'] }))
+  r.get('/height', c.height)
+  r.get('/mempool', c.mempool)
 
   return r
 }

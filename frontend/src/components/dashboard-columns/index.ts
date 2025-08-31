@@ -1,5 +1,4 @@
-export * from './BlockchainVisualizer'
+// Export only components that are NOT lazy loaded
+// Lazy loaded components are imported directly in Dashboard.tsx
 export * from './SearchResults'
-export * from './DashboardData'
-
-
+export * from './blockchain'

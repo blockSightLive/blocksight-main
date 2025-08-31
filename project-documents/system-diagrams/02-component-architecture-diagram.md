@@ -211,7 +211,7 @@ This Component Architecture Diagram shows the internal structure and relationshi
 - **CoreRpcAdapter**: Direct Bitcoin Core RPC integration for enhanced reliability
 - **Electrum Adapter**: TCP client with HTTP/JSON conversion and real-time monitoring
 - **WebSocket Hub**: Real-time event broadcasting (tip height, reorg detection, fees, prices)
-- **API Layer**: RESTful endpoints (/electrum/*, /health, /network/*, /mempool)
+- **API Layer**: RESTful endpoints (/api/v1/electrum/*, /api/v1/core/*, /api/v1/network/*, /ws)
 - **Cache Layer**: Multi-tier architecture (Redis L1, Memory-mapped L2, PostgreSQL)
 
 ### Infrastructure ✅ **IMPLEMENTED**

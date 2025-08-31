@@ -5,7 +5,7 @@
  * @version 1.0.0
  * @author Development Team
  * @since 2025-08-29
- * @lastModified 2025-08-29
+ * @lastModified 2025-08-30
  * 
  * @description
  * This guide provides a complete overview of all markdown documentation files in the codebase,
@@ -21,6 +21,15 @@
 ## Overview
 
 This guide provides a comprehensive overview of all markdown documentation files in the BlockSight.live codebase, organized by purpose and responsibility. Use this guide to understand what each document covers and how to find the information you need.
+
+## 🚀 **QUICK START FOR NEW DEVELOPERS**
+
+**Recommended Reading Order:**
+1. **`docs/README.md`** - This documentation index
+2. **`docs/developer-handbook.md`** - Complete development workflow and guidelines
+3. **`project-documents/00-model-spec.md`** - System architecture and requirements
+4. **`docs/code-standard.md`** - Development standards and rules
+5. **`docs/ENVIRONMENT-SETUP.md`** - Environment setup and configuration
 
 ## Core Project Documentation
 
@@ -52,7 +61,108 @@ This guide provides a comprehensive overview of all markdown documentation files
 - **When to Use**: Technical implementation, architecture decisions, system design
 - **Status**: ✅ **CURRENT** - Fully updated and aligned
 
-## Implementation Plans
+## 🏗️ **API Documentation (Complete Reference)**
+
+### **API-ENDPOINTS.md** - Complete API Reference
+- **Location**: `docs/`
+- **Purpose**: Comprehensive API endpoint documentation with schemas and examples
+- **Responsibility**: All available endpoints, request/response formats, error codes
+- **When to Use**: API development, endpoint reference, integration work
+- **Status**: ✅ **CURRENT** - Complete API reference with all new endpoints
+
+### **API-STANDARDS.md** - API Development Standards
+- **Location**: `docs/`
+- **Purpose**: Development standards and best practices for API development
+- **Responsibility**: Response formats, error handling, validation, security standards
+- **When to Use**: API development, code review, standards compliance
+- **Status**: ✅ **CURRENT** - Complete development standards
+
+### **API-NAVIGATION.md** - API Documentation Guide
+- **Location**: `docs/`
+- **Purpose**: Quick navigation to all API-related documentation and resources
+- **Responsibility**: API development checklist, troubleshooting, quick reference
+- **When to Use**: Starting API development, finding API resources
+- **Status**: ✅ **CURRENT** - Complete navigation guide
+
+## 🌍 **Environment & Setup Documentation**
+
+### **ENVIRONMENT-SETUP.md** - Environment Configuration Guide
+- **Location**: `docs/`
+- **Purpose**: Comprehensive environment setup and configuration instructions
+- **Responsibility**: Environment variables, Docker configuration, service connections
+- **When to Use**: Setting up development/production environments, troubleshooting connections
+- **Status**: ✅ **CURRENT** - Complete environment setup guide (replaces install-notes.md)
+
+## 👨‍💻 **Development Standards & Guidelines**
+
+### **code-standard.md** - Development Rulebook
+- **Location**: `docs/`
+- **Purpose**: Single source of truth for high-quality, high-performance code development
+- **Responsibility**: Programming standards, patterns, quality metrics, workflow rules
+- **When to Use**: Before every coding session, during code reviews, standards compliance
+- **Status**: ✅ **CURRENT** - Optimized and enhanced development rulebook
+
+### **developer-handbook.md** - Complete Development Guide
+- **Location**: `docs/`
+- **Purpose**: Comprehensive development workflow, guidelines, and best practices
+- **Responsibility**: Development processes, tooling, troubleshooting, i18n rules
+- **When to Use**: Daily development work, learning the codebase, troubleshooting
+- **Status**: ✅ **CURRENT** - Complete development handbook (replaces onboarding.md)
+
+### **MIDDLEWARE-DEVELOPER-GUIDE.md** - Middleware Architecture Guide
+- **Location**: `docs/`
+- **Purpose**: Explains the middleware stack, usage, and development patterns
+- **Responsibility**: Middleware architecture, validation, error handling, monitoring, security, caching
+- **When to Use**: Developing new middleware, integrating with existing middleware, troubleshooting
+- **Status**: ✅ **CURRENT** - Comprehensive middleware developer guide
+
+### **CSS-QUALITY-GUIDE.md** - CSS Quality Standards Guide
+- **Location**: `docs/`
+- **Purpose**: Ensures consistent CSS quality with stylelint commands and standards
+- **Responsibility**: CSS quality gates, stylelint usage, CSS architecture rules, responsive design
+- **When to Use**: CSS development, stylelint troubleshooting, CSS architecture decisions
+- **Status**: ✅ **CURRENT** - Comprehensive CSS quality guide
+
+## 🎨 **Frontend Development**
+
+### **frontend/README.md** - Frontend Development Guide
+- **Location**: `docs/frontend/`
+- **Purpose**: Frontend-specific development guidelines and configuration
+- **Responsibility**: React patterns, Vite configuration, styling, component guidelines
+- **When to Use**: Frontend development, component creation, styling work
+- **Status**: ✅ **CURRENT** - Complete frontend development guide
+
+### **frontend/naming-conventions.md** - Frontend Naming Standards
+- **Location**: `docs/frontend/`
+- **Purpose**: Critical naming conventions for frontend components and files
+- **Responsibility**: Component naming, file organization, CSS class naming
+- **When to Use**: Creating new components, organizing frontend code
+- **Status**: ✅ **CURRENT** - Single source of truth for frontend naming
+
+### **frontend/styles-README.md** - Styling Guidelines
+- **Location**: `docs/frontend/`
+- **Purpose**: CSS and styling best practices and patterns
+- **Responsibility**: Styling architecture, theme system, responsive design
+- **When to Use**: Styling work, theme development, CSS architecture
+- **Status**: ✅ **CURRENT** - Complete styling guidelines
+
+## 🏗️ **Infrastructure & Deployment**
+
+### **infrastructure/README.md** - Infrastructure Overview
+- **Location**: `docs/infrastructure/`
+- **Purpose**: Infrastructure architecture and deployment information
+- **Responsibility**: Network topology, deployment strategies, infrastructure components
+- **When to Use**: Infrastructure work, deployment planning, network configuration
+- **Status**: ✅ **CURRENT** - Infrastructure documentation
+
+### **infrastructure/docker.md** - Docker Configuration
+- **Location**: `docs/infrastructure/`
+- **Purpose**: Docker setup and configuration guidelines
+- **Responsibility**: Container configuration, service orchestration, development environment
+- **When to Use**: Docker setup, container configuration, service management
+- **Status**: ✅ **CURRENT** - Docker documentation
+
+## 📊 **Implementation Plans & Status**
 
 ### **THREEJS_IMPLEMENTATION_PLAN.md** - Next Development Focus
 - **Location**: `project-documents/`
@@ -68,201 +178,69 @@ This guide provides a comprehensive overview of all markdown documentation files
 - **When to Use**: Backend development, adapter integration
 - **Status**: ✅ **CURRENT** - Tracks adapter development
 
-### **ELECTRUM_DEVELOPMENT_TODO.md** - Electrum Adapter Tasks
-- **Location**: `backend/src/adapters/electrum/`
-- **Purpose**: Detailed TODO list for Electrum adapter development
-- **Responsibility**: Specific tasks for improving the Electrum adapter
-- **When to Use**: Electrum adapter development, backend tasks
-- **Status**: ✅ **CURRENT** - Active development tasks
+## 🔄 **Documentation Maintenance Rules**
 
-## System Architecture Diagrams
+### **When Adding New Documentation:**
+1. **Update this navigation guide** to include the new document
+2. **Add references** in related documents where appropriate
+3. **Update `docs/README.md`** if it's a core document
+4. **Ensure `docs/code-standard.md`** references are updated
 
-### **01-system-context-diagram.md** - System Boundaries
-- **Location**: `project-documents/system-diagrams/`
-- **Purpose**: Shows BlockSight.live as central system with external entities
-- **Responsibility**: System context, external integrations, data sources
-- **When to Use**: Understanding system boundaries and external relationships
-- **Status**: ✅ **CURRENT** - Updated to reflect implementation status
+### **Documentation Hierarchy:**
+- **Core Documents**: `00-model-spec.md`, `code-standard.md`, `developer-handbook.md`
+- **API Documents**: `API-ENDPOINTS.md`, `API-STANDARDS.md`, `API-NAVIGATION.md`
+- **Setup Documents**: `ENVIRONMENT-SETUP.md`
+- **Specialized Guides**: `frontend/*`, `infrastructure/*`
 
-### **02-component-architecture-diagram.md** - Internal Structure
-- **Location**: `project-documents/system-diagrams/`
-- **Purpose**: Internal component relationships and architecture
-- **Responsibility**: Component interactions, frontend/backend structure
-- **When to Use**: Understanding internal architecture and component relationships
-- **Status**: ✅ **CURRENT** - Updated to reflect implementation status
+### **Single Source of Truth Principle:**
+- Each topic has **one primary document** that serves as the authoritative source
+- **Cross-references** are used to connect related information
+- **No duplication** of core information across multiple documents
 
-### **03-data-flow-diagram.md** - Data Movement Patterns
-- **Location**: `project-documents/system-diagrams/`
-- **Purpose**: How data moves through the system
-- **Responsibility**: Data flow patterns, caching strategies, real-time streaming
-- **When to Use**: Understanding data movement and processing
-- **Status**: ✅ **CURRENT** - Updated to reflect implementation status
+## 📚 **Quick Reference by Task Type**
 
-### **04-sequence-diagrams.md** - System Interactions
-- **Location**: `project-documents/system-diagrams/`
-- **Purpose**: Key system interaction patterns and timing
-- **Responsibility**: User interactions, real-time data flow, system operations
-- **When to Use**: Understanding system interaction patterns and timing
-- **Status**: ✅ **CURRENT** - Updated to reflect implementation status
+### **Getting Started:**
+- **New Developer**: `docs/developer-handbook.md` → `docs/ENVIRONMENT-SETUP.md`
+- **System Overview**: `project-documents/00-model-spec.md`
+- **Development Standards**: `docs/code-standard.md`
 
-### **05-class-diagrams.md** - Object-Oriented Structure
-- **Location**: `project-documents/system-diagrams/`
-- **Purpose**: Object-oriented architecture and class relationships
-- **Responsibility**: Frontend components, backend adapters, infrastructure classes
-- **When to Use**: Understanding object relationships and class structure
-- **Status**: ✅ **CURRENT** - Updated to reflect implementation status
+### **Daily Development:**
+- **API Work**: `docs/API-NAVIGATION.md` → `docs/API-STANDARDS.md`
+- **Frontend Work**: `docs/frontend/README.md` → `docs/frontend/naming-conventions.md`
+- **Backend Work**: `docs/developer-handbook.md` → `docs/code-standard.md`
 
-### **06-deployment-diagram.md** - Infrastructure & Deployment
-- **Location**: `project-documents/system-diagrams/`
-- **Purpose**: Deployment architecture and infrastructure
-- **Responsibility**: Vercel staging, local development, CI/CD pipeline
-- **When to Use**: Deployment, infrastructure, environment setup
-- **Status**: ✅ **CURRENT** - Updated to reflect implementation status
+### **Architecture & Planning:**
+- **System Design**: `project-documents/system-diagrams/*`
+- **Development Roadmap**: `project-documents/01-development-roadmap.md`
+- **Technical Implementation**: `project-documents/02-technical-implementation.md`
 
-### **07-activity-tip-and-mempool.md** - Monitoring Workflows
-- **Location**: `project-documents/system-diagrams/`
-- **Purpose**: Bitcoin tip height and mempool monitoring workflows
-- **Responsibility**: Real-time monitoring, caching strategies, WebSocket broadcasting
-- **When to Use**: Understanding monitoring and real-time data workflows
-- **Status**: ✅ **CURRENT** - Updated to reflect implementation status
+---
 
-### **08-state-circuit-breaker.md** - Failure Handling
-- **Location**: `project-documents/system-diagrams/`
-- **Purpose**: Circuit breaker pattern for failure handling and recovery
-- **Responsibility**: Failure scenarios, state transitions, recovery strategies
-- **When to Use**: Understanding failure handling and system reliability
-- **Status**: ✅ **CURRENT** - Updated to reflect implementation status
+## 📝 **Documentation Status Summary**
 
-### **09-component-electrum-adapter.md** - Electrum Adapter Architecture
-- **Location**: `project-documents/system-diagrams/`
-- **Purpose**: Electrum adapter component architecture
-- **Responsibility**: TCP client, connection management, data transformation
-- **When to Use**: Understanding Electrum adapter implementation
-- **Status**: ✅ **CURRENT** - Updated to reflect implementation status
+### **✅ Current & Complete:**
+- Core project documentation (model-spec, roadmap, checklists)
+- API documentation (endpoints, standards, navigation)
+- Development standards (code-standard, developer-handbook)
+- Environment setup (ENVIRONMENT-SETUP.md)
+- Frontend documentation (README, naming, styles)
+- Infrastructure documentation
 
-### **10-use-case-diagram.md** - User Interactions
-- **Location**: `project-documents/system-diagrams/`
-- **Purpose**: Primary use cases and user interactions
-- **Responsibility**: Real-time monitoring, data visualization, search functionality
-- **When to Use**: Understanding user interactions and system use cases
-- **Status**: ✅ **CURRENT** - Updated to reflect implementation status
+### **🔄 Recently Updated:**
+- `docs/code-standard.md` - Optimized and enhanced
+- `docs/API-ENDPOINTS.md` - Added new endpoints and features
+- `docs/API-STANDARDS.md` - Updated with new standards
+- `docs/ENVIRONMENT-SETUP.md` - New comprehensive guide
+- `docs/API-NAVIGATION.md` - New API navigation guide
 
-### **11-package-diagram.md** - Modular Architecture
-- **Location**: `project-documents/system-diagrams/`
-- **Purpose**: Package structure and modular architecture
-- **Responsibility**: Frontend, backend, and infrastructure packages
-- **When to Use**: Understanding system modularity and package organization
-- **Status**: ✅ **CURRENT** - Updated to reflect implementation status
+### **📚 New Documents:**
+- `docs/DOCUMENTATION-CONSOLIDATION-SUMMARY.md` - Summary of consolidation work
 
-## Frontend Documentation
+### **🗑️ Removed (Consolidated):**
+- `docs/install-notes.md` - Superseded by `ENVIRONMENT-SETUP.md`
+- `docs/onboarding.md` - Consolidated into `developer-handbook.md`
 
-### **naming-conventions.md** - Frontend Standards
-- **Location**: `frontend/src/constants/`
-- **Purpose**: Naming conventions and API standards for frontend
-- **Responsibility**: Consistency guidelines, API standards, frontend conventions
-- **When to Use**: Frontend development, maintaining consistency
-- **Status**: ⚠️ **NEEDS MOVING** - Should be in docs/frontend/
+---
 
-### **styles/README.md** - Style System Guide
-- **Location**: `frontend/src/styles/`
-- **Purpose**: BlockSight.live style system documentation
-- **Responsibility**: CSS architecture, theme system, styling guidelines
-- **When to Use**: Frontend styling, theme development, CSS architecture
-- **Status**: ⚠️ **NEEDS MOVING** - Should be in docs/frontend/
-
-## Development & Infrastructure
-
-### **README.md** - Project Overview
-- **Location**: Root directory
-- **Purpose**: Main project overview and entry point
-- **Responsibility**: Project introduction, quick start, high-level overview
-- **When to Use**: First contact with the project, understanding what it does
-- **Status**: ✅ **CURRENT** - Main project entry point
-
-### **docs/README.md** - Developer Docs Index
-- **Location**: `docs/`
-- **Purpose**: Entry point for developer documentation
-- **Responsibility**: Documentation navigation, developer onboarding
-- **When to Use**: Finding developer documentation, understanding doc structure
-- **Status**: ✅ **CURRENT** - Developer documentation index
-
-### **docs/adr/README.md** - Architecture Decision Records
-- **Location**: `docs/adr/`
-- **Purpose**: Index of architecture decision records
-- **Responsibility**: Key architectural decisions, design rationale
-- **When to Use**: Understanding architectural decisions, design history
-- **Status**: ✅ **CURRENT** - ADR index
-
-### **docs/infrastructure/README.md** - Infrastructure Overview
-- **Location**: `docs/infrastructure/`
-- **Purpose**: Infrastructure and deployment overview
-- **Responsibility**: Infrastructure setup, deployment guides, environment management
-- **When to Use**: Infrastructure setup, deployment, environment management
-- **Status**: ⚠️ **NEEDS CONTENT** - Mostly placeholder content
-
-## Future Planning & Additional
-
-### **FUTURE-PLANNING-CONSOLIDATED.md** - Future Planning & Advanced Features
-- **Location**: `project-documents/`
-- **Purpose**: Comprehensive roadmap for advanced features, analytics, and data collection
-- **Responsibility**: Future planning, advanced features, data collection strategies
-- **When to Use**: Future planning, advanced feature implementation, roadmap discussions
-- **Status**: ✅ **CURRENT** - Consolidated from separate future planning documents
-
-## Documentation Standards
-
-### **code-standard.md** - Documentation Standards
-- **Location**: `docs/`
-- **Purpose**: Documentation standards and guidelines
-- **Responsibility**: File headers, documentation style, version management
-- **When to Use**: Writing documentation, maintaining consistency
-- **Status**: ✅ **CURRENT** - Documentation standards
-
-## How to Use This Guide
-
-### **For New Developers**
-1. Start with `README.md` for project overview
-2. Read `00-model-spec.md` for system understanding
-3. Check `01-development-roadmap.md` for current state
-4. Use `01-execution-checklists.md` for development tasks
-
-### **For Frontend Development**
-1. Check `frontend/src/styles/README.md` for styling
-2. Review `docs/frontend/naming-conventions.md` for standards
-3. Use system diagrams for architecture understanding
-
-### **For Backend Development**
-1. Check `ADAPTER_IMPLEMENTATION_STATUS.md` for adapter status
-2. Review `ELECTRUM_DEVELOPMENT_TODO.md` for tasks
-3. Use system diagrams for architecture understanding
-
-### **For Architecture Decisions**
-1. Check `docs/adr/` for decision records
-2. Review `02-technical-implementation.md` for technical details
-3. Use system diagrams for visual understanding
-
-### **For Project Planning**
-1. Review `01-development-roadmap.md` for strategic direction
-2. Check `01-execution-checklists.md` for current tasks
-3. Review `THREEJS_IMPLEMENTATION_PLAN.md` for next phase
-
-## Maintenance Notes
-
-- **Last Updated**: 2025-08-29
-- **Status**: All core documentation is current and aligned
-- **Next Review**: After ThreeJS implementation phase
-- **Priority Updates**: ✅ **COMPLETED** - Documentation consolidation, organization, and cleanup completed
-- **Cleanup Actions**: Removed 6 redundant/specific setup files, consolidated installation info
-
-## Quick Reference
-
-| Document Type | Primary Files | Purpose |
-|---------------|---------------|---------|
-| **System Overview** | `00-model-spec.md` | Single source of truth |
-| **Development Planning** | `01-development-roadmap.md`, `01-execution-checklists.md` | Strategic and tactical planning |
-| **Technical Details** | `02-technical-implementation.md` | Comprehensive technical specs |
-| **Implementation Plans** | `THREEJS_IMPLEMENTATION_PLAN.md`, `FUTURE-PLANNING-CONSOLIDATED.md` | Next phase roadmap and future planning |
-| **Architecture Diagrams** | `system-diagrams/*.md` | Visual architecture representation |
-| **Backend Status** | `ADAPTER_IMPLEMENTATION_STATUS.md`, `ELECTRUM_DEVELOPMENT_TODO.md` | Backend development tracking |
-| **Frontend Guides** | `naming-conventions.md`, `styles/README.md` | Frontend development standards |
-| **Project Entry** | `README.md`, `docs/README.md` | Project introduction and navigation |
+**Last Updated**: 2025-08-30  
+**Status**: ✅ **CURRENT** - All documentation consolidated and up-to-date

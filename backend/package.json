@@ -43,6 +43,11 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
-    "test": "jest --runInBand --config ./jest.config.ts"
+    "test": "jest --runInBand --config ./jest.config.js --detectOpenHandles",
+    "test:bootstrap": "jest --runInBand --config ./jest.config.js --testPathPattern=bootstrap --detectOpenHandles",
+    "test:bootstrap:unit": "jest --runInBand --config ./jest.config.js --testPathPattern=bootstrap.controller.test.ts --detectOpenHandles",
+    "test:bootstrap:integration": "jest --runInBand --config ./jest.config.js --testPathPattern=bootstrap.integration.test.ts --detectOpenHandles",
+    "test:bootstrap:performance": "jest --runInBand --config ./jest.config.js --testPathPattern=bootstrap.performance.test.ts --detectOpenHandles",
+    "test:bootstrap:coverage": "jest --runInBand --config ./jest.config.js --testPathPattern=bootstrap --coverage --detectOpenHandles"
   }
 }

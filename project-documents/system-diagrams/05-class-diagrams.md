@@ -174,7 +174,7 @@ This file contains class diagrams showing the object-oriented architecture of Bl
 - **CoreRpcAdapter** ↔ **Bitcoin Core**: Direct RPC communication
 - **ElectrumAdapter** ↔ **electrs**: TCP-based blockchain indexing
 - **WebSocketHub** → **Frontend**: Real-time event broadcasting
-- **Routes** → **Controllers**: API endpoint handling
+- **Routes** → **Controllers**: `/api/v1/*` endpoint handling with standardized response formats
 - **Controllers** → **Adapters**: Data retrieval and processing
 - **Cache Layer** → **API Responses**: Multi-tier caching optimization
 

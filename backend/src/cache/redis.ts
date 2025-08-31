@@ -51,6 +51,11 @@ export class RedisL1Cache implements L1Cache {
     void this.client.del(key);
   }
 
+  clear(): void {
+    // Clear all keys - use FLUSHDB for Redis
+    void this.client.flushdb();
+  }
+
   stats(): { size: number; keys: number } {
     // Not readily available without a KEYS/SCAN; return zeros to avoid heavy ops
     return { size: 0, keys: 0 };

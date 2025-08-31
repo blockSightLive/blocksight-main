@@ -6,7 +6,7 @@ BlockSight.live is a cutting-edge Bitcoin-exclusive blockchain analysis platform
 
 **Scope**: This specification defines the desired behavior, architecture, and implementation standards for BlockSight.live, focusing exclusively on Bitcoin while developing innovative tools that enhance privacy, security, and usability.
 
-**Last Updated**: 2025-08-29
+**Last Updated**: 2025-08-30
 
 ---
 
@@ -94,9 +94,53 @@ Bitcoin Core → electrs (Indexer) → HTTP REST API → NodeJS Backend → Mult
 
 #### 4. BlockSight API Layer
 - **Technology**: NodeJS with REST and WebSocket APIs
-- **Endpoints**: Block data, search, price feeds, fee analysis, network load, timeline, calculator, settings
+- **Base URL**: `http://localhost:8000/api/v1/`
+- **Versioning**: v1 (current), breaking changes increment major version
+- **Authentication**: Core RPC endpoints require Bitcoin Core credentials, others public
 
-##### API SLOs & Backpressure (Concise)
+##### **Current API Endpoints (IMPLEMENTED ✅)**
+
+**System Services**
+- **GET** `/api/v1/bootstrap` - System-level orchestration service for backend readiness and frontend initialization
+- **GET** `/api/v1/bootstrap/health` - Comprehensive health monitoring and service status
+
+**Electrum Service (`/api/v1/electrum/*`)**
+- **GET** `/api/v1/electrum/health` - Electrum server health
+- **GET** `/api/v1/electrum/fee/estimates` - Network fee estimates
+- **GET** `/api/v1/electrum/network/height` - Current blockchain height
+- **GET** `/api/v1/electrum/network/mempool` - Mempool status
+
+**Bitcoin Core Service (`/api/v1/core/*`)**
+- **GET** `/api/v1/core/height` - Blockchain height from Core
+- **GET** `/api/v1/core/mempool` - Mempool information from Core
+
+**Network Service (`/api/v1/network/*`)**
+- **GET** `/api/v1/network/health` - Overall system health
+
+**Monitoring & Metrics Service (`/api/v1/metrics/*`, `/metrics`)**
+- **GET** `/metrics` - Prometheus-compatible metrics export
+- **GET** `/api/v1/metrics/health` - System health status and performance metrics
+- **GET** `/api/v1/cache/stats` - Cache performance statistics and Redis status
+- **POST** `/api/v1/cache/invalidate/:service` - Cache invalidation for specific service
+- **POST** `/api/v1/cache/invalidate-all` - Full cache clear and reset
+
+**WebSocket Service (`/ws`)**
+- **URL**: `ws://localhost:8000/ws`
+- **Events**: `block.new`, `mempool.update`, `fee.update`, `network.status`
+
+##### **API Response Standards**
+- **Success**: `{ ok: true, data: T, timestamp: number }`
+- **Error**: `{ ok: false, error: string, message: string, timestamp: number }`
+- **Error Codes**: `validation_error`, `service_unavailable`, `authentication_failed`, `rate_limit_exceeded`, `internal_error`
+
+##### **Middleware Architecture (IMPLEMENTED ✅)**
+- **Request Processing Pipeline**: Complete middleware stack with request ID tracking, metrics collection, security validation, rate limiting, and error handling
+- **Validation System**: Zod-based request validation with common schemas for Bitcoin addresses, transaction hashes, block heights, and pagination
+- **Security Implementation**: Helmet security headers, CORS configuration, request sanitization, and rate limiting protection
+- **Monitoring & Observability**: Prometheus-compatible metrics export at `/metrics`, system health monitoring, cache statistics, and performance tracking
+- **Caching Layer**: Redis integration with TTL management (L1: 1-5s, L2: 1-5min, L3: 1-5hr) and graceful degradation
+
+##### **API SLOs & Backpressure (Concise)**
 - Per-endpoint SLOs: publish P50/P95/P99 targets; enforce admission control and token buckets.
 - Global backpressure: prioritized queues (real-time vs batch), circuit breakers, timeouts, and retries.
 - Contract-first: JSON Schemas + contract tests for Electrum-adapter responses.
@@ -223,6 +267,32 @@ Bitcoin Core → electrs (Indexer) → HTTP REST API → NodeJS Backend → Mult
 - **Network Connectivity**: ✅ **DOCKER → ELECTRS → BITCOIN CORE**
 - **Protocol Compatibility**: ✅ **ELECTRUM PROTOCOL V1.4 VALIDATED**
 - **Performance**: ✅ **SUB-200MS RESPONSE TIMES ACHIEVED**
+
+#### Middleware Architecture Status
+- **Request Processing Pipeline**: ✅ **COMPLETE MIDDLEWARE STACK IMPLEMENTED**
+  - Request ID generation and tracking
+  - Performance metrics collection
+  - Security headers and CORS
+  - Rate limiting (global + service-specific)
+  - Request validation via Zod schemas
+  - Error handling and logging
+  - Cache management and invalidation
+- **Validation System**: ✅ **ZOD-BASED REQUEST VALIDATION**
+  - Common schemas for Bitcoin addresses, hashes, pagination
+  - Service-specific validation for Electrum, Core, Network endpoints
+  - Input sanitization and type coercion
+- **Monitoring & Observability**: ✅ **COMPREHENSIVE METRICS SYSTEM**
+  - Prometheus-compatible metrics export at `/metrics`
+  - System health monitoring at `/api/v1/metrics/health`
+  - Cache performance statistics at `/api/v1/cache/stats`
+  - Performance tracking (P50, P95, P99 latencies)
+  - Request counting and error rate monitoring
+- **Security Implementation**: ✅ **PRODUCTION-READY SECURITY**
+  - Helmet security headers
+  - CORS configuration
+  - Request sanitization
+  - Rate limiting protection
+  - Input validation and sanitization
 
 ### Development Workflow
 - **Main Branch**: Always contains the most advanced working product

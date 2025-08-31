@@ -203,7 +203,7 @@ This Data Flow Diagram shows how data moves through the BlockSight.live system, 
 3. **PostgreSQL Analytics**: Human-friendly SQL views and materialized views
 
 ### API Layer & Data Transformation ✅ **IMPLEMENTED**
-1. **REST API**: Standardized endpoints with rate limiting and CORS support
+1. **REST API**: Standardized `/api/v1/*` endpoints with rate limiting and CORS support
 2. **Data Transformers**: Bitcoin data type formatting and validation
 3. **Response Formatters**: JSON standardization, error codes, and caching headers
 

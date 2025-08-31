@@ -122,28 +122,135 @@ export function makeElectrumController(adapter: ElectrumAdapter, core?: CoreRpcA
       try {
         const cacheKey = keys.mempoolSummary();
         if (l1) {
-          const cached = l1.get<{ pendingTransactions?: number | null; vsize?: number; timestamp: number }>(cacheKey);
+          const cached = l1.get<{ count: number; vsize: number }>(cacheKey);
           if (cached) {
-            recordCacheHit('network.mempool', cacheKey);
-            recordLatency('network.mempool', Date.now() - started);
+            recordCacheHit('mempool.summary', cacheKey);
+            recordLatency('mempool.summary', Date.now() - started);
             return res.json(cached);
           }
         }
-        const useCore = !!core;
-        const summary = useCore ? await core!.getMempoolSummary() : await adapter.getMempoolSummary();
-        const durationMs = Date.now() - started;
-        console.log(`[mempool] source=${useCore ? 'core' : 'electrum'} count=${summary.pendingTransactions ?? 'null'} vsize=${(summary as { vsize?: number }).vsize ?? 'n/a'} durMs=${durationMs}`);
-        const payload = { ...summary, timestamp: Date.now() };
+        const summary = await adapter.getMempoolSummary();
         const ttl = ttlForEntity('mempoolSummary');
-        if (l1) l1.set(cacheKey, payload, ttl);
-        recordCacheMiss('network.mempool', cacheKey);
-        recordLatency('network.mempool', Date.now() - started);
-        res.json(payload);
+        if (l1) l1.set(cacheKey, summary, ttl);
+        recordCacheMiss('mempool.summary', cacheKey);
+        recordLatency('mempool.summary', Date.now() - started);
+        return res.json(summary);
       } catch {
-        const durationMs = Date.now() - started;
-        console.warn(`[mempool] error durMs=${durationMs}`);
-        recordLatency('network.mempool', durationMs);
-        res.status(503).json({ error: 'mempool_unavailable' });
+        const summary = await adapter.getMempoolSummary();
+        recordLatency('mempool.summary', Date.now() - started);
+        return res.json(summary);
+      }
+    },
+
+    // Enhanced endpoints with validation
+    getBalance: async (req: Request, res: Response) => {
+      const started = Date.now();
+      try {
+        const { address } = req.params;
+        const balance = await adapter.getBalance(address);
+        recordLatency('address.balance', Date.now() - started);
+        res.json({
+          ok: true,
+          data: { address, balance },
+          timestamp: Date.now()
+        });
+      } catch (error) {
+        console.error('[getBalance] error:', error);
+        res.status(500).json({
+          ok: false,
+          error: 'balance_retrieval_failed',
+          message: 'Failed to retrieve balance',
+          timestamp: Date.now()
+        });
+      }
+    },
+
+    getTransaction: async (req: Request, res: Response) => {
+      const started = Date.now();
+      try {
+        const { txid } = req.params;
+        const transaction = await adapter.getTransaction(txid);
+        recordLatency('transaction.get', Date.now() - started);
+        res.json({
+          ok: true,
+          data: transaction,
+          timestamp: Date.now()
+        });
+      } catch (error) {
+        console.error('[getTransaction] error:', error);
+        res.status(500).json({
+          ok: false,
+          error: 'transaction_retrieval_failed',
+          message: 'Failed to retrieve transaction',
+          timestamp: Date.now()
+        });
+      }
+    },
+
+    getHistory: async (req: Request, res: Response) => {
+      const started = Date.now();
+      try {
+        const { address } = req.params;
+        const { page = 1, limit = 20 } = req.query;
+        const history = await adapter.getHistory(address, { page: Number(page), limit: Number(limit) });
+        recordLatency('address.history', Date.now() - started);
+        res.json({
+          ok: true,
+          data: { address, history, pagination: { page: Number(page), limit: Number(limit) } },
+          timestamp: Date.now()
+        });
+      } catch (error) {
+        console.error('[getHistory] error:', error);
+        res.status(500).json({
+          ok: false,
+          error: 'history_retrieval_failed',
+          message: 'Failed to retrieve address history',
+          timestamp: Date.now()
+        });
+      }
+    },
+
+    getMempool: async (req: Request, res: Response) => {
+      const started = Date.now();
+      try {
+        const { page = 1, limit = 20 } = req.query;
+        const mempool = await adapter.getMempool({ page: Number(page), limit: Number(limit) });
+        recordLatency('mempool.get', Date.now() - started);
+        res.json({
+          ok: true,
+          data: { mempool, pagination: { page: Number(page), limit: Number(limit) } },
+          timestamp: Date.now()
+        });
+      } catch (error) {
+        console.error('[getMempool] error:', error);
+        res.status(500).json({
+          ok: false,
+          error: 'mempool_retrieval_failed',
+          message: 'Failed to retrieve mempool',
+          timestamp: Date.now()
+        });
+      }
+    },
+
+    getFeeEstimate: async (req: Request, res: Response) => {
+      const started = Date.now();
+      try {
+        const { blocks = 6 } = req.query;
+        const estimate = await adapter.getFeeEstimate(Number(blocks));
+        recordLatency('fee.estimate', Date.now() - started);
+        res.json({
+          ok: true,
+          data: { estimate, blocks: Number(blocks) },
+          timestamp: Date.now()
+        });
+      } catch (error) {
+        console.error('[getFeeEstimate] error:', error);
+        res.status(500).json({
+          ok: false,
+          error: 'fee_estimate_failed',
+          message: 'Failed to get fee estimate',
+          timestamp: Date.now()
+        });
       }
     }
   };

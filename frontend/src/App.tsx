@@ -3,18 +3,19 @@
  * @version 1.0.0
  * @author Development Team
  * @since 2025-08-11
- * @lastModified 2025-08-27
+ * @lastModified 2025-08-30
  * 
  * @description
  * Main application component that renders the complete dashboard.
  * Includes splash screen with LoadingBlocks component for 2 seconds display
  * followed by 2-second fade-out animation while dashboard fades in.
  * Works with cosmic background from BackgroundToggle component.
+ * Now implements route-based code splitting with AppRouter for Phase 2 optimization.
  * 
  * @dependencies
  * - ThemeContext for theme switching
  * - BitcoinContext for Bitcoin data
- * - Dashboard component for main content
+ * - AppRouter for route-based code splitting
  * - Header and Footer components
  * - LoadingBlocks component for splash screen
  * 
@@ -22,7 +23,7 @@
  * Main application component rendered by main.tsx
  * 
  * @state
- * ✅ Enhanced - Full application with smooth splash screen animations and cosmic background support
+ * ✅ Enhanced - Full application with smooth splash screen animations, cosmic background support, and route-based code splitting
  * 
  * @bugs
  * - None currently identified
@@ -30,6 +31,7 @@
  * @todo
  * - [MEDIUM] Test theme switching with cosmic background
  * - [LOW] Optimize component rendering performance
+ * - [COMPLETED] Implement route-based code splitting (Phase 2)
  * 
  * @styling
  * - CSS Modules for component styling
@@ -40,6 +42,8 @@
  * - Efficient component rendering
  * - Theme switching optimization
  * - Cosmic background integration
+ * - Route-based code splitting (Phase 2)
+ * - Component-level lazy loading (Phase 1)
  * 
  * @security
  * - Safe component rendering
@@ -47,10 +51,10 @@
  */
 
 import React, { useState, useEffect } from 'react'
-import { Dashboard } from './pages/Dashboard'
-import LoadingBlocks from './components/shared/LoadingBlocks'
+import { LoadingBlocks } from './components/shared'
 import './App.css'
-import { Header } from './components/Header';
+import { Header } from './components/Header'
+import { AppRouter } from './router/AppRouter'
 
 const App: React.FC = () => {
   // Loading state for splash screen
@@ -87,9 +91,9 @@ const App: React.FC = () => {
         </div>
       )}
       
-      {/* Main content area */}
+      {/* Main content area with route-based code splitting */}
       <main className={`main-content ${isFading ? 'loaded' : 'loading'}`}>
-        <Dashboard />
+        <AppRouter />
       </main>
       
       {/* Footer */}

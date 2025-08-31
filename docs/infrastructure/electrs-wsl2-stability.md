@@ -4,7 +4,7 @@ This runbook makes electrs indexing stable on WSL2 while keeping Bitcoin Core da
 
 Last updated: 2025-08-14
 
-> **Note**: This document describes the previous WSL2/Kali setup. The current production setup uses **VirtualBox Ubuntu LTS VM** with shared folder access to external drive. See `docs/install-notes.md` for current configuration.
+> **Note**: This document describes the previous WSL2/Kali setup. The current production setup uses **VirtualBox Ubuntu LTS VM** with shared folder access to external drive. See `docs/ENVIRONMENT-SETUP.md` for current configuration.
 
 ## Symptoms we’re fixing
 - WSL distro exits/crashes during heavy electrs indexing
@@ -122,7 +122,7 @@ Recommended foreground command with logs (no timeout, in tmux once DB is on ext4
 ```bash
 ulimit -n 16384
 RUST_LOG=info nice -n 10 ionice -c2 -n7 \
-  ./target/release/electrs --conf config.toml 2>&1 | tee -a ~/electrs.log
+   ./target/release/electrs --conf ~/.electrs/config.toml
 ```
 
 3) Start Bitcoin Core first, then electrs

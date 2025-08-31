@@ -17,6 +17,7 @@ export interface L1Cache {
   get<T>(key: string): T | null;
   set<T>(key: string, value: T, ttlSeconds: number): void;
   del(key: string): void;
+  clear(): void; // Add clear method for test compatibility
   stats(): { size: number; keys: number };
 }
 
@@ -42,6 +43,10 @@ export class InMemoryL1Cache implements L1Cache {
 
   del(key: string): void {
     this.store.delete(key);
+  }
+
+  clear(): void {
+    this.store.clear();
   }
 
   stats(): { size: number; keys: number } {

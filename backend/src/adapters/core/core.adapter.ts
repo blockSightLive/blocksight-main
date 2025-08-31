@@ -45,6 +45,7 @@ export class RealCoreRpcAdapter implements CoreRpcAdapter {
   private url: string
   private authHeader: string
   private fetchImpl: Fetch
+  private connected = true // Add connected state for test control
 
   constructor(params: { url: string; username: string; password: string; fetchImpl?: Fetch }) {
     this.url = params.url
@@ -103,8 +104,14 @@ export class RealCoreRpcAdapter implements CoreRpcAdapter {
    * Uses getblockcount RPC method
    */
   async getBlockCount(): Promise<number> {
+    if (!this.connected) throw new Error('Core RPC not connected')
     const count = await this.call<number>('getblockcount')
     return typeof count === 'number' ? count : 0
+  }
+
+  // Test control methods
+  setConnected(connected: boolean): void {
+    this.connected = connected
   }
 }
 

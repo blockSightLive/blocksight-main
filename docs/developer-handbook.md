@@ -153,7 +153,7 @@ DoD checks
 - Additional Data Collection: Analytics ETL and views.
 - Future Considerations: Inscriptions/media, Lightning, forks.
 - Development workflow and automation guidance (see Developer Toolkit section).
-- Onboarding Guide: Step-by-step developer onboarding (see `docs/onboarding.md`).
+- Onboarding Guide: Step-by-step developer onboarding (see this handbook and `docs/ENVIRONMENT-SETUP.md`).
  - Electrs WSL2 Stability: see `docs/infrastructure/electrs-wsl2-stability.md`.
 
 ---
@@ -717,40 +717,21 @@ Worked example (no code): Implement fee estimate fetcher
 
 ## Backend HTTP API – Bootstrap Snapshot
 
-The frontend gates its splash screen using a minimal snapshot from the backend.
+### **System-Level Bootstrap Service**
+- **Endpoint**: `GET /api/v1/bootstrap` (NOT `/electrum/bootstrap`)
+- **Purpose**: System-level orchestration service for backend readiness
+- **Architecture**: Bootstrap is NOT an electrum service - it's a system-level orchestration service that:
+  - Aggregates data from multiple services (Electrum, Core RPC, Cache, etc.)
+  - Acts as the single source of truth for "backend ready" status
+  - Provides the glue between different services for frontend initialization
+  - Sits at `/api/v1/bootstrap` as a top-level system endpoint
 
-- Method: `GET /electrum/bootstrap`
-- Purpose: Provide the fastest-available network readiness signal for the UI.
-- Response:
-```
-{
-  "height": number,               // Electrum tip height
-  "coreHeight": number | null,    // Bitcoin Core height when enabled
-  "mempoolPending": number | null, // Core pending tx count; null when unavailable
-  "mempoolVsize": number | undefined, // Electrum histogram derived vsize (approximate)
-  "asOfMs": number,
-  "source": "electrum"
-}
-```
-
-Caching & Metrics:
-- L1 key: `l1:bootstrap:v1`, TTL ≈ 3 seconds
-- Metrics recorded: `bootstrap` latency and cache hit/miss
-
-Notes:
-- If Core is disabled, `coreHeight` is omitted and `mempoolPending` may be null.
-- This endpoint is not for live updates; the WebSocket remains the primary realtime channel.
-
-### Electrum vs Core Controller Separation
-
-- Electrum Controller (`backend/src/controllers/electrum.controller.ts`)
-  - Electrum-backed endpoints only (fees, electrum height, electrum mempool fallback).
-  - L1 cache keys: `l1:fees:estimates:v1`, `l1:network:height:v1`, `l1:mempool:summary:v1`.
-
-- Core Controller (`backend/src/controllers/core.controller.ts`)
-  - Core-backed endpoints only: `/core/height`, `/core/mempool`.
-  - L1 cache keys: `l1:core:height:v1`, `l1:core:mempool:summary:v1`.
-
-- Bootstrap Controller (`backend/src/controllers/bootstrap.controller.ts`)
-  - Orchestrates both sources for cold-start: `/electrum/bootstrap` with TTL ≈ 3s (`l1:bootstrap:v1`).
-  - Returns `height`, optional `coreHeight`, and mempool fields for quick readiness.
+### **Implementation Details**
+- **L1 Cache**: `l1:bootstrap:v1`, TTL ≈ 3 seconds
+- **Metrics**: `bootstrap` latency and cache hit/miss
+- **Controller**: Bootstrap Controller (`backend/src/controllers/bootstrap.controller.ts`)
+- **Orchestration**: Aggregates data from all available services for cold-start initialization
+- **Health Monitoring**: Comprehensive service health checks with detailed status
+- **Performance Tracking**: Detailed timing breakdowns for health checks, data fetching, and cache operations
+- **Circuit Breaker**: Resilience patterns to prevent cascading failures
+- **Graceful Degradation**: Automatic fallback when services are unavailable

@@ -510,7 +510,7 @@ export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({
             dispatch({ type: FX_ACTIONS.UPDATE, payload: fx })
           }
         }
-              } catch { /* Ignore bootstrap errors */ }
+      } catch { /* Ignore bootstrap errors */ }
         await refreshNetworkStatus();
     }
     initialize();

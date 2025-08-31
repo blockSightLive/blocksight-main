@@ -15,27 +15,37 @@ import type { Server } from 'http';
 
 dotenv.config();
 const port = parseInt(process.env.PORT ?? '8000', 10);
-const app = createApp();
-const server = http.createServer(app) as Server;
 
-server.listen(port, () => {
-  // Minimal log; pino will be wired later
-  console.log(`Backend listening on http://localhost:${port}`);
-});
+// Create app asynchronously
+async function startServer() {
+  const app = await createApp();
+  const server = http.createServer(app) as Server;
 
-// Bind WebSocket server to the same HTTP server and attach routes
-const wsHub = app.locals.wsHub as ReturnType<typeof import('./ws/hub').createWebSocketHub>;
-if (wsHub) {
-  createWebSocketServer({ server, hub: wsHub, path: '/ws' });
-  console.log('WebSocket server bound at ws://localhost:' + port + '/ws');
+  server.listen(port, () => {
+    // Minimal log; pino will be wired later
+    console.log(`Backend listening on http://localhost:${port}`);
+  });
+
+  // Bind WebSocket server to the same HTTP server and attach routes
+  const wsHub = app.locals.wsHub as ReturnType<typeof import('./ws/hub').createWebSocketHub>;
+  if (wsHub) {
+    createWebSocketServer({ server, hub: wsHub, path: '/ws' });
+    console.log('WebSocket server bound at ws://localhost:' + port + '/ws');
+  }
+
+  const shutdown = (signal: string) => {
+    console.log(`Received ${signal}, shutting down...`);
+    server.close(() => process.exit(0));
+    setTimeout(() => process.exit(1), 10_000);
+  };
+
+  process.on('SIGINT', () => shutdown('SIGINT'));
+  process.on('SIGTERM', () => shutdown('SIGTERM'));
 }
 
-const shutdown = (signal: string) => {
-  console.log(`Received ${signal}, shutting down...`);
-  server.close(() => process.exit(0));
-  setTimeout(() => process.exit(1), 10_000);
-};
-
-process.on('SIGINT', () => shutdown('SIGINT'));
-process.on('SIGTERM', () => shutdown('SIGTERM'));
+// Start the server
+startServer().catch(error => {
+  console.error('Failed to start server:', error);
+  process.exit(1);
+});
 

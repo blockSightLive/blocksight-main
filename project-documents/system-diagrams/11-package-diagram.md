@@ -230,14 +230,14 @@ This Package Diagram shows the package structure and modular architecture of Blo
 - **Failover Strategy**: Automatic failover and recovery
 
 #### API Layer Package ✅ **IMPLEMENTED**
-- **Routes**: RESTful API route definitions
-- **Controllers**: API endpoint controllers and handlers
+- **Routes**: `/api/v1/*` RESTful API route definitions with namespaced services
+- **Controllers**: API endpoint controllers and handlers for electrum, core, network, and ws services
 - **Middleware**: API middleware and request processing
-- **Validation**: Request and response validation
-- **Error Handling**: Comprehensive error handling
+- **Validation**: Request and response validation with Zod schemas
+- **Error Handling**: Comprehensive error handling with standardized response formats
 - **Rate Limiting**: Request rate limiting and throttling
 - **CORS Support**: Cross-origin resource sharing support
-- **Authentication**: Authentication and authorization
+- **Authentication**: Authentication and authorization for Core RPC endpoints
 - **Compression**: Response compression and optimization
 - **Performance Monitoring**: API performance monitoring
 
