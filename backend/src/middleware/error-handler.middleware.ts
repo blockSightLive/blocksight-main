@@ -149,33 +149,7 @@ export function enhancedErrorHandler(
   }
 }
 
-// Generic error handler for different error types
-export function handleSpecificError(
-  error: unknown,
-  req: Request,
-  res: Response,
-  _next: NextFunction
-): void {
-  const requestId = req.requestId || 'unknown';
-  
-  // Type guard for different error types
-  if (error && typeof error === 'object' && 'statusCode' in error) {
-    const statusError = error as { statusCode: number; message?: string };
-    const errorResponse: ApiErrorResponse = {
-      ok: false,
-      error: 'HTTPError',
-      message: statusError.message || 'HTTP error occurred',
-      details: { statusCode: statusError.statusCode },
-      requestId,
-      timestamp: Date.now()
-    };
-    
-    res.status(statusError.statusCode).json(errorResponse);
-  } else {
-    // Fallback to generic error handling
-    enhancedErrorHandler(error, req, res);
-  }
-}
+
 
 // Async error wrapper with proper typing
 export function asyncErrorWrapper<T extends unknown[]>(
