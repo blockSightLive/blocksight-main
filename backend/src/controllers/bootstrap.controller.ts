@@ -475,12 +475,17 @@ export function makeBootstrapController({
     healthMonitor.cleanup()
     // Clear any remaining timers
     jest.clearAllTimers()
+    
+    // Force clear any remaining intervals (additional safety)
+    for (let i = 1; i < 1000; i++) {
+      clearInterval(i)
+    }
   },
-  
-  // Test control method to reset health monitor state
-  resetHealthMonitor(): void {
-    healthMonitor.resetForTesting()
-  },
+    
+    // Test control method to reset health monitor state
+    resetHealthMonitor(): void {
+      healthMonitor.resetForTesting()
+    },
     
     async bootstrap(req: Request, res: Response): Promise<void> {
       const requestId = req.requestId || 'unknown'

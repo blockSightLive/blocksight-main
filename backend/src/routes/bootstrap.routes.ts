@@ -50,7 +50,7 @@ import type { ElectrumAdapter } from '../adapters/electrum/types'
 import type { CoreRpcAdapter } from '../adapters/core/types'
 import type { L1Cache } from '../cache/l1'
 
-export async function createBootstrapRouter(adapter: ElectrumAdapter, core?: CoreRpcAdapter, l1?: L1Cache): Promise<Router> {
+export async function createBootstrapRouter(adapter: ElectrumAdapter, core?: CoreRpcAdapter, l1?: L1Cache): Promise<{ router: Router; controller: ReturnType<typeof makeBootstrapController> }> {
   const r = Router()
   
   // Handle optional parameters with proper defaults
@@ -80,5 +80,5 @@ export async function createBootstrapRouter(adapter: ElectrumAdapter, core?: Cor
     })
   })
   
-  return r
+  return { router: r, controller: b }
 }

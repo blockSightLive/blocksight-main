@@ -6,11 +6,9 @@
  * @state In Development
  */
 
-import express, { Request, Response, Express } from 'express';
+import express, { Request, Response } from 'express';
 import { FakeElectrumAdapter } from './adapters/electrum/fake.adapter';
 import { RealElectrumAdapter } from './adapters/electrum/electrum.adapter';
-import { createElectrumRouter } from './routes/electrum.routes';
-import { createCoreRouter } from './routes/core.routes';
 import { RealCoreRpcAdapter } from './adapters/core/core.adapter';
 import { createWebSocketHub } from './ws/hub';
 import { 
@@ -24,9 +22,10 @@ import {
   CacheUtilities
 } from './middleware';
 import { createBootstrapRouter } from './routes/bootstrap.routes';
+import { createElectrumRouter } from './routes/electrum.routes';
+import { createCoreRouter } from './routes/core.routes';
 import { InMemoryL1Cache } from './cache/l1';
-
-export async function createApp(): Promise<Express> {
+export async function createApp(): Promise<express.Application> {
   const app = express();
 
   // Enhanced security middleware (replaces basic CORS)
@@ -73,9 +72,24 @@ export async function createApp(): Promise<Express> {
   // Bootstrap service - System-level orchestration (gateway to backend readiness)
   const l1Cache = new InMemoryL1Cache();
   
-  // Create bootstrap router asynchronously
-  const bootstrapRouter = await createBootstrapRouter(electrumAdapter, coreAdapter, l1Cache);
+  // Create bootstrap router asynchronously and store controller for cleanup
+  const { router: bootstrapRouter, controller: bootstrapController } = await createBootstrapRouter(electrumAdapter, coreAdapter, l1Cache);
   app.use('/api/v1/bootstrap', bootstrapRouter);
+  
+  // Store controller in app.locals for test cleanup
+  app.locals.bootstrapController = bootstrapController;
+  
+  // Add cleanup method for tests
+  (app as { cleanup?: () => Promise<void> }).cleanup = async () => {
+    if (bootstrapController && bootstrapController.cleanup) {
+      bootstrapController.cleanup();
+    }
+    
+    // Clean up WebSocket hub
+    if (wsHub && wsHub.cleanup) {
+      wsHub.cleanup();
+    }
+  };
 
   // Electrum routes - Blockchain data and real-time updates
   app.use('/api/v1/electrum', publicRateLimit, createElectrumRouter(electrumAdapter, coreAdapter, l1Cache));

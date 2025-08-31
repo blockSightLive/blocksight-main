@@ -216,6 +216,26 @@ git log --oneline -5         # Verify recent commits
 
 ---
 
+## 🚨 OVER-ENGINEERING PREVENTION (CRITICAL LESSON LEARNED)
+
+**NEVER over-engineer simple fixes. The goal is to solve the immediate problem with minimal changes.**
+
+**What NOT to do:**
+- ❌ **Don't create new type files** for simple inline type fixes
+- ❌ **Don't refactor multiple files** when fixing a single lint error
+- ❌ **Don't introduce "clean architecture"** when the current code works
+- ❌ **Don't create shared abstractions** for one-off usage
+
+**What TO do instead:**
+- ✅ **Use inline types** for simple, localized fixes
+- ✅ **Fix only the specific error** without touching unrelated code
+- ✅ **Keep existing patterns** unless there's a clear architectural benefit
+- ✅ **Question whether new files/abstractions are needed**
+
+**Remember**: The best code is the code that solves the problem with the least complexity. Don't let "perfect" be the enemy of "working."
+
+---
+
 ## 🔧 Development Workflow
 
 ### Systematic File Editing
@@ -290,131 +310,39 @@ interface ApiErrorResponse {
 
 ### **🔧 MIDDLEWARE ARCHITECTURE (MANDATORY)**
 
-**Middleware Stack Order (CRITICAL):**
-1. **Request ID Generation** - `errorHandler.requestId`
-2. **Metrics Collection** - `MetricsMiddleware.collect`
-3. **Security Headers** - `SecurityMiddleware.comprehensive`
-4. **Rate Limiting** - `globalRateLimit` + service-specific limits
-5. **Body Parsing** - `express.json()`, `express.urlencoded()`
-6. **Request Validation** - Zod schemas via `ValidationMiddleware`
-7. **Route Handlers** - Controllers and business logic
-8. **Error Handling** - `errorHandler.middleware`
-9. **404 Handler** - `errorHandler.notFound`
+**See `docs/middleware-patterns.md` for complete implementation details**
 
-**Required Middleware for All Endpoints:**
-```typescript
-// Apply to all routes
-app.use(errorHandler.requestId);           // Request tracking
-app.use(MetricsMiddleware.collect);        // Performance metrics
-app.use(SecurityMiddleware.comprehensive); // Security headers
-app.use(globalRateLimit);                  // Global rate limiting
+**Critical Reminders:**
+- **Middleware stack order is CRITICAL** - never change without understanding impact
+- **Always implement cleanup methods** for background processes in tests
+- **Use standardized error responses** via ApiErrorResponse interface
+- **Apply validation before route handlers** with Zod schemas
+- **Test middleware in isolation and integration**
 
-// Apply to specific route groups
-app.use('/api/v1/health', healthRateLimit);
-app.use('/api/v1/electrum', publicRateLimit);
-app.use('/api/v1/core', coreRateLimit);
-```
+### **🧪 TESTING ARCHITECTURE (MANDATORY)**
 
-**Validation Middleware (MANDATORY):**
-- **Use Zod schemas** for all request validation
-- **Common schemas** available in `ValidationMiddleware.CommonSchemas`
-- **Service-specific schemas** in respective middleware files
-- **Apply validation** before route handlers
+**See `project-documents/system-diagrams/12-testing-architecture-diagram.md` for complete testing architecture, patterns, and standards.**
 
-```typescript
-// Example: Apply validation to route
-app.get('/api/v1/electrum/address/:address', 
-  ValidationMiddleware.validateParams(ElectrumSchemas.getBalance),
-  electrumController.getBalance
-);
-```
-
-**Error Handling Middleware (MANDATORY):**
-- **Standardized error responses** via `ApiErrorResponse` interface
-- **Request ID tracking** for debugging and correlation
-- **Proper HTTP status codes** via `ERROR_STATUS_CODES`
-- **Async error wrapping** via `asyncErrorWrapper`
-
-**Monitoring & Metrics (MANDATORY):**
-- **Performance tracking** via `MetricsMiddleware.collect`
-- **Prometheus metrics** available at `/metrics`
-- **Health monitoring** at `/api/v1/metrics/health`
-- **Cache statistics** at `/api/v1/cache/stats`
-
-**Security Middleware (MANDATORY):**
-- **CORS configuration** via `SecurityMiddleware.cors`
-- **Security headers** via `SecurityMiddleware.helmet`
-- **Request sanitization** via `SecurityMiddleware.sanitization`
-- **Input validation** via `SecurityMiddleware.validation`
-
-**Caching Middleware (OPTIONAL):**
-- **Redis integration** via `CacheMiddleware`
-- **TTL management** (L1: 1-5s, L2: 1-5min, L3: 1-5hr)
-- **Cache invalidation** via `/api/v1/cache/*` endpoints
-- **Graceful degradation** when Redis unavailable
+**Critical Reminders:**
+- **Background processes MUST have cleanup methods** to prevent Jest hanging
+- **Always use beforeEach/afterEach** for app lifecycle management
+- **Never create apps inside individual tests** - use shared instances
+- **Always call cleanup** after each test to prevent "open handle" errors
+- **Test cleanup methods** to ensure they work correctly
 
 ### **📊 MONITORING & OBSERVABILITY (MANDATORY)**
 
-**Available Monitoring Endpoints:**
-- **`/metrics`** - Prometheus-compatible metrics export
-- **`/api/v1/metrics/health`** - System health status
-- **`/api/v1/cache/stats`** - Cache performance metrics
+**Available Endpoints:**
+- **`/metrics`** - Prometheus metrics
+- **`/api/v1/metrics/health`** - System health
+- **`/api/v1/cache/stats`** - Cache performance
 - **`/api/v1/cache/invalidate/:service`** - Cache invalidation
-- **`/api/v1/cache/invalidate-all`** - Full cache clear
 
-**Metrics Collection (AUTOMATIC):**
-- **Response times** - P50, P95, P99 latencies
-- **Request counts** - Total requests, errors, cache hits/misses
-- **System health** - Uptime, memory usage, Redis status
-- **WebSocket metrics** - Connection counts, broadcast latencies
-
-**Developer Access to Monitoring:**
-```bash
-# View Prometheus metrics
-curl http://localhost:8000/metrics
-
-# Check system health
-curl http://localhost:8000/api/v1/metrics/health
-
-# View cache statistics
-curl http://localhost:8000/api/v1/cache/stats
-
-# Invalidate cache for specific service
-curl -X POST http://localhost:8000/api/v1/cache/invalidate/electrum
-```
-
-**Performance Budgets (MANDATORY):**
-- **API Response Time**: P95 < 200ms (cached), P95 < 1000ms (uncached)
-- **Cache Hit Rate**: > 80% for read-heavy endpoints
-- **Error Rate**: < 1% for all endpoints
-- **Memory Usage**: < 512MB for backend process
-
-### **🔄 MIDDLEWARE DEVELOPMENT PATTERNS**
-
-**Creating New Middleware:**
-1. **Follow naming convention**: `{purpose}.middleware.ts`
-2. **Export from index**: Add to `backend/src/middleware/index.ts`
-3. **Apply in app.ts**: Add to middleware stack in correct order
-4. **Add tests**: Create tests in `backend/tests/middleware.test.ts`
-5. **Update documentation**: Document in this section and API docs
-
-**Middleware Testing (MANDATORY):**
-```typescript
-// Test middleware in isolation
-describe('Validation Middleware', () => {
-  it('should validate request parameters', async () => {
-    const app = createTestApp();
-    app.use(ValidationMiddleware.validateParams(CommonSchemas.bitcoinAddress));
-    // Test validation logic
-  });
-});
-```
-
-**Middleware Integration (MANDATORY):**
-- **Test middleware stack** in integration tests
-- **Verify order** of middleware application
-- **Test error handling** and fallback behavior
-- **Validate performance** impact of middleware
+**Performance Budgets:**
+- **API Response**: P95 < 200ms (cached), < 1000ms (uncached)
+- **Cache Hit Rate**: > 80%
+- **Error Rate**: < 1%
+- **Memory**: < 512MB
 
 ### **Modern React Patterns**
 I use:
@@ -523,7 +451,7 @@ I implement:
 - [ ] Existing functionality intact
 - [ ] Documentation updated
 - [ ] **Performance impact assessed**
-- [ ] **CSS quality checked with stylelint**
+- [ ] **🧪 Background Process Cleanup**: All tests properly clean up intervals/timeouts
 - [ ] **🔒 MANDATORY REQUIREMENTS CHECKED**:
   - [ ] **Terminal Commands**: No commands run by AI
   - [ ] **Lazy Loading**: Implemented for heavy components
@@ -543,244 +471,89 @@ I implement:
 
 ## 🎨 **CSS QUALITY STANDARDS (MANDATORY)**
 
-### **Stylelint Commands (MANDATORY)**
-**Before committing any CSS changes, run these commands:**
+**See `docs/css-quality-standards.md` for complete implementation details**
 
-```bash
-# Check all CSS files in the project
-npm run stylelint
-
-# Fix auto-fixable CSS issues
-npm run stylelint:fix
-
-# Check only frontend CSS files
-npm run stylelint:frontend
-
-# Fix frontend CSS issues
-npm run stylelint:frontend:fix
-```
-
-### **CSS Quality Gates (MANDATORY)**
-- **No CSS linting errors** before commit
-- **Design tokens used** for colors, spacing, typography
-- **BEM naming convention** followed for complex components
-- **CSS Modules** used for component isolation
-- **Responsive design** implemented with CSS Grid/Flexbox
-
-### **CSS Architecture Rules**
-- **CSS Custom Properties** for theming (light/dark/cosmic)
-- **CSS Modules** for component-scoped styles
-- **Design tokens** in `frontend/src/styles/tokens/`
-- **BEM methodology** for complex component hierarchies
-- **Mobile-first** responsive design approach
-
-### **CSS File Organization**
-```
-frontend/src/styles/
-├── tokens/           # Design tokens (colors, spacing, typography)
-├── components/       # Component-specific CSS modules
-├── layouts/          # Layout and grid systems
-├── themes/           # Theme-specific overrides
-└── global/           # Global styles and utilities
-```
-
-### **CSS Quality Checklist**
-- [ ] **Stylelint passes** with no errors
-- [ ] **Design tokens used** instead of hardcoded values
-- [ ] **BEM naming** followed for complex components
-- [ ] **CSS Modules** used for component isolation
-- [ ] **Responsive design** implemented
-- [ ] **Accessibility** considered (color contrast, focus states)
-- [ ] **Performance** optimized (no unused CSS, efficient selectors)
+**Critical Reminders:**
+- **Run stylelint before commit**: `npm run stylelint`
+- **Use CSS Modules** for component isolation
+- **Implement design tokens** via CSS Custom Properties
+- **Follow BEM methodology** for complex components
+- **Mobile-first responsive design** approach
+- **Ensure accessibility compliance** (WCAG 2.1 AA)
 
 ---
 
 ## 🚀 **FRONTEND BUNDLE OPTIMIZATION & CODE SPLITTING STRATEGY (MANDATORY)**
 
-### **Bundle Size Standards (MANDATORY)**
-**Before every frontend build, ensure bundle size compliance:**
-- **Main Bundle Target**: < 1MB (gzipped: < 300KB)
-- **Individual Chunks**: < 500KB (gzipped: < 150KB)
-- **Total Bundle Size**: < 2MB (gzipped: < 600KB)
+**See `docs/frontend-bundle-strategy.md` for complete implementation details**
 
-### **Code Splitting Implementation Framework (MANDATORY)**
-
-#### **Component-Level Splitting (Immediate Priority)**
-**Implementation Pattern:**
-- Lazy load heavy components (Dashboard, 3D components)
-- Use React.lazy() with Suspense fallbacks
-- Implement error boundaries for lazy components
-
-#### **Route-Based Splitting (Next Priority)**
-**Implementation Pattern:**
-- Create centralized routing system
-- Implement lazy page loading
-- Optimize chunk organization for routes
-
-#### **Advanced Optimization (Future Consideration)**
-**Implementation Pattern:**
-- Enhanced chunk optimization
-- Dynamic imports for components
-- Custom lazy loading hooks
-
-### **Lazy Loading Implementation Standards (MANDATORY)**
-
-#### **React.lazy() Pattern (MANDATORY)**
-```typescript
-import React, { lazy, Suspense } from 'react'
-
-// Lazy load heavy components
-const Dashboard = lazy(() => import('./pages/Dashboard'))
-const BlockchainScene = lazy(() => import('./components/blockchain/BlockchainScene'))
-
-// Always wrap with Suspense
-<Suspense fallback={<LoadingSpinner />}>
-  <Dashboard />
-</Suspense>
-```
-
-#### **Error Boundary Integration (MANDATORY)**
-```typescript
-// Wrap lazy-loaded components with error boundaries
-<ErrorBoundary fallback={<ErrorFallback />}>
-  <Suspense fallback={<LoadingSpinner />}>
-    <LazyComponent />
-  </Suspense>
-</ErrorBoundary>
-```
-
-#### **Loading States (MANDATORY)**
-- **Skeleton Screens**: Show component structure while loading
-- **Progress Indicators**: Visual feedback for loading progress
-- **Fallback Content**: Meaningful placeholder content
-
-### **Bundle Analysis Commands (MANDATORY)**
-**Before committing any frontend changes, run these commands:**
-
-```bash
-# Build and analyze bundle
-npm run build
-
-# Check bundle size warnings
-# Look for chunks > 500KB warnings
-
-# Analyze bundle composition (if available)
-npm run analyze
-```
-
-### **Performance Validation Checklist (MANDATORY)**
-- [ ] **Bundle Size**: Under 1MB target
-- [ ] **Chunk Sizes**: No chunks > 500KB
-- [ ] **Lazy Loading**: Components load on demand
-- [ ] **Loading States**: Proper fallback content
-- [ ] **Error Handling**: Error boundaries implemented
-- [ ] **Performance**: Initial load < 3s
-
-### **Code Splitting Best Practices (MANDATORY)**
-1. **Lazy Load by Feature**: Group related components together
-2. **Lazy Load by Route**: Separate pages into different chunks
-3. **Lazy Load Heavy Dependencies**: 3D libraries, large utilities
-4. **Preload Critical Paths**: Load essential components immediately
-5. **Monitor Bundle Growth**: Track size changes over time
-
-### **Vite Configuration Standards (MANDATORY)**
-```typescript
-// frontend/vite.config.ts
-build: {
-  rollupOptions: {
-    output: {
-      manualChunks: {
-        vendor: ['react', 'react-dom'],
-        threejs: ['three', 'three-stdlib'],
-        i18n: ['i18next', 'react-i18next'],
-        utils: ['lodash', 'date-fns']
-      }
-    }
-  }
-}
-```
+**Critical Reminders:**
+- **Bundle Size Targets**: Main < 1MB, Chunks < 500KB, Total < 2MB
+- **Always implement lazy loading** for heavy components
+- **Use React.lazy() with Suspense** for code splitting
+- **Implement error boundaries** around lazy components
+- **Run `npm run build`** to check bundle size warnings
+- **Monitor chunk sizes** and optimize with Vite manual chunks
 
 ---
 
 ## 🔧 TypeScript Error Resolution
 
-### Common Resolution Patterns
-1. **Mixed Chart Types:** Use generic Chart component or separate specific components
-2. **Readonly Arrays:** Remove `as const` or use type assertion
-3. **Union Types:** Transform types before use
-4. **No `any`:** Never introduce `any`. Prefer precise types or `unknown` narrowed with guards. Tests must reference concrete framework types (e.g., Express) rather than `any`.
+**Critical Rule:** I NEVER commit with TypeScript errors. Use `npm run typecheck` systematically.
 
-### Systematic Resolution Flow
-1. Run `npm run typecheck`
-2. Analyze each error completely
-3. Apply appropriate resolution pattern
-4. Verify resolution with `npm run typecheck`
-5. Repeat until 0 errors
-
-**Critical Rule:** I NEVER commit with TypeScript errors. I use `npm run typecheck` systematically to detect and fix errors before continuing development.
+**Common Patterns:**
+- **Mixed Chart Types:** Use generic components or separate specific ones
+- **Readonly Arrays:** Remove `as const` or use type assertion  
+- **Union Types:** Transform types before use
+- **No `any`:** Use precise types or `unknown` with guards
 
 ---
 
 ## 📚 Documentation Maintenance
 
-### README Alignment
-After completing any coding task, I must:
-1. **Reason about impact** - Did my changes affect project structure, commands, or configuration?
-2. **Check README relevance** - Are there new npm scripts, environment variables, or procedures?
-3. **Update if necessary** - Keep README.md as the single source of truth
-4. **Maintain consistency** - Ensure all documentation reflects current state
+**README Alignment:** Always check if changes affect project structure, commands, or configuration.
 
-### Documentation Style Rules (CRITICAL)
-- **`project-documents/01-development-roadmap.md` and `project-documents/01-execution-checklists.md` are MINIMAL task representations**
-- **NO unnecessary completion texts or huge explanatory blocks for done items**
-- **Done items are marked with `[x]` or `✅` - that's it**
-- **Steps to take are NOT marked with `[x]` - this follows common sense**
-- **Keep these files lean and focused on current actionable tasks**
-- **If you need to explain what was done, do it in the specific documentation files, not in these task lists**
+**Documentation Style Rules:**
+- **Task lists are MINIMAL** - mark done with `[x]` only
+- **No explanatory blocks** for completed items
+- **Keep files lean** and focused on actionable tasks
 
-### Version Management - CRITICAL RULE
-**I NEVER increment version numbers unless explicitly requested or required by development phases.**
-- **Current version is 1.0.0** and remains so until explicitly stated otherwise
-- **Small changes, fixes, or updates do NOT warrant version changes**
-- **Version increments are controlled by development roadmap phases only**
-- **I maintain version 1.0.0 for all documentation updates and corrections**
+**Version Management:** NEVER increment versions unless explicitly required by development phases.
 
 ---
 
 ## ⚡ Performance Considerations
 
-### Before Every Code Change
-I must assess:
-- **Memory Impact**: Will this change increase memory usage?
-- **Bundle Size**: Will this affect the final bundle size?
-- **Runtime Performance**: Will this impact user experience?
-- **Network Impact**: Will this affect API response times?
-
-### Performance Checklist
-- [ ] **Memory**: No memory leaks, efficient data structures
-- [ ] **Bundle**: No unnecessary dependencies added
-- [ ] **Runtime**: No blocking operations in UI thread
-- [ ] **Network**: Efficient API calls, proper caching
-- [ ] **Rendering**: No unnecessary re-renders
+**Always assess impact before changes:**
+- **Memory**: No leaks, efficient data structures
+- **Bundle**: No unnecessary dependencies
+- **Runtime**: No blocking operations in UI thread
+- **Network**: Efficient API calls, proper caching
 
 ---
 
 ## 📚 Essential Documentation References
 
+**📋 See `docs/DOCUMENTATION-INDEX.md` for complete, organized documentation reference**
+
 ### Core Documents
 - **`project-documents/00-model-spec.md`** - System architecture and requirements
 - **`docs/API-ENDPOINTS.md`** - Complete API reference
 - **`docs/API-STANDARDS.md`** - API development standards
-- **`docs/API-NAVIGATION.md`** - API documentation guide
 - **`docs/ENVIRONMENT-SETUP.md`** - Environment configuration
-- **`docs/DOCUMENTATION-NAVIGATION.md`** - Main documentation index
+
+### Implementation Guides
+- **`project-documents/system-diagrams/12-testing-architecture-diagram.md`** - Complete testing architecture, patterns, and standards
+- **`docs/middleware-patterns.md`** - Middleware architecture and implementation
+- **`docs/frontend-bundle-strategy.md`** - Frontend optimization and code splitting
+- **`docs/css-quality-standards.md`** - CSS architecture and quality standards
 
 ### System Diagrams
-- **`project-documents/system-diagrams/`** - All system architecture diagrams
-- **`project-documents/system-diagrams/02-component-architecture-diagram.md`** - Component relationships
-- **`project-documents/system-diagrams/03-data-flow-diagram.md`** - Data flow patterns
-- **`project-documents/system-diagrams/05-class-diagrams.md`** - Class relationships
-- **`project-documents/system-diagrams/11-package-diagram.md`** - Package structure
+**📊 `project-documents/system-diagrams/` - ALL system architecture diagrams**
+- **`01-system-context-diagram.md`** - System boundaries and external integrations
+- **`02-component-architecture-diagram.md`** - Component relationships and data flow
+- **`03-data-flow-diagram.md`** - Data flow patterns and API interactions
+- **`12-testing-architecture-diagram.md`** - Testing patterns and background process management
 
 ### Development Tools
 - **`README.md`** - Single source of truth for commands and setup

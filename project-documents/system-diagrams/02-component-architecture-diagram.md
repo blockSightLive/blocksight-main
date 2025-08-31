@@ -219,6 +219,7 @@ This Component Architecture Diagram shows the internal structure and relationshi
 - **Docker**: Local development environment with electrs, Redis, and PostgreSQL containers
 - **GitHub Actions**: CI/CD pipeline with automated testing, type checking, and linting
 - **Monitoring**: Prometheus metrics, Grafana dashboards, structured logging
+- **Testing Framework**: Comprehensive testing architecture with background process management
 
 ## Data Flow Patterns
 

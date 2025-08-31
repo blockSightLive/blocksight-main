@@ -4,6 +4,7 @@
 	--card-theme-background: var(--color-grey-light);
 	--card-theme-border: var(--color-border);
 	--card-theme-hover: var(--color-grey-medium);
+    
 	display: flex;
 	flex-direction: column;
 	align-items: center;

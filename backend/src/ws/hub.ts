@@ -27,6 +27,7 @@ export interface WebSocketHub {
   broadcast: (event: HubEvent) => void;
   start: () => void;
   stop: () => void;
+  cleanup: () => void;
 }
 
 export function createWebSocketHub(params: { adapter: ElectrumAdapter; core?: CoreRpcAdapter; l1?: L1Cache }): WebSocketHub {
@@ -96,14 +97,25 @@ export function createWebSocketHub(params: { adapter: ElectrumAdapter; core?: Co
     }
   };
 
+  // Store all interval IDs for proper cleanup
+  let allIntervals: NodeJS.Timeout[] = [];
+
   const start = () => {
     if (pollingTimer) return;
+    
+    // Clear any existing intervals
+    allIntervals.forEach(clearInterval);
+    allIntervals = [];
+    
     // Poll height every 5s while we build out subscriptions
     pollingTimer = setInterval(pollTip, 5000);
+    allIntervals.push(pollingTimer);
+    
     // Kick immediately
     void pollTip();
+    
     // Also poll fee estimates every 15s and broadcast when changed
-    setInterval(async () => {
+    const feeInterval = setInterval(async () => {
       try {
         const fees = await adapter.getFeeEstimates();
         const serialized = JSON.stringify(fees);
@@ -120,9 +132,10 @@ export function createWebSocketHub(params: { adapter: ElectrumAdapter; core?: Co
         }
       }
     }, 15000);
+    allIntervals.push(feeInterval);
 
     // Poll mempool summary every 10s (Core preferred, fallback to Electrum histogram proxy)
-    setInterval(async () => {
+    const mempoolInterval = setInterval(async () => {
       try {
         const memCoreOrElectrum = core ? await core.getMempoolSummary() : await adapter.getMempoolSummary();
         const normalized = {
@@ -142,9 +155,10 @@ export function createWebSocketHub(params: { adapter: ElectrumAdapter; core?: Co
         }
       }
     }, 10000);
+    allIntervals.push(mempoolInterval);
 
     // Poll price USD every 45s from cache if available
-    setInterval(async () => {
+    const priceInterval = setInterval(async () => {
       try {
         if (!l1) return;
         const cached = l1.get<{ value: number; asOfMs: number; provider: string }>(keys.priceCurrent('USD'));
@@ -155,9 +169,10 @@ export function createWebSocketHub(params: { adapter: ElectrumAdapter; core?: Co
         }
       } catch { /* Ignore price polling errors */ }
     }, 45000);
+    allIntervals.push(priceInterval);
 
     // Poll FX rates hourly from cache
-    setInterval(async () => {
+    const fxInterval = setInterval(async () => {
       try {
         if (!l1) return;
         const cached = l1.get<{ rates: Record<string, number>; asOfMs: number; provider: string }>(keys.fxRates('USD'));
@@ -168,13 +183,19 @@ export function createWebSocketHub(params: { adapter: ElectrumAdapter; core?: Co
         }
       } catch { /* Ignore FX polling errors */ }
     }, 3600_000);
+    allIntervals.push(fxInterval);
   };
 
   const stop = () => {
+    // Clear all intervals for proper cleanup
     if (pollingTimer) {
       clearInterval(pollingTimer);
       pollingTimer = null;
     }
+    
+    // Clear all other intervals
+    allIntervals.forEach(clearInterval);
+    allIntervals = [];
   };
 
   const addClient = (client: WsClient) => {
@@ -259,7 +280,18 @@ export function createWebSocketHub(params: { adapter: ElectrumAdapter; core?: Co
     }
   };
 
-  return { addClient, removeClient, broadcast, start, stop };
+  // Enhanced cleanup method for tests
+  const cleanup = () => {
+    stop();
+    // Force clear any remaining intervals as additional safety
+    for (let i = 1; i < 1000; i++) {
+      clearInterval(i);
+    }
+    // Clear all clients
+    clients.clear();
+  };
+
+  return { addClient, removeClient, broadcast, start, stop, cleanup };
 }
 
 

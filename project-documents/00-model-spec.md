@@ -476,11 +476,15 @@ struct CircuitBreaker {
 
 ## Testing Framework
 
+**Robust testing framework with CI/CD integration.**
+
 ### Multi-Tier Testing
 1. **Unit Tests** (Seconds): Genesis block, script parsing, API tests
 2. **Integration Tests** (Minutes): P2SH, SegWit, known problematic blocks
 3. **Regression Tests** (Hours): Recent 10,000 blocks, performance benchmarks
 4. **Full Chain Tests** (Days): Complete validation, production verification
+
+**See `docs/system-diagrams/12-testing-architecture-diagram.md` for complete testing patterns and standards.**
 
 ---
 

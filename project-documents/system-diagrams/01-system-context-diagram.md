@@ -146,6 +146,7 @@ This System Context Diagram shows BlockSight.live as the central system and its 
 - **Monitoring & Logging**: Prometheus, Grafana, structured logs, alerts [READY]
 - **External APIs**: Price sources with rate limiting and backoff [READY]
 - **Dev Tooling**: GitHub Actions, IaC, testing frameworks [DONE]
+- **Testing Architecture**: Comprehensive testing framework with background process management [DONE]
 
 ### Styles System Architecture [DONE]
 - **CSS Modules Layer**: Component isolation, grid systems, 3D containers, layout management
