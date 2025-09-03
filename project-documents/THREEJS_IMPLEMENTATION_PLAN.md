@@ -1,117 +1,152 @@
-# 🎯 ThreeJS Blockchain Visualization Implementation Plan
+# 🎯 ThreeJS Blockchain Visualization Implementation Plan - MVP FOCUS
 
-**Document Type:** Implementation Roadmap  
-**Version:** 1.0.0  
+**Document Type:** MVP Implementation Roadmap  
+**Version:** 2.0.0  
 **Created:** 2025-08-27  
-**Status:** Ready for Implementation  
-**Architecture:** Center Column + Component Hybrid  
-**Last Modified:** 2025-08-31
+**Status:** MVP Implementation Ready  
+**Architecture:** Center Column + Real Bitcoin Data Integration  
+**Last Modified:** 2025-01-15
 
 ---
 
-**📋 DOCUMENTATION STATUS**: Phase 1 improvements have been consolidated into existing documentation structure:
-- **00-model-spec.md**: Updated with Phase 1 completion status and performance requirements
-- **02-component-architecture-diagram.md**: Added ThreeJS components and WebSocket architecture
-- **03-data-flow-diagram.md**: Added ThreeJS data flow and event handling
-- **01-execution-checklists.md**: Added Phase 1 completion checklist
-- **PHASE1_IMPROVEMENTS_SUMMARY.md**: Consolidated and deleted (information preserved in above files)
+## 🎯 **MVP GOAL: EXACT VISUAL MATCH**
+
+**Target**: Replicate the exact 3D blockchain visualization from the design specification:
+- **Vertical block stack** with proper 3D depth and perspective
+- **Color-coded blocks**: Orange (unconfirmed), Red (current), Purple (confirmed)
+- **Real Bitcoin data** displayed on each block (height, tx count, timestamps)
+- **Clean, minimalist design** with subtle lighting against cosmic background
+- **Real-time updates** from MainOrchestrator via WebSocket
 
 ---
 
-## 🏗️ **ARCHITECTURAL DECISION: Option 2 + 3 Hybrid**
+## 🏗️ **MVP ARCHITECTURE: SIMPLIFIED & FOCUSED**
 
-### **Selected Approach:**
-- **ThreeJS Stage**: Center column container (1/3 dashboard width)
-- **Component Integration**: BlockchainVisualizer component within 3D stage
-- **Scope**: Isolated 3D rendering context for performance and maintainability
+### **Core Components:**
+- **ThreeDBlockchain**: Main 3D scene with vertical block stack
+- **Block**: Individual 3D block with real Bitcoin data display
+- **MainOrchestrator Integration**: Real-time data flow from backend
+- **WebSocketHandler**: Live blockchain updates
 
-### **Rationale:**
-1. **Performance**: Isolated rendering prevents dashboard-wide re-renders
-2. **Maintainability**: Clear separation between 3D world and UI components
-3. **Scalability**: Can expand to full dashboard later if needed
-4. **Testing**: Easier to test 3D logic independently
-
----
-
-## 📦 **PHASE 1: PACKAGE SETUP & DEPENDENCIES**
-
-### **Required Packages:**
-```bash
-npm install three @types/three @react-three/fiber @react-three/drei
+### **Data Flow:**
+```
+Backend RPC → WebSocket Hub → MainOrchestrator → ThreeJS Components → 3D Visualization
 ```
 
-### **Build System Updates:**
-- Configure Vite for 3D asset handling
-- Update TypeScript config for ThreeJS types
-- Verify WebGL support detection
-
 ---
 
-## 🎨 **PHASE 2: THREEJS STAGE ARCHITECTURE**
+## 🎯 **PHASE 1: VISUAL FIDELITY IMPLEMENTATION (IMMEDIATE)**
 
-### **Center Column 3D Container:**
-- **Container**: `.dashboard-center` with 3D viewport
-- **Dimensions**: 1/3 dashboard width × (100vh - header height)
-- **CSS Properties**: `perspective`, `transform-style: preserve-3d`
-
-### **ThreeJS Setup:**
-- **Renderer**: WebGL with antialiasing enabled
-- **Camera**: PerspectiveCamera with 75° FOV
-- **Lighting**: Ambient + Directional + Point light system
-- **Controls**: OrbitControls for user interaction
-
-### **Responsive Design:**
-- Viewport adaptation to container size
-- Camera FOV adjustment for mobile
-- Performance scaling based on device capability
-
----
-
-## 🔷 **PHASE 3: BLOCKCHAIN VISUALIZATION SYSTEM**
-
-### **Block Representation:**
-- **Geometry**: 3D cubes with blockchain status colors
-- **Materials**: PBR materials for realistic rendering
-- **Colors**: Integration with existing blockchain status colors from `colors.css`
-  - Unconfirmed Blocks: `#F9D8A2` (light), `#F29F58` (dark)
-  - Next Block: `#FC7A99` (light), `#AB4459` (dark)
-  - Last Block: `#7B2F9B` (light), `#431752` (dark)
-  - Previous Block: `#502168` (light), `#2A0F35` (dark)
-
-### **Blockchain Structure:**
-- **Z-Axis**: Blockchain progression (depth)
-- **X-Axis**: Block variations/status
-- **Y-Axis**: Block height/position
-- **Connections**: Lines or beams between sequential blocks
-
-### **Animation System:**
-- **Block Transitions**: Smooth movement for new blocks
-- **Status Changes**: Color transitions and glow effects
-- **Loading States**: Animated block creation/destruction
-
----
-
-## 🔌 **PHASE 3.5: WEBSOCKET INTEGRATION & REAL-TIME UPDATES**
-
-### **WebSocket Event Integration:**
-- **Real-Time Block Updates**: Subscribe to `block.new` events from existing WebSocket Hub
-- **Mempool Changes**: Listen to `mempool.update` events for transaction flow visualization
-- **Network Status**: Receive `network.status` updates for fee and congestion indicators
-- **Reorg Detection**: Handle `chain.reorg` events for blockchain reorganization visualization
-
-### **Event Processing Architecture:**
+### **1.1 Block Visual Design - EXACT MATCH**
 ```typescript
-// WebSocket event handler for 3D visualization
+// Block styling to match design specification exactly
+const blockStyles = {
+  unconfirmed: { 
+    color: '#F9D8A2', // Orange blocks (top)
+    size: 1.0,
+    position: 'top'
+  },
+  current: { 
+    color: '#FC7A99', // Red block (center) - larger
+    size: 1.2,
+    position: 'center'
+  },
+  confirmed: { 
+    color: '#7B2F9B', // Purple blocks (bottom)
+    size: 1.0,
+    position: 'bottom'
+  },
+  historical: { 
+    color: '#502168', // Darker purple (further down)
+    size: 0.8,
+    position: 'historical'
+  }
+}
+```
+
+### **1.2 Layout Structure - VERTICAL STACK**
+- **Block Arrangement**: Vertical stack with slight offset for 3D depth
+- **Block Positioning**: Exact positioning to match design specification
+- **Depth Perspective**: Proper 3D depth with realistic spacing
+- **Block Sizing**: Larger current block, smaller historical blocks
+
+### **1.3 Text Integration - REAL DATA DISPLAY**
+```typescript
+// Text elements on blocks (matching design)
+interface BlockTextData {
+  blockHeight: string;        // "882,491", "882,490", etc.
+  transactionCount: string;   // "3278 Transacciones"
+  timestamp: string;          // "en 9 min", "09:10", "hace menos de 1 min"
+  status: string;             // Block status indicator
+}
+```
+
+---
+
+## 🔷 **PHASE 2: REAL BITCOIN DATA INTEGRATION (IMMEDIATE)**
+
+### **2.1 MainOrchestrator Integration**
+```typescript
+// Connect MainOrchestrator to ThreeJS
+const useThreeJSBlockchainData = () => {
+  const { blockchainData, mempoolData, networkData } = useMainOrchestrator();
+  
+  return {
+    currentHeight: blockchainData.height,
+    mempoolTxs: mempoolData.pendingTransactions,
+    recentBlocks: blockchainData.recentBlocks,
+    networkStatus: networkData.status
+  };
+};
+```
+
+### **2.2 Block Data Mapping**
+```typescript
+// Map real Bitcoin data to 3D blocks
+const mapBlockData = (blockData: BlockchainData) => ({
+  height: blockData.height,
+  txCount: blockData.txCount,
+  timestamp: blockData.timestamp,
+  status: determineBlockStatus(blockData),
+  color: getBlockColor(blockData.status),
+  textData: formatBlockText(blockData)
+});
+```
+
+### **2.3 Real-Time Updates**
+- **WebSocket Integration**: Live updates from MainOrchestrator
+- **Block Status Changes**: Dynamic color/status updates
+- **Transaction Counts**: Real-time transaction data display
+- **Timestamp Updates**: Live time calculations
+
+---
+
+## 🔌 **PHASE 3: CONTEXT INTEGRATION & PERFORMANCE (IMMEDIATE)**
+
+### **3.1 MainOrchestrator Enhancement**
+```typescript
+// Enhanced BlockchainContext for ThreeJS
+const useThreeJSBlockchainData = () => {
+  const { blockchainData, mempoolData, networkData } = useMainOrchestrator();
+  
+  return {
+    blocks: formatBlocksForThreeJS(blockchainData),
+    mempool: formatMempoolForThreeJS(mempoolData),
+    network: formatNetworkForThreeJS(networkData)
+  };
+};
+```
+
+### **3.2 WebSocket Event Processing**
+```typescript
+// Simplified WebSocket event handler for MVP
 const handleWebSocketEvent = (event: WebSocketEvent) => {
   switch (event.type) {
     case 'block.new':
-      addNewBlockToVisualization(event.data);
+      updateBlockVisualization(event.data);
       break;
     case 'mempool.update':
       updateMempoolVisualization(event.data);
-      break;
-    case 'chain.reorg':
-      handleReorgVisualization(event.data);
       break;
     case 'network.status':
       updateNetworkStatusVisualization(event.data);
@@ -120,405 +155,142 @@ const handleWebSocketEvent = (event: WebSocketEvent) => {
 };
 ```
 
-### **Real-Time Data Flow:**
-1. **WebSocket Hub** → **ThreeJS Event Handler** → **3D Scene Updates**
-2. **Blockchain Data** → **Visualization State** → **ThreeJS Geometry Updates**
-3. **Performance Optimization**: Debounced updates to maintain 60fps rendering
-4. **Fallback Handling**: Graceful degradation when WebSocket unavailable
-
-### **State Synchronization:**
-- **React Context Integration**: Use existing `BitcoinContext` for WebSocket state
-- **ThreeJS State Management**: Synchronize 3D scene with React state
-- **Performance Monitoring**: Track WebSocket event processing time
-- **Error Recovery**: Automatic reconnection and state restoration
+### **3.3 Performance Optimization**
+- **Data Caching**: Efficient data updates without full re-renders
+- **Selective Updates**: Only update changed blocks
+- **Memory Management**: Proper cleanup of ThreeJS resources
+- **60fps Target**: Maintain smooth rendering performance
 
 ---
 
-## 🎨 **PHASE 4: THEME SYSTEM INTEGRATION**
+## 🎯 **MVP SUCCESS CRITERIA**
 
-### **Dynamic Theme Adaptation:**
-- **Light Theme**: Bright, high-contrast 3D elements with subtle shadows
-- **Dark Theme**: Low-brightness elements with enhanced glow effects
-- **Cosmic Theme**: Enhanced 3D effects with particle systems and cosmic colors
+### **Visual Requirements (Must Have)**
+- [ ] **Exact Color Match**: Orange (#F9D8A2), Red (#FC7A99), Purple (#7B2F9B, #502168)
+- [ ] **Vertical Stack Layout**: Blocks arranged vertically with proper 3D depth
+- [ ] **Block Sizing**: Larger current block, smaller historical blocks
+- [ ] **Text Display**: Block height, transaction count, timestamps on blocks
+- [ ] **Clean Design**: Minimalist blocks with subtle lighting
 
-### **Theme-Aware 3D Materials:**
-```typescript
-// Theme-aware material system
-const createThemeAwareMaterial = (theme: ThemeType) => {
-  const baseMaterial = new THREE.MeshStandardMaterial();
-  
-  switch (theme) {
-    case 'light':
-      baseMaterial.color.setHex(0x7B2F9B); // Light purple
-      baseMaterial.metalness = 0.1;
-      baseMaterial.roughness = 0.8;
-      break;
-    case 'dark':
-      baseMaterial.color.setHex(0x4A1F); // Dark purple
-      baseMaterial.metalness = 0.3;
-      baseMaterial.roughness = 0.6;
-      baseMaterial.emissive.setHex(0x1A0F35); // Subtle glow
-      break;
-    case 'cosmic':
-      baseMaterial.color.setHex(0xFC7A99); // Cosmic red
-      baseMaterial.metalness = 0.8;
-      baseMaterial.roughness = 0.2;
-      baseMaterial.emissive.setHex(0x502168); // Enhanced glow
-      break;
-  }
-  
-  return baseMaterial;
-};
-```
+### **Data Requirements (Must Have)**
+- [ ] **Real Bitcoin Data**: Display actual blockchain height and transaction counts
+- [ ] **Live Updates**: Real-time data from MainOrchestrator via WebSocket
+- [ ] **Block Status**: Dynamic color changes based on block confirmation status
+- [ ] **Timestamp Accuracy**: Real-time timestamp calculations and display
 
-### **CSS Custom Properties Integration:**
-- **Theme Variables**: Use existing CSS custom properties for 3D element styling
-- **Dynamic Updates**: Real-time theme switching without 3D scene recreation
-- **Performance**: Efficient theme updates using ThreeJS material properties
-- **Consistency**: Maintain visual harmony with existing UI components
-
-### **Theme-Specific 3D Effects:**
-- **Light Theme**: Subtle ambient occlusion and soft shadows
-- **Dark Theme**: Enhanced bloom effects and volumetric lighting
-- **Cosmic Theme**: Particle systems, lens flares, and atmospheric effects
+### **Performance Requirements (Must Have)**
+- [ ] **60fps Rendering**: Smooth 3D visualization performance
+- [ ] **Memory Usage**: <200MB for 3D scene
+- [ ] **Update Latency**: <2s for new block updates
+- [ ] **Error Handling**: Graceful degradation on data errors
 
 ---
 
-## 🌍 **PHASE 4.5: INTERNATIONALIZATION & RTL SUPPORT**
+## 🚀 **IMPLEMENTATION TIMELINE**
 
-### **RTL Language Support:**
-- **Hebrew RTL**: Mirror 3D scene layout for right-to-left reading
-- **Text Direction**: Adjust 3D text elements based on language direction
-- **Layout Adaptation**: Mirror dashboard column positioning for RTL languages
-- **Cultural Considerations**: Adapt 3D color schemes for cultural preferences
+### **Session 1: Visual Fidelity (2-3 hours)**
+- [ ] Update block colors to match design exactly
+- [ ] Implement proper block sizing and spacing
+- [ ] Add text rendering on blocks (height, tx count, timestamps)
+- [ ] Create proper 3D depth and perspective
 
-### **3D Text Internationalization:**
-```typescript
-// RTL-aware 3D text positioning
-const createInternationalizedText = (text: string, language: string) => {
-  const textGeometry = new THREE.TextGeometry(text, {
-    font: getFontForLanguage(language),
-    size: 0.1,
-    height: 0.02
-  });
-  
-  const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-  
-  // Adjust position for RTL languages
-  if (isRTLLanguage(language)) {
-    textMesh.position.x = -textMesh.position.x;
-    textMesh.rotation.y = Math.PI; // Flip text direction
-  }
-  
-  return textMesh;
-};
-```
+### **Session 2: Real Data Integration (2-3 hours)**
+- [ ] Connect MainOrchestrator blockchain data to ThreeJS
+- [ ] Map real block heights to 3D blocks
+- [ ] Display real transaction counts
+- [ ] Show real timestamps and status
 
-### **i18n Integration:**
-- **Translation Keys**: Use existing i18next framework for 3D text elements
-- **Dynamic Language Switching**: Update 3D scene text without recreation
-- **Resource Management**: Lazy-load language-specific 3D assets
-- **Performance**: Efficient text updates using ThreeJS text geometry
-
-### **Cultural Adaptation:**
-- **Color Preferences**: Adjust 3D color schemes based on cultural context
-- **Layout Preferences**: Modify 3D scene organization for different regions
-- **Accessibility**: Ensure 3D elements meet WCAG 2.1 AA standards
-- **Localization**: Support for regional number and date formats
-
----
-
-## ⚡ **PHASE 5: PERFORMANCE OPTIMIZATION**
-
-### **Rendering Optimization:**
-- **Object Pooling**: Reuse block geometries and materials
-- **Level of Detail (LOD)**: Reduce detail for distant blocks
-- **Frustum Culling**: Only render visible blocks
-- **Instanced Rendering**: Batch similar blocks
-
-### **Performance Monitoring:**
-- FPS counter integration
-- Memory usage tracking
-- Render time measurement
-- Performance degradation alerts
-
----
-
-## 🎨 **PHASE 6: INTERACTIVE FEATURES**
-
-### **User Controls:**
-- **Camera Movement**: Orbit, pan, zoom controls
-- **Block Selection**: Click to view block details
-- **Hover Effects**: Highlight blocks on mouse over
-- **Focus Mode**: Zoom to specific block or chain section
-
-### **Responsive Interactions:**
-- **Touch Support**: Mobile gesture controls
-- **Keyboard Navigation**: Arrow keys for navigation
-- **Accessibility**: Screen reader support for block information
+### **Session 3: Context Enhancement (2-3 hours)**
+- [ ] Enhance BlockchainContext for ThreeJS needs
+- [ ] Implement efficient data updates
+- [ ] Add performance monitoring
+- [ ] Test and validate MVP functionality
 
 ---
 
 ## 🔧 **TECHNICAL IMPLEMENTATION DETAILS**
 
-### **File Structure Updates:**
+### **File Structure (Current - MVP Focused):**
 ```
-frontend/src/components/dashboard-columns/
-├── BlockchainVisualizer.tsx (Enhanced with ThreeJS)
-├── BlockchainVisualizer.module.css (3D-specific styles)
-└── threejs/
-    ├── BlockchainScene.tsx (Main 3D scene)
-    ├── Block.tsx (Individual block component)
-    ├── Blockchain.tsx (Blockchain structure)
-    ├── Camera.tsx (Camera controls)
-    ├── Lighting.tsx (Lighting system)
-    ├── ThemeManager.tsx (Theme-aware 3D elements)
-    ├── WebSocketHandler.tsx (Real-time updates)
-    └── I18nSupport.tsx (Internationalization)
+frontend/src/components/dashboard-columns/blockchain/
+├── ThreeDBlockchain.tsx (Main 3D scene - MVP)
+├── TwoDBlockchain.tsx (2D fallback - MVP)
+├── Block.tsx (Individual block component - MVP)
+├── WebSocketHandler.tsx (Real-time updates - MVP)
+└── BlockchainVisualizer.tsx (Container - MVP)
 ```
 
-### **CSS Integration:**
-- **3D Properties**: `perspective`, `transform-style`, `backface-visibility`
-- **Performance**: `will-change: transform`, `contain: layout style paint`
-- **Responsive**: Media queries for 3D viewport adjustments
-- **Theme Integration**: CSS custom properties for dynamic theming
+### **Key Implementation Files:**
+- **ThreeDBlockchain.tsx**: Main 3D scene with vertical block stack
+- **Block.tsx**: Individual 3D block with real Bitcoin data display
+- **WebSocketHandler.tsx**: Live blockchain updates from MainOrchestrator
+- **BlockchainVisualizer.tsx**: Container managing 2D/3D mode switching
 
-### **State Management:**
-- **ThreeJS State**: Scene, camera, renderer instances
-- **Blockchain Data**: Block information and relationships
-- **UI State**: Selection, hover, focus states
-- **Performance State**: FPS, memory, render metrics
-- **Theme State**: Current theme and 3D material properties
-- **Language State**: Current language and RTL settings
+### **Data Flow Architecture:**
+```typescript
+// MainOrchestrator → ThreeJS data flow
+Backend RPC → WebSocket Hub → MainOrchestrator → ThreeJS Components → 3D Visualization
+```
 
 ---
 
-## 🧪 **PHASE 7: TESTING & VALIDATION**
-
-### **Unit Tests:**
-- ThreeJS component rendering
-- Block creation and destruction
-- Camera movement and controls
-- Performance optimization functions
-- Theme switching functionality
-- WebSocket event handling
-- Internationalization support
-
-### **Integration Tests:**
-- Dashboard column integration
-- Theme system compatibility
-- Responsive design validation
-- Performance benchmarks
-- WebSocket integration testing
-- i18n system validation
-
-### **User Acceptance Tests:**
-- 3D visualization clarity
-- Interactive feature functionality
-- Performance on various devices
-- Accessibility compliance
-- Theme switching experience
-- Language switching experience
-- RTL layout validation
-
----
-
-## 🚀 **DEPLOYMENT & MONITORING**
-
-### **Production Considerations:**
-- **Bundle Size**: Monitor ThreeJS impact on bundle
-- **Performance**: Real user monitoring (RUM) for 3D performance
-- **Fallbacks**: 2D visualization for WebGL-unsupported devices
-- **Progressive Enhancement**: Basic functionality without 3D
-
-### **Monitoring Metrics:**
-- **Performance**: FPS, render time, memory usage
-- **User Experience**: Interaction success rates, error rates
-- **Accessibility**: Screen reader compatibility, keyboard navigation
-- **Device Support**: WebGL capability, mobile performance
-- **WebSocket**: Connection stability, event processing time
-- **Theme System**: Theme switching performance, material updates
-- **Internationalization**: Language switching, RTL support
-
----
-
-## 📅 **IMPLEMENTATION TIMELINE**
-
-### **Week 1: Foundation**
-- Package installation and configuration
-- Basic ThreeJS stage setup
-- Center column 3D container
-
-### **Week 2: Core Visualization**
-- Block representation system
-- Basic blockchain structure
-- Camera and lighting setup
-
-### **Week 3: Integration & Theming**
-- WebSocket integration for real-time updates
-- Theme system integration
-- Internationalization support
-
-### **Week 4: Interactivity & Polish**
-- User controls implementation
-- Hover and selection effects
-- Performance optimization
-- Comprehensive testing
-
----
-
-## 🚨 **RISK MITIGATION**
+## 🚨 **RISK MITIGATION (MVP FOCUS)**
 
 ### **High Risk Areas:**
-1. **Performance Impact**: Mobile device rendering performance
-2. **Browser Compatibility**: WebGL support variations
-3. **State Complexity**: 3D + React state synchronization
-4. **WebSocket Integration**: Real-time data synchronization
-5. **Theme Switching**: 3D material updates performance
-6. **RTL Support**: Layout mirroring complexity
+1. **Performance Impact**: 3D rendering performance on various devices
+2. **Data Synchronization**: MainOrchestrator → ThreeJS state sync
+3. **WebSocket Integration**: Real-time data updates
+4. **Visual Fidelity**: Matching exact design specification
 
 ### **Mitigation Strategies:**
-1. **Progressive Enhancement**: Fallback to 2D visualization
-2. **Performance Monitoring**: Real-time performance tracking
-3. **Comprehensive Testing**: Cross-browser and device testing
-4. **Code Splitting**: Lazy load ThreeJS components
-5. **WebSocket Fallbacks**: Polling fallback for real-time data
-6. **Theme Optimization**: Efficient material property updates
-7. **RTL Testing**: Comprehensive RTL language validation
+1. **2D Fallback**: TwoDBlockchain component for WebGL-unsupported devices
+2. **Performance Monitoring**: Real-time FPS and memory tracking
+3. **Data Validation**: Ensure data accuracy from MainOrchestrator
+4. **Design Validation**: Regular comparison with design specification
 
 ---
 
 ## 📚 **RESOURCES & REFERENCES**
 
-### **Documentation:**
+### **Core Documentation:**
 - [Three.js Documentation](https://threejs.org/docs/)
 - [React Three Fiber](https://docs.pmnd.rs/react-three-fiber/)
-- [Three.js Examples](https://threejs.org/examples/)
+- [MainOrchestrator Context](project-documents/system-diagrams/13-context-orchestration-diagram.md)
 
-### **Performance Resources:**
-- WebGL performance best practices
-- Three.js optimization techniques
-- React performance optimization
-
-### **Integration Resources:**
-- WebSocket Hub documentation
-- Theme system architecture
-- Internationalization patterns
+### **Design Reference:**
+- **Target Image**: Exact visual specification for MVP implementation
+- **Color Palette**: Orange (#F9D8A2), Red (#FC7A99), Purple (#7B2F9B, #502168)
+- **Layout**: Vertical stack with proper 3D depth and perspective
 
 ---
 
-## ✅ **SUCCESS CRITERIA**
+## 🚀 **CURRENT IMPLEMENTATION STATUS (2025-01-15)**
 
-### **Functional Requirements:**
-- [ ] 3D blockchain visualization renders correctly
-- [ ] Interactive controls work smoothly
-- [ ] Performance maintains 60fps on target devices
-- [ ] Responsive design adapts to all screen sizes
-- [ ] WebSocket integration provides real-time updates
-- [ ] Theme switching works seamlessly with 3D elements
-- [ ] Internationalization supports all target languages
-- [ ] RTL layout works correctly for Hebrew
+### **✅ COMPLETED (MVP Foundation):**
+1. **Basic ThreeJS Integration** - Three.js packages installed and basic 3D scene working
+2. **MainOrchestrator System** - Centralized state management with plugin architecture
+3. **WebSocket Integration** - Real-time data flow from backend to frontend
+4. **Basic 3D Components** - ThreeDBlockchain, TwoDBlockchain, Block components
+5. **2D/3D Mode Switching** - User-selectable visualization modes
 
-### **Quality Requirements:**
-- [ ] Code coverage ≥ 85%
-- [ ] Performance benchmarks met
-- [ ] Accessibility compliance verified
-- [ ] Cross-browser compatibility confirmed
-- [ ] WebSocket reliability ≥ 99.9%
-- [ ] Theme switching performance < 100ms
-- [ ] Language switching performance < 200ms
+### **🔄 CURRENT STATUS (MVP Implementation):**
+- **Visual Fidelity**: ~30% complete - Basic 3D shapes exist but don't match design specification
+- **Real Data Integration**: ~40% complete - WebSocket working but data not properly displayed on blocks
+- **Context Integration**: ~60% complete - MainOrchestrator working but ThreeJS integration needs enhancement
 
----
+### **📋 MVP COMPONENTS STATUS:**
+- ✅ `ThreeDBlockchain.tsx` - Basic 3D scene exists, needs visual fidelity updates
+- ✅ `TwoDBlockchain.tsx` - 2D fallback working
+- ✅ `Block.tsx` - Basic 3D block exists, needs real data integration
+- ✅ `WebSocketHandler.tsx` - WebSocket events working, needs ThreeJS integration
+- ✅ `BlockchainVisualizer.tsx` - Container working, needs visual updates
+- ✅ `MainOrchestrator.tsx` - Context system working, needs ThreeJS data formatting
 
-## 🚀 **CURRENT IMPLEMENTATION STATUS (2025-08-31)**
-
-### **✅ COMPLETED PHASES:**
-1. **Phase 1A: Package Setup** - Three.js packages installed and configured
-2. **Phase 1B: Three.js Integration** - Complete 3D visualization integrated into BlockchainVisualizer
-3. **Phase 1C: Small Incremental WebSocket Integration** - Real block height from Bitcoin Core connected to 3D visualization
-4. **Phase 1D: Critical Three.js Context Fix** - PerformanceMonitor properly integrated within Canvas context
-5. **Phase 1E: Section-Specific 3D Visualization** - Mempool, Current, and Historical blockchain sections with unique data and animations
-6. **Phase 1F: Theme Integration & Enhanced Performance** - Theme-aware lighting, section-specific camera positioning, and enhanced performance monitoring
-7. **Phase 1G: Real Blockchain Data Integration** - Enhanced useBlockHeight hook with comprehensive blockchain data fetching
-8. **Phase 1H: WebSocket Event Structure** - Basic WebSocket event handling architecture for Phase 2 integration
-9. **Phase 1I: Performance Baseline Establishment** - Performance targets, monitoring, and optimization strategies
-
-### **🔄 IN PROGRESS:**
-1. **Phase 2A: Full WebSocket Integration** - Real-time blockchain data updates and mempool visualization ✅ **COMPLETED**
-2. **Phase 2B: Context Plugin Creation** - All four context plugins implemented ✅ **COMPLETED**
-3. **Phase 2C: Context Orchestration System** - MainOrchestrator with plugin-based architecture ✅ **COMPLETED**
-4. **Phase 2D: Component Migration** - Major components migrated to use orchestrator ✅ **COMPLETED**
-5. **Phase 2E: Console Logging & Plugin Lifecycle** - Reduced console flooding and stabilized plugin registration ✅ **COMPLETED**
-6. **Phase 3: Advanced Features & Optimization** - Advanced 3D features, performance optimizations, and theme system integration ✅ **COMPLETED**
-7. **Phase 3.5: MVP Vertical Blockchain Visualization** - MVP implementation with proper colors and transparency ✅ **COMPLETED**
-8. **Phase 3.5: WebSocket Integration & Real-Time Updates** - WebSocket event processing architecture implemented ✅ **COMPLETED**
-
-### **📋 COMPLETED COMPONENTS:**
-- ✅ `Scene.tsx` - **ENHANCED** - Advanced Three.js scene with enhanced theme integration, performance optimizations, advanced lighting, and enhanced camera controls
-- ✅ `Block.tsx` - **ENHANCED** - Advanced 3D block with particle effects, enhanced animations, advanced materials, and performance optimizations
-- ✅ `BlockchainScene.tsx` - **ENHANCED** - Section-specific blockchain data orchestration with real-time WebSocket integration and 3D visualization updates
-- ✅ `MVPBlockchainScene.tsx` - **NEW** - MVP vertical blockchain visualization with proper colors and transparency
-- ✅ `PerformanceMonitor.tsx` - **ENHANCED** - Advanced performance monitoring with optimization recommendations, performance alerts, and enhanced metrics
-- ✅ `BlockchainVisualizer.tsx` - Full 3D integration with real blockchain data, WebSocket handling, and performance monitoring
-- ✅ `useBlockHeight.ts` - **ENHANCED** - WebSocket-triggered refresh capability with polling fallback and correct API endpoints
-- ✅ `WebSocketHandler.tsx` - **NEW** - Real-time WebSocket event processing for 3D blockchain visualization updates
-- ✅ `PerformanceBaseline.tsx` - Performance targets and monitoring for optimization strategies
-
-### **🔧 CRITICAL ENHANCEMENTS APPLIED:**
-- **✅ Section-Specific 3D Scenes** - Mempool (pending blocks), Current (mining blocks), Historical (confirmed blocks)
-- **✅ Theme-Aware Lighting System** - Dynamic lighting based on light/dark/cosmic themes
-- **✅ Section-Specific Camera Positioning** - Optimized camera angles for each blockchain section
-- **✅ Enhanced Block Animations** - Section-specific animations (mempool floating, current steady, historical stable)
-- **✅ Advanced Performance Monitoring** - WebSocket event tracking, section performance metrics, real-time updates
-- **✅ Material System Enhancement** - Section-specific material properties and visual effects
-- **✅ Responsive 3D Container Integration** - Proper 3D scene integration within BlockchainVisualizer sections
-- **✅ Real Blockchain Data Integration** - Comprehensive blockchain data fetching from Bitcoin Core via existing API endpoints
-- **✅ WebSocket Event Architecture** - Event-driven structure for real-time blockchain updates (tip.height, network.mempool, network.fees, chain.reorg)
-- **✅ Performance Baseline System** - Performance targets (FPS: 45-60, Render: 16-22ms, Memory: 100-200MB, Blocks: 15-30)
-- **✅ Real WebSocket Endpoint Connection** - Direct connection to ws://localhost:8000/ws with automatic reconnection and status monitoring
-- **✅ WebSocket-Triggered Data Refresh** - Immediate blockchain data updates on WebSocket events with polling fallback
-- **✅ API Endpoint Fixes** - Corrected port mismatches (3000 vs 8000) and aligned with available backend endpoints
-- **✅ WebSocket Event Alignment** - Frontend now handles backend's actual event types (tip.height, network.mempool, etc.)
-- **✅ Electrum Method Fixes** - Replaced non-standard get_mempool_fee_histogram with proper Electrum methods
-- **✅ Advanced 3D Features** - Particle effects, advanced materials, enhanced animations, and morphing support
-- **✅ Performance Optimizations** - Instanced rendering support, frustum culling, enhanced LOD system, and advanced rendering optimizations
-- **✅ Enhanced Theme Integration** - Advanced theme-aware materials, enhanced lighting system, and cosmic theme support
-- **✅ Advanced Performance Monitoring** - Performance alerts, optimization recommendations, advanced metrics, and real-time monitoring
-- **✅ MVP Vertical Blockchain Visualization** - Proper vertical linear display with correct colors (Orange, Light Purple, Dark Purple)
-- **✅ Transparent Background Integration** - Sections now transparent to show cosmic background
-- **✅ Camera Controls for Navigation** - OrbitControls for vertical blockchain navigation
-- **✅ Real-Time WebSocket Integration** - WebSocket event processing architecture for live blockchain updates
-- **✅ Event-Driven 3D Updates** - Real-time block updates, mempool changes, and network status visualization
-- **✅ Performance-Optimized Event Processing** - Debounced updates with 60fps target and performance monitoring
-- **✅ Chain Reorganization Handling** - WebSocket events for blockchain reorganization visualization
-
-### **🎯 NEXT IMMEDIATE ACTIONS:**
-1. **✅ Documentation Standardized** - API endpoints and WebSocket events properly documented
-2. **🔧 CRITICAL FIXES APPLIED** - Core API 503 errors and Electrum method issues resolved
-3. **✅ Context Plugins Created** - All four context plugins implemented and integrated
-4. **✅ Component Migration Completed** - Major components migrated to use orchestrator system
-5. **✅ Console Logging Reduced** - Plugin lifecycle stabilized and console flooding eliminated
-6. **✅ Phase 3: Advanced Features** - Advanced 3D features, performance optimizations, and theme system integration completed
-7. **✅ Phase 3.5: MVP Vertical Blockchain** - MVP vertical blockchain visualization with proper colors and transparency completed
-8. **✅ Phase 3.5: WebSocket Integration** - Real-time WebSocket event processing architecture implemented
-9. **🔄 Phase 4: Advanced Interactive Features** - Full Scene.tsx restoration with advanced lighting and interactive features
-10. **🔄 Phase 5: Performance Optimization** - Advanced performance optimizations and monitoring
-
-### **🚀 NEW FEATURES IMPLEMENTED:**
-- **Real Blockchain Data Integration**: Enhanced hook fetches comprehensive blockchain data from Bitcoin Core
-- **WebSocket Event Structure**: Event-driven architecture ready for Phase 2 real-time integration
-- **Performance Baseline Monitoring**: Performance targets and monitoring for optimization strategies
-- **Enhanced Status Display**: Real-time data source, update status, and WebSocket connection monitoring
-- **Performance Alert System**: Warning and critical alerts for performance degradation
-- **Section-Specific Data Processing**: Real blockchain data filtered and processed for each visualization section
-- **Context Orchestration System**: MainOrchestrator with plugin-based architecture for unified state management
-- **Plugin-Based Contexts**: Modular, swappable context plugins for blockchain, electrum, external API, and system data
-- **Unified State Management**: Single source of truth for all frontend state through centralized orchestrator
-- **Stabilized Plugin Lifecycle**: Eliminated console flooding and registration/unregistration cycles
-- **Advanced 3D Features**: Particle effects, advanced materials, enhanced animations, and morphing support
-- **Performance Optimizations**: Instanced rendering support, frustum culling, enhanced LOD system, and advanced rendering optimizations
-- **Enhanced Theme Integration**: Advanced theme-aware materials, enhanced lighting system, and cosmic theme support
-- **Advanced Performance Monitoring**: Performance alerts, optimization recommendations, advanced metrics, and real-time monitoring
+### **🎯 IMMEDIATE MVP REQUIREMENTS:**
+1. **Visual Fidelity** - Match exact design specification (colors, layout, text)
+2. **Real Data Display** - Show actual Bitcoin data on 3D blocks
+3. **Context Integration** - Seamless MainOrchestrator → ThreeJS data flow
+4. **Performance** - Maintain 60fps with real-time updates
 
 ---
 
@@ -635,10 +407,47 @@ frontend/src/components/dashboard-columns/
 - **Particle Optimization**: 5-8x performance improvement for particle effects
 - **Morphing System**: Smooth animations with minimal performance impact
 
-### **📊 Real Metrics Implemented:**
-- **FPS Monitoring**: Real-time frame rate tracking
-- **Memory Usage**: GPU and system memory monitoring
-- **Draw Calls**: Actual render call counting
-- **Triangle Count**: Real geometry complexity metrics
-- **Culling Statistics**: Real culling performance data
-- **LOD Switching**: Actual LOD transition tracking
+---
+
+## 📋 **MOVED TO FUTURE-PLANNING-CONSOLIDATED.md**
+
+**Advanced Features (Overkill for MVP):**
+- Instanced Rendering, Frustum Culling, LOD System
+- Particle Systems, Morphing Animations  
+- Advanced Lighting, Theme Integration
+- Internationalization & RTL Support
+
+**These features are documented in `FUTURE-PLANNING-CONSOLIDATED.md` for future implementation phases after MVP completion.**
+
+---
+
+## 🚀 **FUTURE ENHANCEMENT: ADMIN LOGGING DASHBOARD**
+
+### **Advanced Logging & Monitoring System**
+
+**Purpose**: Real-time system monitoring and debugging for administrators
+
+**Features**:
+- **Real-time Log Stream**: Live backend and frontend logs
+- **Performance Metrics**: API response times, memory usage, error rates
+- **System Health**: Connection status, bootstrap state, service availability
+- **User Analytics**: User interactions, component usage, error patterns
+- **Three.js Performance**: Render times, frame rates, WebGL metrics
+
+**Implementation Plan**:
+```typescript
+// Admin Dashboard Components
+- LogStreamViewer: Real-time log display with filtering
+- PerformanceMetrics: Charts and graphs for system performance
+- SystemHealth: Service status and connection monitoring
+- UserAnalytics: User behavior and interaction tracking
+- ThreeJSMetrics: 3D rendering performance monitoring
+```
+
+**Integration Points**:
+- **Backend Logger**: Enhanced with WebSocket streaming
+- **Frontend Logger**: Real-time performance tracking
+- **Admin Panel**: Secure dashboard for system monitoring
+- **Alert System**: Critical error notifications
+
+**This advanced logging system will be implemented after MVP completion to provide comprehensive system monitoring and debugging capabilities.**

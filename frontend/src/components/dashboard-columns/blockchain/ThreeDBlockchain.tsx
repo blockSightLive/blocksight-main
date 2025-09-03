@@ -37,13 +37,33 @@
  */
 
 import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react'
-import { Canvas, useThree } from '@react-three/fiber'
-import { OrbitControls } from '@react-three/drei'
-// import { OrbitControls as OrbitControlsType } from 'three-stdlib' // Removed unused import
-// import { useMainOrchestrator } from '../../../contexts/MainOrchestrator' // Temporarily disabled
+import { Canvas, useThree, extend } from '@react-three/fiber'
+import { OrbitControls } from 'three-stdlib'
 import { WebSocketHandler } from './WebSocketHandler'
 import { ThreeJSErrorBoundary } from '../../error-handling'
 import * as THREE from 'three'
+
+// Extend React Three Fiber with OrbitControls
+extend({ OrbitControls })
+
+// Type declaration for the extended component
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace JSX {
+    interface IntrinsicElements {
+      orbitControls: {
+        enablePan?: boolean
+        enableZoom?: boolean
+        enableRotate?: boolean
+        minDistance?: number
+        maxDistance?: number
+        maxPolarAngle?: number
+        minPolarAngle?: number
+        [key: string]: unknown
+      }
+    }
+  }
+}
 
 interface BlockchainBlock {
   height: number
@@ -209,7 +229,7 @@ const ThreeDSceneContent: React.FC = () => {
       <pointLight position={[-5, -5, 5]} intensity={0.3} />
       
       {/* Camera controls for 3D navigation */}
-      <OrbitControls 
+      <orbitControls 
         enablePan={true}
         enableZoom={true}
         enableRotate={true}

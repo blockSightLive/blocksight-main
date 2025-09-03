@@ -39,6 +39,7 @@
 
 import type { CoreMempoolSummary, CoreRpcAdapter } from './types'
 import { BITCOIN_RPC_METHODS, type BlockchainInfo, type MempoolInfo, type NetworkInfo, type MiningInfo } from '../../types/bitcoin-rpc'
+import { logger, LogCategory } from '../../utils/logger'
 
 type Fetch = typeof fetch
 
@@ -51,19 +52,21 @@ export class RealCoreRpcAdapter implements CoreRpcAdapter {
   private readonly minCallInterval = 100 // Minimum 100ms between calls (rate limiting)
 
   constructor(params: { url: string; username: string; password: string; fetchImpl?: Fetch }) {
-    console.log('[DEBUG] RealCoreRpcAdapter constructor called with:')
-    console.log('  URL:', params.url)
-    console.log('  Username:', params.username)
-    console.log('  Password:', params.password ? '***SET***' : 'NOT SET')
-    console.log('  Password length:', params.password ? params.password.length : 0)
+    logger.debug(LogCategory.RPC, 'RealCoreRpcAdapter constructor called', {
+      url: params.url,
+      username: params.username,
+      passwordSet: !!params.password,
+      passwordLength: params.password ? params.password.length : 0
+    })
     
     this.url = params.url
     const token = Buffer.from(`${params.username}:${params.password}`).toString('base64')
     this.authHeader = `Basic ${token}`
     this.fetchImpl = params.fetchImpl || fetch
     
-    console.log('  Auth Header:', this.authHeader.substring(0, 20) + '...')
-    console.log('  Full Auth Header:', this.authHeader)
+    logger.debug(LogCategory.RPC, 'Auth header created', {
+      authHeaderPreview: this.authHeader.substring(0, 20) + '...'
+    })
   }
 
   /**
@@ -85,9 +88,10 @@ export class RealCoreRpcAdapter implements CoreRpcAdapter {
     const timeout = setTimeout(() => controller.abort(), timeoutMs)
     
     try {
-      console.log(`[DEBUG] Making RPC call to: ${this.url}`)
-      console.log(`[DEBUG] Method: ${method}`)
-      console.log(`[DEBUG] Auth Header: ${this.authHeader.substring(0, 20)}...`)
+      logger.debug(LogCategory.RPC, `Making RPC call: ${method}`, {
+        url: this.url,
+        authHeaderPreview: this.authHeader.substring(0, 20) + '...'
+      })
       
       const res = await this.fetchImpl(this.url, {
         method: 'POST',
@@ -144,7 +148,7 @@ export class RealCoreRpcAdapter implements CoreRpcAdapter {
         minFee: info.mempoolminfee || 0.00001
       }
     } catch (error) {
-      console.error('[CoreRPC] getMempoolSummary failed, using fallback data:', error)
+      logger.error(LogCategory.RPC, 'getMempoolSummary failed, using fallback data', { error: error instanceof Error ? error.message : String(error) })
       // Return fallback data when Bitcoin Core is unavailable
       return {
         pendingTransactions: 0,
@@ -164,12 +168,12 @@ export class RealCoreRpcAdapter implements CoreRpcAdapter {
     if (!this.connected) throw new Error('Core RPC not connected')
     
     try {
-      console.log(`[CoreRPC] Attempting to connect to ${this.url}`)
+      logger.debug(LogCategory.RPC, `Attempting to connect to ${this.url}`)
       const count = await this.call<number>(BITCOIN_RPC_METHODS.GET_BLOCK_COUNT)
-      console.log(`[CoreRPC] Successfully got block count: ${count}`)
+      logger.debug(LogCategory.RPC, `Successfully got block count: ${count}`)
       return typeof count === 'number' ? count : 0
     } catch (error) {
-      console.error('[CoreRPC] getBlockCount failed, using fallback data:', error)
+      logger.error(LogCategory.RPC, 'getBlockCount failed, using fallback data', { error: error instanceof Error ? error.message : String(error) })
       // Return fallback block height when Bitcoin Core is unavailable
       return 800000 // Approximate current Bitcoin block height
     }
@@ -187,7 +191,7 @@ export class RealCoreRpcAdapter implements CoreRpcAdapter {
       const info = await this.call<BlockchainInfo>(BITCOIN_RPC_METHODS.GET_BLOCKCHAIN_INFO)
       return info || {} as BlockchainInfo
     } catch (error) {
-      console.error('[CoreRPC] getBlockchainInfo failed, using fallback data:', error)
+      logger.error(LogCategory.RPC, 'getBlockchainInfo failed, using fallback data', { error: error instanceof Error ? error.message : String(error) })
       // Return fallback blockchain info when Bitcoin Core is unavailable
       return {
         chain: 'main' as const,
@@ -218,7 +222,7 @@ export class RealCoreRpcAdapter implements CoreRpcAdapter {
       const info = await this.call<NetworkInfo>(BITCOIN_RPC_METHODS.GET_NETWORK_INFO)
       return info || {} as NetworkInfo
     } catch (error) {
-      console.error('[CoreRPC] getNetworkInfo failed, using fallback data:', error)
+      logger.error(LogCategory.RPC, 'getNetworkInfo failed, using fallback data', { error: error instanceof Error ? error.message : String(error) })
       // Return fallback network info when Bitcoin Core is unavailable
       return {
         version: 250000,
@@ -253,7 +257,7 @@ export class RealCoreRpcAdapter implements CoreRpcAdapter {
       const info = await this.call<MiningInfo>(BITCOIN_RPC_METHODS.GET_MINING_INFO)
       return info || {} as MiningInfo
     } catch (error) {
-      console.error('[CoreRPC] getMiningInfo failed, using fallback data:', error)
+      logger.error(LogCategory.RPC, 'getMiningInfo failed, using fallback data', { error: error instanceof Error ? error.message : String(error) })
       // Return fallback mining info when Bitcoin Core is unavailable
       return {
         blocks: 800000,

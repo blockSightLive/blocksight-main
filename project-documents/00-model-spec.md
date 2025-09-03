@@ -122,13 +122,21 @@ BlockSight.live is a cutting-edge Bitcoin-exclusive blockchain analysis platform
 - Treat blockchain data as append-only; prefer immutable facts + materialized rollups.
 - Batch writes, idempotent rebuilds, deterministic replays for recovery.
 
-#### 4. BlockSight API Layer
+#### 4. Bootstrap System & Centralized Logging
+- **Purpose**: System initialization orchestrator and professional logging system
+- **Technology**: NodeJS with centralized logging and health monitoring
+- **Architecture**: System readiness verification, service health monitoring, circuit breaker patterns
+- **Logging System**: Environment-based log levels, structured logging, performance optimization
+- **Integration**: WebSocket Hub initialization, cache management, frontend readiness reporting
+- **Performance**: < 2s bootstrap response time, minimal logging overhead, continuous health monitoring
+
+#### 5. BlockSight API Layer
 - **Technology**: NodeJS with REST and WebSocket APIs
 - **Base URL**: `http://localhost:8000/api/v1/`
 - **Versioning**: v1 (current), breaking changes increment major version
 - **Authentication**: Core RPC endpoints require Bitcoin Core credentials, others public
 
-#### 5. Frontend Context Orchestration System
+#### 6. Frontend Context Orchestration System
 - **MainOrchestrator**: Central coordination context managing all specialized contexts
 - **Context Plugins**: Modular, swappable contexts (Blockchain, Electrum, External API, System)
 - **Architecture Benefits**: Single source of truth, unified caching, centralized error handling

@@ -37,6 +37,7 @@
 - **`docs/API-STANDARDS.md`** - API development standards and adapter implementation status
 - **`docs/API-ENDPOINTS.md`** - Complete API reference and endpoint documentation
 - **`docs/middleware-patterns.md`** - Complete middleware architecture and implementation
+- **`docs/BOOTSTRAP_SYSTEM_GUIDE.md`** - **CRITICAL** - Bootstrap system and centralized logging guide
 
 ### **Testing & Quality**
 - **`docs/testing-standards-checklist.md`** - Complete testing standards, checklist, and test suite documentation
@@ -67,6 +68,10 @@
 
 ### **Testing & Quality**
 - **`12-testing-architecture-diagram.md`** - Testing patterns and background process management
+
+### **System Architecture**
+- **`13-context-orchestration-diagram.md`** - Frontend context orchestration architecture
+- **`14-bootstrap-system-diagram.md`** - **CRITICAL** - Bootstrap system and logging architecture
 
 ---
 
@@ -140,6 +145,7 @@ docker-compose -f docker-compose.dev.yml down  # Stop development environment
 ### **For Backend Development**
 1. **`docs/API-STANDARDS.md`** - API development standards
 2. **`docs/middleware-patterns.md`** - Middleware architecture
+3. **`docs/BOOTSTRAP_SYSTEM_GUIDE.md`** - **CRITICAL** - Bootstrap system and logging
 
 ### **For Testing**
 1. **`docs/testing-standards-checklist.md`** - Complete testing guide

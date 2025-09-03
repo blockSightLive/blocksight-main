@@ -291,6 +291,15 @@ My methodology:
 
 **See `docs/bitcoin-rpc-reference.md` for complete implementation details.**
 
+### **Bootstrap System Standards**
+- **ALWAYS use centralized logging** from `backend/src/utils/logger.ts`
+- **NEVER use console.log** in production code - use logger methods
+- **FOLLOW bootstrap patterns** for system initialization and health monitoring
+- **IMPLEMENT circuit breakers** for service resilience
+- **USE environment-based log levels** (ERROR/WARN in production, DEBUG in development)
+
+**See `docs/BOOTSTRAP_SYSTEM_GUIDE.md` for complete implementation details.**
+
 ### **🔧 MIDDLEWARE ARCHITECTURE (MANDATORY)**
 **See `docs/middleware-patterns.md` for complete implementation details**
 
@@ -410,6 +419,13 @@ My methodology:
 - **Keep files lean** and focused on actionable tasks
 
 **Version Management:** NEVER increment versions unless explicitly required by development phases.
+
+**🚨 CRITICAL: NO RANDOM DOCUMENTATION CREATION**
+- **NEVER create new markdown files** without explicit user request
+- **ALWAYS integrate new features** into existing documentation structure
+- **CONSULT `docs/DOCUMENTATION-INDEX.md`** before creating any documentation
+- **UPDATE existing docs** instead of creating new ones
+- **FOLLOW the established documentation hierarchy** in `docs/DOCUMENTATION-INDEX.md`
 
 **🚨 CRITICAL: Context Orchestration Diagram Updates**
 - **ALWAYS update** `project-documents/system-diagrams/13-context-orchestration-diagram.md` when:

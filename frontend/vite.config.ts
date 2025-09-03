@@ -93,11 +93,8 @@ export default defineConfig({
           i18n: ['i18next', 'react-i18next'],
           
           // CRITICAL FIX: Keep Three.js ecosystem together to prevent shader compilation issues
-          // Three.js core + React Three Fiber + Drei must be in same chunk
-          threejs: ['three', '@react-three/fiber', '@react-three/drei'],
-          
-          // Three.js standard library (additional features)
-          threeStdlib: ['three-stdlib'],
+          // Three.js core + React Three Fiber + three-stdlib must be in same chunk
+          threejs: ['three', '@react-three/fiber', 'three-stdlib'],
           
           // Route-based chunks for Phase 2 optimization
           pages: [
@@ -153,7 +150,7 @@ export default defineConfig({
     include: [
       'three',
       '@react-three/fiber',
-      '@react-three/drei'
+      'three-stdlib'
     ],
     exclude: []
   }

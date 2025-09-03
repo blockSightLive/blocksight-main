@@ -44,7 +44,45 @@ frontend/src/components/error-handling/
 ├── RouterErrorBoundary.tsx     # Router-specific boundary
 ├── ThreeJSErrorInterceptor.ts  # Global error interceptor
 └── index.ts                    # Clean exports
+
+frontend/src/utils/
+└── productionErrorDetection.ts # Production error detection system
 ```
+
+### **Production Error Detection System**
+- **File**: `frontend/src/utils/productionErrorDetection.ts`
+- **Purpose**: Catch production-only errors that slip through development testing
+- **Features**: Global error handlers, React error boundaries, production error patterns
+- **Integration**: Wraps entire application in `main.tsx`
+
+#### **Production Error Patterns Detected**
+```typescript
+const productionErrorPatterns = [
+  /Cannot access .* before initialization/i,
+  /ReferenceError/i,
+  /TypeError.*undefined/i,
+  /Cannot read propert.*of undefined/i,
+  /Module not found/i,
+  /ChunkLoadError/i,
+  /Loading chunk .* failed/i,
+  /OrbitControls.*initialization/i,
+  /three.*initialization/i,
+  /WebGL.*error/i,
+  /Canvas.*error/i
+]
+```
+
+#### **Critical Error Detection**
+- **ReferenceError**: Module initialization issues
+- **ChunkLoadError**: Bundle loading failures
+- **Three.js Errors**: WebGL and 3D rendering issues
+- **Module Not Found**: Import resolution problems
+
+#### **Error Recovery**
+- **User-Friendly Overlay**: Shows error message with refresh button
+- **Automatic Reporting**: Logs detailed error information
+- **Circuit Breaker**: Prevents infinite error loops
+- **Graceful Degradation**: System continues functioning despite failures
 
 ### **Component Hierarchy**
 ```

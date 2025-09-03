@@ -41,6 +41,7 @@
  */
 
 import { ElectrumAdapter, FeeEstimates, ElectrumTransaction, TransactionHistory, MempoolTransaction } from './types';
+import { logger, LogCategory } from '../../utils/logger';
 
 type ElectrumTransport = 'tcp' | 'tls';
 
@@ -71,20 +72,20 @@ export class RealElectrumAdapter implements ElectrumAdapter {
   private async ensureConnected(): Promise<BasicElectrumClient> {
     if (this.client) return this.client;
     try {
-      console.log(`Connecting to electrs at ${this.host}:${this.port} (TLS: ${this.tls})`);
+      logger.debug(LogCategory.RPC, `Connecting to electrs at ${this.host}:${this.port} (TLS: ${this.tls})`);
       const mod = (await import('electrum-client')) as unknown as {
         default: ElectrumCtor;
       };
       const ElectrumClient = mod.default;
       const transport: ElectrumTransport = this.tls ? 'tls' : 'tcp';
       const client = new ElectrumClient(this.port, this.host, transport);
-      console.log('ElectrumClient created, attempting connection...');
+      logger.debug(LogCategory.RPC, 'ElectrumClient created, attempting connection...');
       await client.connect();
-      console.log('Successfully connected to electrs');
+      logger.debug(LogCategory.RPC, 'Successfully connected to electrs');
       this.client = client;
       return this.client;
     } catch (error) {
-      console.error('Failed to connect to electrs:', error);
+      logger.error(LogCategory.RPC, 'Failed to connect to electrs', { error: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -99,10 +100,10 @@ export class RealElectrumAdapter implements ElectrumAdapter {
       const c = await this.ensureConnected();
       // Try server.version first (more reliable than server.ping)
       const res = await c.request('server.version', ['0.0.0', '1.4']);
-      console.log('Server version response:', res);
+      logger.debug(LogCategory.RPC, 'Server version response', { version: res });
       return res !== null;
     } catch (error) {
-      console.error('Electrum ping failed:', error);
+      logger.error(LogCategory.RPC, 'Electrum ping failed', { error: error instanceof Error ? error.message : String(error) });
       return false;
     }
   }
@@ -135,7 +136,7 @@ export class RealElectrumAdapter implements ElectrumAdapter {
       }
       return 0;
     } catch (error) {
-      console.error(`Electrum estimatefee failed for ${blocks} blocks:`, error);
+      logger.error(LogCategory.RPC, `Electrum estimatefee failed for ${blocks} blocks`, { error: error instanceof Error ? error.message : String(error) });
       return 0;
     }
   }
@@ -159,10 +160,10 @@ export class RealElectrumAdapter implements ElectrumAdapter {
         return result.height as number;
       }
       
-      console.warn('Tip height response missing height field:', result);
+      logger.warn(LogCategory.RPC, 'Tip height response missing height field', { result });
       return 0;
     } catch (error) {
-      console.error('[ElectrumRPC] getTipHeight failed, using fallback data:', error);
+      logger.error(LogCategory.RPC, 'getTipHeight failed, using fallback data', { error: error instanceof Error ? error.message : String(error) });
       // Return fallback block height when Electrum is unavailable
       return 800000 // Approximate current Bitcoin block height
     }
@@ -187,14 +188,14 @@ export class RealElectrumAdapter implements ElectrumAdapter {
       
       // Use the correct Electrum method: blockchain.block.header
       const header = await c.request('blockchain.block.header', [height]);
-      console.log('Tip header response:', header);
+      logger.debug(LogCategory.RPC, 'Tip header response', { header });
       
       return {
         height,
         headerHex: typeof header === 'string' ? header : undefined
       };
     } catch (error) {
-      console.error('Failed to get tip header:', error);
+      logger.error(LogCategory.RPC, 'Failed to get tip header', { error: error instanceof Error ? error.message : String(error) });
       const height = await this.getTipHeight();
       return { height };
     }
@@ -215,7 +216,7 @@ export class RealElectrumAdapter implements ElectrumAdapter {
       // Use the correct Electrum method: mempool.get_fee_histogram
       try {
         const feeHistogram = await client.request('mempool.get_fee_histogram', []) as Array<[number, number]>;
-        console.log('[getMempoolSummary] Fee histogram:', feeHistogram);
+        logger.debug(LogCategory.RPC, 'Fee histogram received', { feeHistogram });
         
         if (Array.isArray(feeHistogram) && feeHistogram.length > 0) {
           // Calculate total transactions from fee histogram
@@ -228,11 +229,11 @@ export class RealElectrumAdapter implements ElectrumAdapter {
         
         return { count: 0, vsize: 0 };
       } catch (error) {
-        console.log('[getMempoolSummary] Fee histogram not available, using fallback');
+        logger.debug(LogCategory.RPC, 'Fee histogram not available, using fallback');
         return { count: 0, vsize: 0 };
       }
     } catch (error) {
-      console.error('[getMempoolSummary] error:', error);
+      logger.error(LogCategory.RPC, 'getMempoolSummary error', { error: error instanceof Error ? error.message : String(error) });
       return { count: 0, vsize: 0 };
     }
   }
@@ -246,7 +247,7 @@ export class RealElectrumAdapter implements ElectrumAdapter {
       const balance = await client.request('blockchain.scripthash.get_balance', [scriptHash]) as { confirmed: number; unconfirmed: number };
       return (balance.confirmed || 0) + (balance.unconfirmed || 0);
     } catch (error) {
-      console.error('[getBalance] error:', error);
+      logger.error(LogCategory.RPC, 'getBalance error', { error: error instanceof Error ? error.message : String(error) });
       throw new Error(`Failed to get balance for address ${address}`);
     }
   }
@@ -265,7 +266,7 @@ export class RealElectrumAdapter implements ElectrumAdapter {
       const tx = await client.request('blockchain.transaction.get', [txid]) as ElectrumTransaction;
       return tx;
     } catch (error) {
-      console.error('[getTransaction] error:', error);
+      logger.error(LogCategory.RPC, 'getTransaction error', { error: error instanceof Error ? error.message : String(error) });
       throw new Error(`Failed to get transaction ${txid}`);
     }
   }
@@ -282,7 +283,7 @@ export class RealElectrumAdapter implements ElectrumAdapter {
       const end = start + options.limit;
       return history.slice(start, end);
     } catch (error) {
-      console.error('[getHistory] error:', error);
+      logger.error(LogCategory.RPC, 'getHistory error', { error: error instanceof Error ? error.message : String(error) });
       throw new Error(`Failed to get history for address ${address}`);
     }
   }
@@ -316,7 +317,7 @@ export class RealElectrumAdapter implements ElectrumAdapter {
         return [];
       }
     } catch (error) {
-      console.error('[getMempool] error:', error);
+      logger.error(LogCategory.RPC, 'getMempool error', { error: error instanceof Error ? error.message : String(error) });
       return [];
     }
   }
@@ -328,7 +329,7 @@ export class RealElectrumAdapter implements ElectrumAdapter {
       const fee = await client.request('blockchain.estimatefee', [blocks]) as number;
       return fee;
     } catch (error) {
-      console.error('[getFeeEstimate] error:', error);
+      logger.error(LogCategory.RPC, 'getFeeEstimate error', { error: error instanceof Error ? error.message : String(error) });
       // Fallback to default fee estimate
       const estimates = await this.getFeeEstimates();
       if (blocks <= 1) return estimates.fast;
@@ -349,7 +350,7 @@ export class RealElectrumAdapter implements ElectrumAdapter {
       await client.request('server.version', ['1.4', '1.4']);
       return true;
     } catch (error) {
-      console.error('[RealElectrumAdapter] isConnected error:', error);
+      logger.error(LogCategory.RPC, 'isConnected error', { error: error instanceof Error ? error.message : String(error) });
       return false;
     }
   }

@@ -53,25 +53,31 @@ import { BrowserRouter } from 'react-router-dom'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { MainOrchestratorProvider } from './contexts/MainOrchestrator'
 import { BlockchainVisualizationProvider } from './contexts/BlockchainVisualizationContext'
+import { ProductionErrorBoundary, initializeProductionErrorDetection } from './utils/productionErrorDetection'
 import CosmicCanvas from './components/CosmicCanvas'
 import App from './App'
 import './i18n' // Initialize i18n before app renders
 import './index.css'
 
+// Initialize production error detection
+initializeProductionErrorDetection()
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    {/* COSMIC BACKGROUND - HTML5 Canvas only */}
-    <CosmicCanvas quality="high" />
-    
-    {/* MAIN APPLICATION */}
-    <BrowserRouter>
-      <ThemeProvider>
-        <MainOrchestratorProvider>
-          <BlockchainVisualizationProvider>
-            <App />
-          </BlockchainVisualizationProvider>
-        </MainOrchestratorProvider>
-      </ThemeProvider>
-    </BrowserRouter>
+    <ProductionErrorBoundary>
+      {/* COSMIC BACKGROUND - HTML5 Canvas only */}
+      <CosmicCanvas quality="high" />
+      
+      {/* MAIN APPLICATION */}
+      <BrowserRouter>
+        <ThemeProvider>
+          <MainOrchestratorProvider>
+            <BlockchainVisualizationProvider>
+              <App />
+            </BlockchainVisualizationProvider>
+          </MainOrchestratorProvider>
+        </ThemeProvider>
+      </BrowserRouter>
+    </ProductionErrorBoundary>
   </React.StrictMode>,
 )

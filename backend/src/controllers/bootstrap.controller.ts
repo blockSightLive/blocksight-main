@@ -46,6 +46,7 @@ import { Request, Response } from 'express'
 import { ElectrumAdapter } from '../adapters/electrum/types'
 import { CoreRpcAdapter } from '../adapters/core/types'
 import { L1Cache } from '../cache/l1'
+import { logger, LogCategory } from '../utils/logger'
 
 // Configuration constants
 const BOOTSTRAP_CONFIG = {
@@ -211,7 +212,7 @@ class BackgroundHealthMonitor {
         this.healthCache.set('cache', cacheHealth.value)
       }
     } catch (error) {
-      console.error('[BackgroundHealthMonitor] Error updating health status:', error)
+      logger.error(LogCategory.SYSTEM, 'Background health monitor error', { error: error instanceof Error ? error.message : String(error) })
     }
   }
   
@@ -313,10 +314,10 @@ async function verifySystemConnections(
   
   // Check circuit breakers before making requests
   if (!circuitBreakerManager.checkCircuitBreaker('electrum')) {
-    console.warn('[bootstrap] Electrum circuit breaker open, skipping')
+    logger.warn(LogCategory.CONNECTION, 'Electrum circuit breaker open, skipping health check')
   }
   if (coreAdapter && !circuitBreakerManager.checkCircuitBreaker('core')) {
-    console.warn('[bootstrap] Core circuit breaker open, skipping')
+    logger.warn(LogCategory.CONNECTION, 'Core circuit breaker open, skipping health check')
   }
   
   // Parallel connection verification
@@ -326,7 +327,7 @@ async function verifySystemConnections(
   if (circuitBreakerManager.checkCircuitBreaker('electrum')) {
     connectionPromises.push(
       verifyElectrumConnection(electrumAdapter, circuitBreakerManager).catch(error => {
-        console.error('[bootstrap] Electrum connection verification failed:', error)
+        logger.error(LogCategory.CONNECTION, 'Electrum connection verification failed', { error: error.message })
         return { connected: false }
       })
     )
@@ -338,7 +339,7 @@ async function verifySystemConnections(
   if (coreAdapter && circuitBreakerManager.checkCircuitBreaker('core')) {
     connectionPromises.push(
       verifyCoreConnection(coreAdapter, circuitBreakerManager).catch(error => {
-        console.error('[bootstrap] Core connection verification failed:', error)
+        logger.error(LogCategory.CONNECTION, 'Core connection verification failed', { error: error.message })
         return { connected: false }
       })
     )
@@ -349,7 +350,7 @@ async function verifySystemConnections(
   // External API connection verification (placeholder for now)
   connectionPromises.push(
     verifyExternalAPIConnections().catch(error => {
-      console.error('[bootstrap] External API connection verification failed:', error)
+      logger.error(LogCategory.CONNECTION, 'External API connection verification failed', { error: error.message })
       return { connected: false }
     })
   )
@@ -357,7 +358,7 @@ async function verifySystemConnections(
   // WebSocket Hub initialization verification (placeholder for now)
   connectionPromises.push(
     verifyWebSocketHubInitialization().catch(error => {
-      console.error('[bootstrap] WebSocket Hub initialization verification failed:', error)
+      logger.error(LogCategory.CONNECTION, 'WebSocket Hub initialization verification failed', { error: error.message })
       return { initialized: false }
     })
   )
@@ -403,7 +404,18 @@ async function verifySystemConnections(
   }
   
   const totalTime = Date.now() - startTime
-  console.log(`[bootstrap] System connection verification completed in ${totalTime}ms, system ready: ${systemReady}`)
+  logger.bootstrap(`System connection verification completed in ${totalTime}ms, system ready: ${systemReady}`)
+  
+  // Update connection status for logging system
+  logger.updateConnectionStatus('bitcoin-core', coreConnected)
+  logger.updateConnectionStatus('electrum', electrumConnected)
+  logger.updateConnectionStatus('bitcoin-price-api', externalConnected)
+  logger.updateConnectionStatus('fx-rates-api', externalConnected)
+  
+  // Mark bootstrap complete if all services are ready
+  if (systemReady) {
+    logger.markBootstrapComplete()
+  }
   
   return response
 }
@@ -511,7 +523,7 @@ export function makeBootstrapController({
         const cachedData = l1Cache.get<BootstrapResponse>(cacheKey)
         
         if (cachedData) {
-          console.log(`[bootstrap] Cache hit for request ${requestId}`)
+          logger.debug(LogCategory.SYSTEM, `Cache hit for request ${requestId}`)
           res.json({
             ok: true,
             data: cachedData,
@@ -531,10 +543,10 @@ export function makeBootstrapController({
         // Check if system is ready
         if (!bootstrapData.systemReady) {
           // System not ready, return degraded response instead of throwing error
-          console.warn(`[bootstrap] System not ready for request ${requestId}, returning degraded response`)
+          logger.warn(LogCategory.SYSTEM, `System not ready for request ${requestId}, returning degraded response`)
           
           const totalTime = Date.now() - startTime
-          console.log(`[bootstrap] Request ${requestId} completed in ${totalTime}ms (degraded)`)
+          logger.debug(LogCategory.SYSTEM, `Request ${requestId} completed in ${totalTime}ms (degraded)`)
           
           res.status(200).json({
             ok: true,
@@ -549,7 +561,7 @@ export function makeBootstrapController({
         l1Cache.set(cacheKey, bootstrapData, BOOTSTRAP_CONFIG.CACHE_TTL_SECONDS)
         
         const totalTime = Date.now() - startTime
-        console.log(`[bootstrap] Request ${requestId} completed in ${totalTime}ms`)
+        logger.debug(LogCategory.SYSTEM, `Request ${requestId} completed in ${totalTime}ms`)
         
         res.status(200).json({
           ok: true,
@@ -560,7 +572,7 @@ export function makeBootstrapController({
         
       } catch (error) {
         const totalTime = Date.now() - startTime
-        console.error(`[bootstrap] error for request ${requestId} after ${totalTime}ms:`, error)
+        logger.error(LogCategory.SYSTEM, `Bootstrap error for request ${requestId} after ${totalTime}ms`, { error: error instanceof Error ? error.message : String(error) })
         
         // Check if any services are available
         const healthStatus = healthMonitor.getHealthStatus()
@@ -634,7 +646,7 @@ export function makeBootstrapController({
         })
         
       } catch (error) {
-        console.error(`[bootstrap-health] error for request ${requestId}:`, error)
+        logger.error(LogCategory.SYSTEM, `Bootstrap health error for request ${requestId}`, { error: error instanceof Error ? error.message : String(error) })
         res.status(500).json({
           ok: false,
           error: 'health_check_failed',
