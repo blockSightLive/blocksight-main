@@ -1,7 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <script src="http://localhost:8097"></script>
+    <!-- React DevTools - Only in development -->
+    <script>
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        const script = document.createElement('script');
+        script.src = 'http://localhost:8097';
+        script.onerror = () => {
+          console.log('React DevTools not available - this is normal in production');
+        };
+        document.head.appendChild(script);
+      }
+    </script>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/bitcoin-icon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />

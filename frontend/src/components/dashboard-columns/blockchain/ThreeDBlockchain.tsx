@@ -37,33 +37,46 @@
  */
 
 import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react'
-import { Canvas, useThree, extend } from '@react-three/fiber'
-import { OrbitControls } from 'three-stdlib'
+import { Canvas, useThree } from '@react-three/fiber'
+import { OrbitControls } from '@react-three/drei'
 import { WebSocketHandler } from './WebSocketHandler'
 import { ThreeJSErrorBoundary } from '../../error-handling'
 import * as THREE from 'three'
 
-// Extend React Three Fiber with OrbitControls
-extend({ OrbitControls })
+// OrbitControls from @react-three/drei is ready to use
 
-// Type declaration for the extended component
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace JSX {
-    interface IntrinsicElements {
-      orbitControls: {
-        enablePan?: boolean
-        enableZoom?: boolean
-        enableRotate?: boolean
-        minDistance?: number
-        maxDistance?: number
-        maxPolarAngle?: number
-        minPolarAngle?: number
-        [key: string]: unknown
-      }
-    }
+
+
+// WebGL Context Management
+const createWebGLContext = () => {
+  const canvas = document.createElement('canvas')
+  const gl = canvas.getContext('webgl2') || canvas.getContext('webgl')
+  if (!gl) {
+    throw new Error('WebGL not supported')
   }
+  return { canvas, gl }
 }
+
+// WebGL Context Recovery - Available for future use if needed
+// const recoverWebGLContext = (renderer: THREE.WebGLRenderer) => {
+//   try {
+//     renderer.dispose()
+//     const { canvas } = createWebGLContext()
+//     renderer = new THREE.WebGLRenderer({ 
+//       canvas, 
+//       antialias: true,
+//       powerPreference: 'high-performance',
+//       preserveDrawingBuffer: false,
+//       failIfMajorPerformanceCaveat: false
+//     })
+//     return renderer
+//   } catch (error) {
+//     console.error('WebGL context recovery failed:', error)
+//     return null
+//   }
+// }
+
+// OrbitControls from @react-three/drei has built-in TypeScript support
 
 interface BlockchainBlock {
   height: number
@@ -229,7 +242,7 @@ const ThreeDSceneContent: React.FC = () => {
       <pointLight position={[-5, -5, 5]} intensity={0.3} />
       
       {/* Camera controls for 3D navigation */}
-      <orbitControls 
+      <OrbitControls 
         enablePan={true}
         enableZoom={true}
         enableRotate={true}
