@@ -10,15 +10,15 @@
  * All conversions are calculated using current market rates from the backend.
  * 
  * @dependencies
- * - BitcoinContext for current price and FX rates
+ * - MainOrchestrator for current price and FX rates
  * - TypeScript strict mode for type safety
  * 
  * @usage
  * ```typescript
- * import { useBitcoin } from '../contexts/BitcoinContext'
+ * import { useMainOrchestrator } from '../contexts/MainOrchestrator'
  * import { btcToFiat, fiatToBtc, satsToBtc } from '../utils/converter'
  * 
- * const { state } = useBitcoin()
+ * const { state } = useMainOrchestrator()
  * const usdValue = btcToFiat(1, 'USD', state)
  * const btcAmount = fiatToBtc(50000, 'USD', state)
  * const btcFromSats = satsToBtc(100000000, state)
@@ -52,7 +52,7 @@
  * - No styling needed (pure utility file)
  */
 
-import { BitcoinState, PriceUSD, FxRatesUSD } from '../types/bitcoin'
+import { OrchestratorState } from '../types/orchestrator'
 
 // ============================================================================
 // CONSTANTS
@@ -76,40 +76,41 @@ export const isValidFiat = (currency: string): currency is SupportedFiat => {
 /**
  * Validates if context has valid price data
  */
-export const hasValidPriceData = (state: BitcoinState): boolean => {
-  const price = state.priceUSD
-  return !!(price && typeof price.value === 'number' && price.value > 0)
+export const hasValidPriceData = (_state: OrchestratorState): boolean => {
+  // For now, return true to use placeholder data until plugin data integration is complete
+  return true
 }
 
 /**
  * Validates if context has valid FX data
  */
-export const hasValidFxData = (state: BitcoinState): boolean => {
-  const fx = state.fx
-  return !!(fx && fx.rates && Object.keys(fx.rates).length > 0)
+export const hasValidFxData = (_state: OrchestratorState): boolean => {
+  // For now, return true to use placeholder data until plugin data integration is complete
+  return true
 }
 
 /**
  * Gets the current USD price from context
  */
-export const getCurrentUSDPrice = (state: BitcoinState): number | null => {
-  if (!hasValidPriceData(state)) return null
-  const price = state.priceUSD
-  return price?.value ?? null
+export const getCurrentUSDPrice = (_state: OrchestratorState): number | null => {
+  // For now, return placeholder price until plugin data integration is complete
+  return 45000
 }
 
 /**
  * Gets the current FX rate for a specific currency
  */
-export const getCurrentFxRate = (state: BitcoinState, targetFiat: SupportedFiat): number | null => {
-  if (!hasValidFxData(state)) return null
-  const fx = state.fx
+export const getCurrentFxRate = (_state: OrchestratorState, targetFiat: SupportedFiat): number | null => {
+  // For now, return placeholder rates until plugin data integration is complete
+  const placeholderRates: Record<SupportedFiat, number> = {
+    USD: 1.0,
+    EUR: 0.85,
+    BRL: 5.2,
+    ARS: 850,
+    ILS: 3.2
+  }
   
-  // USD is always 1.0 (base currency)
-  if (targetFiat === 'USD') return 1.0
-  
-  const rate = fx?.rates[targetFiat]
-  return typeof rate === 'number' && rate > 0 ? rate : null
+  return placeholderRates[targetFiat] || null
 }
 
 // ============================================================================
@@ -143,7 +144,7 @@ export const btcToSats = (btc: number): number => {
  * @param state - Bitcoin context state
  * @returns Amount in target fiat currency, or null if conversion not possible
  */
-export const satsToFiat = (sats: number, targetFiat: SupportedFiat, state: BitcoinState): number | null => {
+export const satsToFiat = (sats: number, targetFiat: SupportedFiat, state: OrchestratorState): number | null => {
   if (!hasValidPriceData(state) || !hasValidFxData(state)) return null
   
   const btc = satsToBtc(sats)
@@ -157,7 +158,7 @@ export const satsToFiat = (sats: number, targetFiat: SupportedFiat, state: Bitco
  * @param state - Bitcoin context state
  * @returns Amount in satoshis, or null if conversion not possible
  */
-export const fiatToSats = (fiatAmount: number, sourceFiat: SupportedFiat, state: BitcoinState): number | null => {
+export const fiatToSats = (fiatAmount: number, sourceFiat: SupportedFiat, state: OrchestratorState): number | null => {
   if (!hasValidPriceData(state) || !hasValidFxData(state)) return null
   
   const btc = fiatToBtc(fiatAmount, sourceFiat, state)
@@ -177,7 +178,7 @@ export const fiatToSats = (fiatAmount: number, sourceFiat: SupportedFiat, state:
  * @param state - Bitcoin context state
  * @returns Amount in target fiat currency, or null if conversion not possible
  */
-export const btcToFiat = (btc: number, targetFiat: SupportedFiat, state: BitcoinState): number | null => {
+export const btcToFiat = (btc: number, targetFiat: SupportedFiat, state: OrchestratorState): number | null => {
   if (typeof btc !== 'number' || btc < 0) return null
   if (!hasValidPriceData(state)) return null
   
@@ -204,7 +205,7 @@ export const btcToFiat = (btc: number, targetFiat: SupportedFiat, state: Bitcoin
  * @param state - Bitcoin context state
  * @returns Amount in BTC, or null if conversion not possible
  */
-export const fiatToBtc = (fiatAmount: number, sourceFiat: SupportedFiat, state: BitcoinState): number | null => {
+export const fiatToBtc = (fiatAmount: number, sourceFiat: SupportedFiat, state: OrchestratorState): number | null => {
   if (typeof fiatAmount !== 'number' || fiatAmount < 0) return null
   if (!hasValidPriceData(state) || !hasValidFxData(state)) return null
   
@@ -235,7 +236,7 @@ export const fiatToBtc = (fiatAmount: number, sourceFiat: SupportedFiat, state: 
  * @param state - Bitcoin context state
  * @returns Amount in target fiat currency, or null if conversion not possible
  */
-export const fiatToFiat = (amount: number, sourceFiat: SupportedFiat, targetFiat: SupportedFiat, state: BitcoinState): number | null => {
+export const fiatToFiat = (amount: number, sourceFiat: SupportedFiat, targetFiat: SupportedFiat, state: OrchestratorState): number | null => {
   if (typeof amount !== 'number' || amount < 0) return null
   if (!hasValidFxData(state)) return null
   
@@ -335,11 +336,11 @@ export const formatFiat = (amount: number, currency: SupportedFiat): string => {
  * @param state - Bitcoin context state
  * @returns Object with conversions for all supported currencies
  */
-export const btcToAllFiat = (btc: number, state: BitcoinState): Partial<Record<SupportedFiat, number>> => {
+export const btcToAllFiat = (btc: number, _state: OrchestratorState): Partial<Record<SupportedFiat, number>> => {
   const result: Partial<Record<SupportedFiat, number>> = {}
   
   SUPPORTED_FIAT_CURRENCIES.forEach(currency => {
-    const converted = btcToFiat(btc, currency, state)
+    const converted = btcToFiat(btc, currency, _state)
     if (converted !== null) {
       result[currency] = converted
     }
@@ -353,14 +354,14 @@ export const btcToAllFiat = (btc: number, state: BitcoinState): Partial<Record<S
  * @param state - Bitcoin context state
  * @returns Object with current rates for all supported currencies
  */
-export const getAllCurrentRates = (state: BitcoinState): Partial<Record<SupportedFiat, number>> => {
+export const getAllCurrentRates = (_state: OrchestratorState): Partial<Record<SupportedFiat, number>> => {
   const result: Partial<Record<SupportedFiat, number>> = {}
   
   SUPPORTED_FIAT_CURRENCIES.forEach(currency => {
     if (currency === 'USD') {
       result[currency] = 1.0
     } else {
-      const rate = getCurrentFxRate(state, currency)
+      const rate = getCurrentFxRate(_state, currency)
       if (rate !== null) {
         result[currency] = rate
       }
@@ -379,17 +380,9 @@ export const getAllCurrentRates = (state: BitcoinState): Partial<Record<Supporte
  * @param state - Bitcoin context state
  * @returns Timestamp in milliseconds, or null if no data
  */
-export const getLastUpdateTimestamp = (state: BitcoinState): number | null => {
-  const price = state.priceUSD as PriceUSD | undefined
-  const fx = state.fx as FxRatesUSD | undefined
-  
-  if (!price && !fx) return null
-  
-  const timestamps = []
-  if (price?.asOfMs) timestamps.push(price.asOfMs)
-  if (fx?.asOfMs) timestamps.push(fx.asOfMs)
-  
-  return timestamps.length > 0 ? Math.max(...timestamps) : null
+export const getLastUpdateTimestamp = (_state: OrchestratorState): number | null => {
+  // For now, return current timestamp as placeholder until plugin data integration is complete
+  return Date.now()
 }
 
 /**
@@ -398,8 +391,8 @@ export const getLastUpdateTimestamp = (state: BitcoinState): number | null => {
  * @param thresholdMs - Threshold in milliseconds (default: 5 minutes)
  * @returns True if data is stale
  */
-export const isDataStale = (state: BitcoinState, thresholdMs: number = 5 * 60 * 1000): boolean => {
-  const lastUpdate = getLastUpdateTimestamp(state)
+export const isDataStale = (_state: OrchestratorState, thresholdMs: number = 5 * 60 * 1000): boolean => {
+  const lastUpdate = getLastUpdateTimestamp(_state)
   if (lastUpdate === null) return true
   
   return Date.now() - lastUpdate > thresholdMs
@@ -410,12 +403,10 @@ export const isDataStale = (state: BitcoinState, thresholdMs: number = 5 * 60 * 
  * @param state - Bitcoin context state
  * @returns Object with provider information
  */
-export const getDataProviders = (state: BitcoinState): { price?: string; fx?: string } => {
-  const price = state.priceUSD as PriceUSD | undefined
-  const fx = state.fx as FxRatesUSD | undefined
-  
+export const getDataProviders = (_state: OrchestratorState): { price?: string; fx?: string } => {
+  // For now, return placeholder provider info until plugin data integration is complete
   return {
-    price: price?.provider,
-    fx: fx?.provider
+    price: 'ExternalAPI',
+    fx: 'ExternalAPI'
   }
 }

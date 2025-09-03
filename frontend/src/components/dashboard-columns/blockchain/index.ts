@@ -1,15 +1,24 @@
 /**
- * @fileoverview Clean exports for Three.js components
- * @version 1.0.0
+ * @fileoverview Blockchain visualization components export
+ * @version 2.0.0
  * @since 2025-08-30
- * @lastModified 2025-08-30
+ * @lastModified 2025-08-31
  * 
  * @description
- * Exports for blockchain components that are NOT lazy loaded.
- * Lazy loaded components (Scene, Block) are imported directly in BlockchainScene.tsx
- * to avoid import conflicts and enable proper chunk separation.
+ * Exports all blockchain visualization components including the new Phase 3 completion components.
+ * WebSocket handling and blockchain data are now managed by MainOrchestrator.
+ * 
+ * @dependencies
+ * - All blockchain visualization components
+ * - MainOrchestrator for state management
  */
 
-// Export only components that are NOT lazy loaded
-export { useBlockHeight } from './useBlockHeight'
-export { PerformanceMonitor } from './PerformanceMonitor'
+// Core blockchain visualization components
+export { Block } from './Block'
+
+export { PerformanceBaseline } from './PerformanceBaseline'
+export { ThreeDBlockchain } from './ThreeDBlockchain'
+export { TwoDBlockchain } from './TwoDBlockchain'
+
+// Additional blockchain components
+export { WebSocketHandler } from './WebSocketHandler'

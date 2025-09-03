@@ -15,6 +15,22 @@
 http://localhost:8000/api/v1/
 ```
 
+### **Critical Port Usage Notes:**
+- **Backend API Server**: Runs on port 8000 (`localhost:8000`)
+- **Frontend Development Server**: Runs on port 3000 (`localhost:3000`)
+- **Frontend API Calls**: Must use `localhost:8000` for all backend API requests
+- **WebSocket Connection**: Frontend connects to `ws://localhost:8000/ws`
+- **CORS Configuration**: Backend allows frontend origin `http://localhost:3000`
+
+### **Frontend Integration Example:**
+```typescript
+// ✅ CORRECT - Use backend port (8000)
+const response = await fetch('http://localhost:8000/api/v1/core/height')
+
+// ❌ INCORRECT - Don't use relative paths (resolves to frontend port 3000)
+const response = await fetch('/api/v1/core/height')
+```
+
 ### **Consistent Namespacing Strategy:**
 - **`/electrum/*`** - All Electrum-related endpoints
 - **`/core/*`** - All Bitcoin Core RPC endpoints
@@ -200,10 +216,17 @@ http://localhost:8000/api/v1/
 - **Protocol:** WebSocket
 - **Description:** Real-time blockchain updates and events
 - **Event Types:**
-  - `block.new` - New block detected
-  - `mempool.update` - Mempool status change
-  - `fee.update` - Fee estimate change
-  - `network.status` - Network health update
+  - `tip.height` - New blockchain tip height detected (maps to block updates)
+  - `network.mempool` - Mempool status change
+  - `network.fees` - Fee estimate change
+  - `chain.reorg` - Blockchain reorganization detected
+  - `price.current` - Current price updates
+  - `fx.rates` - Foreign exchange rate updates
+
+### **Event Handling Notes:**
+- **Frontend Integration**: The frontend WebSocketHandler processes these events and maps them to appropriate UI updates
+- **Event Mapping**: `tip.height` events trigger block update handlers for real-time blockchain visualization
+- **Subscription**: Frontend automatically subscribes to all event types on connection
 
 ---
 
@@ -221,9 +244,9 @@ ELECTRUM_TLS=false
 
 #### **Bitcoin Core Configuration:**
 ```bash
-CORE_RPC_URL=http://localhost:8332
-CORE_RPC_USERNAME=rpcuser
-CORE_RPC_PASSWORD=rpcpassword
+BITCOIN_CORE_URL=http://localhost:8332
+BITCOIN_CORE_USERNAME=rpcuser
+BITCOIN_CORE_PASSWORD=rpcpassword
 ```
 
 #### **General Configuration:**
@@ -443,6 +466,7 @@ curl http://localhost:8000/api/v1/network/health
 - ✅ Rate limiting implementation
 - ✅ Enhanced error handling
 - ✅ API metrics and monitoring
+- ✅ **API Endpoint Fixes (COMPLETED)** - Fixed port mismatches and WebSocket event alignment
 
 ### **Phase 3 (Future):**
 - 📋 GraphQL endpoint for complex queries

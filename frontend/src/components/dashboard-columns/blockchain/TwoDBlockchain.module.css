@@ -1,0 +1,247 @@
+/**
+ * @fileoverview Two-dimensional blockchain visualization styles
+ * @version 1.0.0
+ * @since 2025-01-01
+ * @lastModified 2025-01-01
+ * 
+ * @description
+ * CSS Module for 2D blockchain visualization fallback.
+ * Pure CSS animations for smooth performance without WebGL.
+ * 
+ * @styling
+ * - Continuous vertical stack with no section headers
+ * - Center blocks bigger and more prominent
+ * - Static display with no camera controls
+ * - No visible scrollbars
+ * - Blockchain-inspired colors
+ */
+
+.twoDBlockchain {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: transparent;
+}
+
+.blockStack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px 0;
+  width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+/* Base block styling */
+.block {
+  width: 80px;
+  height: 60px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform-style: preserve-3d;
+  animation: blockFloat 3s ease-in-out infinite;
+}
+
+/* Block type colors */
+.block.mempool {
+  background: linear-gradient(135deg, #F9D8A2 0%, #F29F58 100%);
+  border: 2px solid #F29F58;
+}
+
+.block.current {
+  background: linear-gradient(135deg, #FC7A99 0%, #AB4459 100%);
+  border: 2px solid #AB4459;
+}
+
+.block.historical {
+  background: linear-gradient(135deg, #7B2F9B 0%, #431752 100%);
+  border: 2px solid #431752;
+}
+
+/* Center block - bigger and more visible */
+.centerBlock {
+  width: 120px;
+  height: 90px;
+  transform: scale(1.2);
+  z-index: 10;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  animation: centerBlockPulse 2s ease-in-out infinite;
+}
+
+/* Blocks above center - smaller and stacked up */
+.aboveCenter {
+  transform: scale(0.8);
+  opacity: 0.8;
+  animation: blockFloat 3s ease-in-out infinite;
+  animation-delay: calc(var(--block-index, 0) * 0.1s);
+}
+
+/* Blocks below center - smaller and stacked down */
+.belowCenter {
+  transform: scale(0.8);
+  opacity: 0.8;
+  animation: blockFloat 3s ease-in-out infinite;
+  animation-delay: calc(var(--block-index, 0) * 0.1s);
+}
+
+/* Block content */
+.blockContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.blockHeight {
+  font-size: 12px;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+
+.centerBlock .blockHeight {
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.blockInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 8px;
+  line-height: 1.2;
+}
+
+.centerBlock .blockInfo {
+  font-size: 10px;
+}
+
+.transactionCount {
+  font-weight: 600;
+}
+
+.confirmations {
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+/* Hover effects */
+.block:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.centerBlock:hover {
+  transform: scale(1.3);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Animations */
+@keyframes blockFloat {
+  0%, 100% {
+    transform: translateY(0px) scale(var(--block-scale, 0.8));
+  }
+  50% {
+    transform: translateY(-5px) scale(var(--block-scale, 0.8));
+  }
+}
+
+@keyframes centerBlockPulse {
+  0%, 100% {
+    transform: scale(1.2);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    transform: scale(1.25);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* Loading indicator */
+.loadingIndicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+}
+
+.loadingText {
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  animation: loadingPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes loadingPulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .block {
+    width: 60px;
+    height: 45px;
+  }
+  
+  .centerBlock {
+    width: 90px;
+    height: 70px;
+  }
+  
+  .blockHeight {
+    font-size: 10px;
+  }
+  
+  .centerBlock .blockHeight {
+    font-size: 14px;
+  }
+  
+  .blockInfo {
+    font-size: 7px;
+  }
+  
+  .centerBlock .blockInfo {
+    font-size: 9px;
+  }
+}
+
+/* Dark theme support */
+html[data-theme="dark"] .block {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+html[data-theme="dark"] .centerBlock {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+}
+
+html[data-theme="dark"] .block:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+}
+
+html[data-theme="dark"] .centerBlock:hover {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
+}

@@ -47,21 +47,37 @@
 
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { useBitcoin } from '../../contexts/BitcoinContext'
+import { useMainOrchestrator } from '../../contexts/MainOrchestrator'
 import { btcToFiat, formatFiat, getLastUpdateTimestamp, getDataProviders } from '../../utils/converter'
-import { useFiatPreference } from '../../hooks/useFiatPreference'
+import { useSystemContext } from '../../contexts/plugins/SystemContext'
 import styles from './BitcoinPriceDashboard.module.css'
+
+// Type definitions for price data
+interface PriceData {
+  price: number
+  change24h: number
+  lastUpdated: number
+}
+
+// FXData interface removed - not currently used
 
 export const BitcoinPriceDashboard: React.FC = () => {
 	const { t } = useTranslation()
-	const { state } = useBitcoin()
-	const { preferredFiat } = useFiatPreference()
+	const { state } = useMainOrchestrator()
+	const { fiatPreference } = useSystemContext()
+	const { preferredFiat } = fiatPreference
 
-	const price = (state as { priceUSD?: { value: number; asOfMs: number; provider: string } }).priceUSD
-	const fx = (state as { fx?: { base: string; rates: Record<string, number>; asOfMs: number; provider: string } }).fx
+	// Use MainOrchestrator state for real data when available (fallback to mock until wired)
+	const price = (state as unknown as { external?: { prices?: { BTC?: unknown } } }).external?.prices?.BTC || { price: 45000, currency: 'USD', lastUpdated: Date.now() }
+	const fx = (state as unknown as { external?: { fxRates?: unknown } }).external?.fxRates || {
+		EUR: { rate: 0.85, lastUpdated: Date.now() },
+		BRL: { rate: 5.2, lastUpdated: Date.now() },
+		ARS: { rate: 850, lastUpdated: Date.now() },
+		ILS: { rate: 3.2, lastUpdated: Date.now() }
+	}
 
 	// Check if we have valid data
-	const hasValidData = price && fx && typeof price.value === 'number' && price.value > 0
+	const hasValidData = price && fx && typeof (price as PriceData).price === 'number' && (price as PriceData).price > 0
 
 	const onRefresh = () => {
 		// No-op placeholder: price and fx refresh via WS; could trigger HTTP fetch if needed
@@ -90,12 +106,12 @@ export const BitcoinPriceDashboard: React.FC = () => {
 			<div className={styles.main}>
 				<div className={styles.usd}>
 					<span className={styles.currency}>USD</span>
-					<span className={styles.value}>${price.value.toLocaleString()}</span>
+					<span className={styles.value}>${(price as PriceData).price.toLocaleString()}</span>
 				</div>
 				{preferredFiat !== 'USD' && (
 					<div className={styles.preferred}>
 						<span className={styles.currency}>{preferredFiat}</span>
-						<span className={styles.value}>{formatFiat(btcToFiat(1, preferredFiat, state) ?? 0, preferredFiat)}</span>
+						<span className={styles.value}>{formatFiat(btcToFiat(1, preferredFiat as 'USD' | 'EUR' | 'BRL' | 'ARS' | 'ILS', state) ?? 0, preferredFiat as 'USD' | 'EUR' | 'BRL' | 'ARS' | 'ILS')}</span>
 					</div>
 				)}
 			</div>

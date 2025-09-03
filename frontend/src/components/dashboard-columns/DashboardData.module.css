@@ -14,7 +14,7 @@
 	min-height: 600px; /* Moved from data-card */
 	padding: var(--spacing-6); /* Moved from data-card */
 	border-radius: var(--radius-lg); /* Moved from data-card */
-	background: var(--color-grey-light); /* Light theme: #F5F5F5 */
+	background: transparent; /* Transparent to show cosmic background */
 	border: 2px solid #F29F58; /* Moved from data-card */
 	box-shadow: 0 0 15px rgb(242 159 88 / 30%); /* Moved from data-card */
 	overflow: visible;

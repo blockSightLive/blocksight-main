@@ -53,6 +53,7 @@ import {
 } from '../src/adapters/electrum/types'
 import { CoreRpcAdapter } from '../src/adapters/core/types'
 import { L1Cache } from '../src/cache/l1'
+import type { BlockchainInfo, NetworkInfo, MiningInfo } from '../src/types/bitcoin-rpc'
 
 // Mock implementations
 class MockElectrumAdapter implements ElectrumAdapter {
@@ -185,6 +186,61 @@ class MockCoreRpcAdapter implements CoreRpcAdapter {
   async getMempoolSummary(): Promise<{ pendingTransactions: number; bytes?: number }> {
     if (!this.connected) throw new Error('Core RPC not connected')
     return this.mempoolData
+  }
+  
+  async getBlockchainInfo(): Promise<BlockchainInfo> {
+    if (!this.connected) throw new Error('Core RPC not connected')
+    return {
+      chain: 'main',
+      blocks: this.blockCount,
+      headers: this.blockCount,
+      bestblockhash: '0'.repeat(64),
+      difficulty: 1,
+      mediantime: Date.now() / 1000,
+      verificationprogress: 1.0,
+      initialblockdownload: false,
+      chainwork: '0'.repeat(64),
+      size_on_disk: 500000000,
+      pruned: false,
+      warnings: ''
+    }
+  }
+  
+  async getNetworkInfo(): Promise<NetworkInfo> {
+    if (!this.connected) throw new Error('Core RPC not connected')
+    return {
+      version: 250000,
+      subversion: '/Satoshi:25.0.0/',
+      protocolversion: 70016,
+      localservices: '0000000000000409',
+      localservicesnames: ['NETWORK', 'WITNESS'],
+      localrelay: true,
+      timeoffset: 0,
+      networkactive: true,
+      connections: 8,
+      connections_in: 3,
+      connections_out: 5,
+      networks: [],
+      relayfee: 0.00001000,
+      incrementalfee: 0.00001000,
+      localaddresses: [],
+      warnings: ''
+    }
+  }
+  
+  async getMiningInfo(): Promise<MiningInfo> {
+    if (!this.connected) throw new Error('Core RPC not connected')
+    return {
+      blocks: this.blockCount,
+      currentblockweight: 4000000,
+      currentblocktx: 2000,
+      difficulty: 1,
+      errors: '',
+      networkhashps: 1000000000000,
+      pooledtx: this.mempoolData.pendingTransactions,
+      chain: 'main',
+      warnings: ''
+    }
   }
   
   // Test control methods
@@ -372,12 +428,13 @@ describe('Bootstrap Controller', () => {
       expect(mockRes.json).toHaveBeenCalledWith({
         ok: true,
         data: mockBootstrapData,
+        requestId: 'test-request-id',
         timestamp: expect.any(Number)
       })
       expect(mockRes.status).not.toHaveBeenCalled()
     })
 
-    it('should fetch fresh data when cache is empty', async () => {
+    it('should verify system connections when cache is empty', async () => {
       // Arrange
       mockElectrum.setConnected(true)
       mockCore.setConnected(true)
@@ -389,11 +446,30 @@ describe('Bootstrap Controller', () => {
       expect(mockRes.json).toHaveBeenCalledWith({
         ok: true,
         data: expect.objectContaining({
-          height: 800000,
-          coreHeight: 800000,
-          mempoolPending: 1500,
-          mempoolVsize: 1500000
+          systemReady: true,
+          services: expect.objectContaining({
+            electrum: true,
+            core: true,
+            external: true,
+            websocket: true
+          }),
+          readiness: expect.objectContaining({
+            overall: 'ready',
+            details: expect.objectContaining({
+              electrum: 'healthy',
+              core: 'healthy',
+              external: 'healthy',
+              websocket: 'healthy'
+            })
+          }),
+          initialization: expect.objectContaining({
+            electrumConnected: true,
+            coreConnected: true,
+            externalAPIsConnected: true,
+            websocketHubInitialized: true
+          })
         }),
+        requestId: 'test-request-id',
         timestamp: expect.any(Number)
       })
     })
@@ -410,12 +486,13 @@ describe('Bootstrap Controller', () => {
       await bootstrapController.bootstrap(mockReq, mockRes)
       
       // Assert
-      expect(mockRes.status).toHaveBeenCalledWith(503)
+      expect(mockRes.status).toHaveBeenCalledWith(200)
       expect(mockRes.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          ok: false,
-          error: 'bootstrap_unavailable',
-          message: 'Bootstrap service temporarily unavailable'
+          ok: true,
+          data: expect.objectContaining({
+            systemReady: false
+          })
         })
       )
     })
@@ -434,11 +511,13 @@ describe('Bootstrap Controller', () => {
       await bootstrapController.bootstrap(req, mockRes)
       
       // Assert
-      expect(mockRes.status).toHaveBeenCalledWith(503)
+      expect(mockRes.status).toHaveBeenCalledWith(200)
       expect(mockRes.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          ok: false,
-          error: 'bootstrap_unavailable',
+          ok: true,
+          data: expect.objectContaining({
+            systemReady: false
+          }),
           requestId: testRequestId
         })
       )

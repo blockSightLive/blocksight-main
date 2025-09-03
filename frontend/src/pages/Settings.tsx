@@ -56,18 +56,15 @@ import './Settings.css'
 
 export const Settings: React.FC = () => {
   const { t } = useTranslation()
-  const handleLanguageChange = (language: string) => {
-    console.log('Language changed to:', language)
+  const handleLanguageChange = (_language: string) => {
     // TODO: Implement language change functionality
   }
 
-  const handleThemeChange = (theme: string) => {
-    console.log('Theme changed to:', theme)
+  const handleThemeChange = (_theme: string) => {
     // TODO: Implement theme change functionality
   }
 
-  const handleCurrencyChange = (currency: string) => {
-    console.log('Currency changed to:', currency)
+  const handleCurrencyChange = (_currency: string) => {
     // TODO: Implement currency change functionality
   }
 

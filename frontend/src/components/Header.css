@@ -194,6 +194,46 @@
   font-weight: var(--font-weight-medium);
 }
 
+/* Blockchain Visualization Toggle */
+.blockchain-toggle {
+  /* Direct flexbox properties */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Component-specific properties */
+  min-width: var(--spacing-20);
+  height: var(--spacing-6);
+  padding: var(--spacing-1) var(--spacing-3);
+  background: var(--bg-glass);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  margin-left: var(--spacing-2);
+}
+
+.blockchain-toggle:hover {
+  background: var(--bg-hover-weak);
+  border-color: var(--color-border-focus);
+}
+
+.blockchain-toggle:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+  box-shadow: var(--ring-focus-accent);
+}
+
+.blockchain-toggle__icon {
+  margin-right: var(--spacing-2);
+}
+
+.blockchain-toggle__text {
+  font-weight: var(--font-weight-medium);
+}
+
 /* Navigation Dropdown Toggle */
 .nav-dropdown__toggle {
   /* Direct flexbox properties */
@@ -440,6 +480,7 @@
   /* Mobile button adjustments */
   .lang-select,
   .theme-toggle,
+  .blockchain-toggle,
   .nav-dropdown__toggle,
   .status-dots {
     min-width: var(--spacing-16);
@@ -449,6 +490,7 @@
   }
   
   .theme-toggle__text,
+  .blockchain-toggle__text,
   .nav-dropdown__text {
     display: none; /* Hide text on mobile for space */
   }

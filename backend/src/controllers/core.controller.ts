@@ -13,6 +13,27 @@ import { recordCacheHit, recordCacheMiss, recordLatency } from '../metrics/metri
 
 export function makeCoreController(core: CoreRpcAdapter, l1?: L1Cache) {
   return {
+    // Debug endpoint to test Core RPC connection
+    debug: async (_req: Request, res: Response) => {
+      try {
+        const height = await core.getBlockCount()
+        res.json({ 
+          ok: true, 
+          height, 
+          message: 'Core RPC connection successful',
+          timestamp: Date.now() 
+        })
+      } catch (error) {
+        console.error('[Core Debug] Error:', error)
+        res.status(503).json({ 
+          ok: false, 
+          error: 'core_connection_failed',
+          message: error instanceof Error ? error.message : 'Unknown error',
+          timestamp: Date.now() 
+        })
+      }
+    },
+
     height: async (_req: Request, res: Response) => {
       const started = Date.now()
       try {
@@ -31,9 +52,13 @@ export function makeCoreController(core: CoreRpcAdapter, l1?: L1Cache) {
         recordCacheMiss('core.height', cacheKey)
         recordLatency('core.height', Date.now() - started)
         return res.json(payload)
-      } catch {
+      } catch (error) {
+        console.error('[Core Height] Error:', error)
         recordLatency('core.height', Date.now() - started)
-        return res.status(503).json({ error: 'core_height_unavailable' })
+        return res.status(503).json({ 
+          error: 'core_height_unavailable',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        })
       }
     },
 

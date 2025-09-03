@@ -55,7 +55,7 @@ export async function createApp(): Promise<express.Application> {
   const useReal = process.env.ELECTRUM_ENABLED === 'true';
   const electrumAdapter = useReal
     ? new RealElectrumAdapter({
-        host: process.env.ELECTRUM_HOST ?? 'host.docker.internal',
+        host: process.env.ELECTRUM_HOST ?? 'localhost', // Use localhost instead of host.docker.internal
         port: parseInt(process.env.ELECTRUM_PORT ?? '50001', 10),
         tls: (process.env.ELECTRUM_TLS ?? 'false') === 'true'
       })
@@ -63,10 +63,19 @@ export async function createApp(): Promise<express.Application> {
   app.use('/api/v1/electrum', publicRateLimit, createElectrumRouter(electrumAdapter));
 
   // Core routes - Bitcoin Core RPC integration with rate limiting
+  console.log('[DEBUG] All environment variables:')
+  console.log('  NODE_ENV:', process.env.NODE_ENV)
+  console.log('  PORT:', process.env.PORT)
+  console.log('  BITCOIN_CORE_URL:', process.env.BITCOIN_CORE_URL)
+  console.log('  BITCOIN_CORE_USERNAME:', process.env.BITCOIN_CORE_USERNAME)
+  console.log('  BITCOIN_CORE_PASSWORD:', process.env.BITCOIN_CORE_PASSWORD ? '***SET***' : 'NOT SET')
+  console.log('  ELECTRUM_HOST:', process.env.ELECTRUM_HOST)
+  console.log('  ELECTRUM_PORT:', process.env.ELECTRUM_PORT)
+  
   const coreAdapter = new RealCoreRpcAdapter({
-    url: process.env.CORE_RPC_URL ?? 'http://localhost:8332',
-    username: process.env.CORE_RPC_USERNAME ?? 'rpcuser',
-    password: process.env.CORE_RPC_PASSWORD ?? 'rpcpassword'
+    url: process.env.BITCOIN_CORE_URL ?? 'http://localhost:8332',
+    username: process.env.BITCOIN_CORE_USERNAME ?? 'rpcuser',
+    password: process.env.BITCOIN_CORE_PASSWORD ?? 'rpcpassword'
   });
 
   // Bootstrap service - System-level orchestration (gateway to backend readiness)
@@ -123,8 +132,12 @@ export async function createApp(): Promise<express.Application> {
     }
   });
 
-  // Create and attach WebSocket hub
-  const wsHub = createWebSocketHub({ adapter: electrumAdapter });
+  // Create and attach WebSocket hub with both adapters
+  const wsHub = createWebSocketHub({ 
+    adapter: electrumAdapter, 
+    core: coreAdapter,
+    l1: l1Cache 
+  });
   app.locals.wsHub = wsHub;
 
   // Metrics endpoints

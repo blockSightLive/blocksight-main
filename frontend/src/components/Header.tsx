@@ -17,7 +17,7 @@
  * 
  * @dependencies
  * - ThemeContext for theme switching
- * - BitcoinContext for network status
+ * - MainOrchestrator for network status and blockchain data
  * - React Router for navigation
  * - i18n for internationalization
  * 
@@ -42,15 +42,18 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { useBitcoin } from '../contexts/BitcoinContext'
+import { useMainOrchestrator } from '../contexts/MainOrchestrator'
 import { SearchBar } from './SearchBar'
+import { ErrorBoundary } from './error-handling'
 import './Header.css'
 import { useTheme } from '../contexts/ThemeContext'
+import { useBlockchainVisualization } from '../contexts/BlockchainVisualizationContext'
 
 export const Header: React.FC = () => {
   const { t, i18n } = useTranslation()
   const { theme, toggleTheme } = useTheme()
-  const { state } = useBitcoin()
+  const { mode: blockchainMode, toggleMode: toggleBlockchainMode } = useBlockchainVisualization()
+  const { state } = useMainOrchestrator()
   
   // Dropdown state management
   const [isNavDropdownOpen, setIsNavDropdownOpen] = useState(false)
@@ -107,7 +110,8 @@ export const Header: React.FC = () => {
   }
 
   return (
-    <header className="header">
+    <ErrorBoundary componentName="Header" maxRetries={2} enableAutoRecovery={true}>
+      <header className="header">
       {/* Brand Section - Left Side */}
       <div className="header__brand">
         <Link to="/" className="header__logo">
@@ -231,12 +235,25 @@ export const Header: React.FC = () => {
           </span>
         </button>
         
+        {/* Blockchain Visualization Toggle */}
+        <button 
+          className="blockchain-toggle"
+          onClick={toggleBlockchainMode}
+          aria-label="Toggle blockchain visualization"
+          title="Toggle between 2D and 3D blockchain visualization"
+        >
+          <span className="blockchain-toggle__text">
+            {blockchainMode === '3d' ? '3D' : '2D'}
+          </span>
+        </button>
+        
         {/* Status Dots */}
         <div className="status-dots">
-          <span className={`dot ${state.networkStatus.isOnline ? 'dot--ok' : 'dot--down'}`}></span>
-          <span className={`dot ${state.blocks.length > 0 ? 'dot--ok' : 'dot--down'}`}></span>
+          <span className={`dot ${state.websocket.connected ? 'dot--ok' : 'dot--down'}`}></span>
+          <span className="dot dot--ok"></span>
         </div>
       </aside>
     </header>
+    </ErrorBoundary>
   )
 }

@@ -40,6 +40,7 @@
 
 ### **Testing & Quality**
 - **`docs/testing-standards-checklist.md`** - Complete testing standards, checklist, and test suite documentation
+- **`docs/ERROR_HANDLING_GUIDE.md`** - **CRITICAL** - Comprehensive error handling patterns, boundaries, and graceful degradation
 - **`docs/ENVIRONMENT-SETUP.md`** - Comprehensive environment configuration guide
 
 ### **Infrastructure & DevOps**
@@ -142,7 +143,8 @@ docker-compose -f docker-compose.dev.yml down  # Stop development environment
 
 ### **For Testing**
 1. **`docs/testing-standards-checklist.md`** - Complete testing guide
-2. **`project-documents/system-diagrams/12-testing-architecture-diagram.md`** - Testing patterns
+2. **`docs/ERROR_HANDLING_GUIDE.md`** - **CRITICAL** - Error handling patterns and boundaries
+3. **`project-documents/system-diagrams/12-testing-architecture-diagram.md`** - Testing patterns
 
 ---
 

@@ -48,10 +48,10 @@ export const RATE_LIMIT_CONFIG = {
     statusCode: 429
   },
   
-  // Core RPC endpoints (Bitcoin Core data)
+  // Core RPC endpoints (Bitcoin Core data) - OPTIMIZED for real-time applications
   core: {
     windowMs: 15 * 60 * 1000, // 15 minutes
-    maxRequests: 50, // 50 requests per 15 minutes (more restrictive)
+    maxRequests: 200, // 200 requests per 15 minutes (increased for real-time apps)
     message: 'Too many requests from this IP for Core RPC endpoints',
     statusCode: 429
   },

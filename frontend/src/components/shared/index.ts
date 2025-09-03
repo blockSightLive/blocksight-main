@@ -34,5 +34,5 @@
  */
 
 export { default as LoadingBlocks } from './LoadingBlocks'
-export { ErrorBoundary } from './ErrorBoundary'
+// ErrorBoundary moved to error-handling module
 export { ErrorDisplay } from './ErrorDisplay'

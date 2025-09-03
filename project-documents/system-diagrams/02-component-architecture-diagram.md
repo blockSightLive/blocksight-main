@@ -40,7 +40,17 @@
 
 ## Overview
 
-This Component Architecture Diagram shows the internal structure and relationships of BlockSight.live components, including the completed frontend components, backend adapters, and infrastructure components. It reflects our current implementation status with CoreRpcAdapter, completed frontend, and Vercel staging deployment.
+This Component Architecture Diagram shows the internal structure and relationships of BlockSight.live components, including the completed frontend components, backend adapters, and infrastructure components. It reflects our current implementation status with CoreRpcAdapter, completed frontend, Vercel staging deployment, and **Phase 1 ThreeJS implementation**.
+
+## 🚨 **CRITICAL ARCHITECTURAL PRINCIPLE**
+
+**WEBSOCKET HUB IS THE CENTRAL COORDINATOR FOR ALL DATA SOURCES**
+
+- ✅ **Parallel Data Ingestion**: Bitcoin Core, Electrum, and External APIs feed independently
+- ✅ **Centralized Event Broadcasting**: WebSocket Hub aggregates and streams all events
+- ✅ **Frontend Orchestration**: MainOrchestrator receives unified events via WebSocket
+- ✅ **No Sequential Dependencies**: Each data source operates independently
+- ✅ **Scalable Architecture**: New data sources can be added without affecting existing ones
 
 ## Component Architecture Diagram
 
@@ -75,7 +85,7 @@ This Component Architecture Diagram shows the internal structure and relationshi
 │  │  │  │   Switcher      │    │   System        │    │ • Mempool Data      ││ │ │
 │  │  │  │ • Responsive    │    │ • Splash        │    │ • Performance       ││ │ │
 │  │  │  │   Design        │    │   Screen        │    │   Metrics           ││ │ │
-│  │  │  └─────────────────┘    └─────────────────┘    └─────────────────────┘│ │ │
+│  │  │  └─────────────────┘    └────────────────┘    └─────────────────────┘│ │ │
 │  │  │                                                                       │ │ │
 │  │  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────────┐│ │ │
 │  │  │  │   Theme System  │    │   i18n System   │    │   Performance       ││ │ │
@@ -86,7 +96,36 @@ This Component Architecture Diagram shows the internal structure and relationshi
 │  │  │  │ • Dynamic       │    │   Switching     │    │ • Code Splitting    ││ │ │
 │  │  │  │   Switching     │    │ • Cultural      │    │ • Bundle Analysis   ││ │ │
 │  │  │  │ • CSS Props     │    │   Adaptation    │    │ • Performance       ││ │ │
-│  │  │  └─────────────────┘    └─────────────────┘    └─────────────────────┘│ │ │
+│  │  │  └─────────────────┘    └────────────────┘    └─────────────────────┘│ │ │
+│  │  └───────────────────────────────────────────────────────────────────────┘ │ │
+│  │                                   │                                        │ │
+│  │  ┌───────────────────────────────────────────────────────────────────────┐ │ │
+│  │  │                    THREEJS BLOCKCHAIN VISUALIZATION                   │ │ │
+│  │  │                              (PHASE 1)                                │ │ │
+│  │  │                                                                       │ │ │
+│  │  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────────┐│ │ │
+│  │  │  │ Blockchain      │    │   WebSocket     │    │   Performance       ││ │ │
+│  │  │  │ Visualizer      │    │   Handler       │    │   Baseline          ││ │ │
+│  │  │  │                 │    │                 │    │                     ││ │ │
+│  │  │  │ • Status Bar    │    │ • Event-driven  │    │ • Performance       ││ │ │
+│  │  │  │ • Performance   │    │   Architecture  │    │   Targets           ││ │ │
+│  │  │  │   Alerts        │    │ • block.new     │    │ • FPS Monitoring    ││ │ │
+│  │  │  │ • Section Mgmt  │    │ • mempool.update│    │ • Memory Tracking   ││ │ │
+│  │  │  │ • Real-time     │    │ • network.status│    │ • Alert System      ││ │ │
+│  │  │  │   Data          │    │ • fee.update    │    │ • Optimization      ││ │ │
+│  │  │  └─────────────────┘    └────────────────┘    └─────────────────────┘│ │ │
+│  │  │                                   │                                    │ │ │
+│  │  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────────┐│ │ │
+│  │  │  │ BlockchainScene │    │      Block      │    │       Scene         ││ │ │
+│  │  │  │                 │    │                 │    │                     ││ │ │
+│  │  │  │ • Section Data  │    │ • 3D Geometry   │    │ • Three.js Setup    ││ │ │
+│  │  │  │ • Real-time     │    │ • Real Block    │    │ • Camera Controls   ││ │ │
+│  │  │  │   Updates       │    │   Data          │    │ • Theme Lighting    ││ │ │
+│  │  │  │ • Mempool/      │    │ • Animations    │    │ • Performance       ││ │ │
+│  │  │  │   Current/      │    │ • Hover Effects │    │   Monitor           ││ │ │
+│  │  │  │   Historical    │    │ • Section       │    │ • Section-specific  ││ │ │
+│  │  │  │   Sections      │    │   Styling       │    │   Positioning       ││ │ │
+│  │  │  └─────────────────┘    └────────────────┘    └─────────────────────┘│ │ │
 │  │  └───────────────────────────────────────────────────────────────────────┘ │ │
 │  │                                   │                                        │ │
 │  │  ┌───────────────────────────────────────────────────────────────────────┐ │ │

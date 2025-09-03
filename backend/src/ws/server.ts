@@ -32,6 +32,17 @@ export function createWebSocketServer(params: {
           ws.__filters__?.add(msg.eventType);
           return;
         }
+        if (msg?.type === 'subscribe' && Array.isArray(msg?.events)) {
+          // Support bulk subscription
+          // @ts-expect-error - filters attached in hub.addClient
+          const setRef = ws.__filters__;
+          if (setRef) {
+            for (const ev of msg.events) {
+              if (typeof ev === 'string') setRef.add(ev);
+            }
+          }
+          return;
+        }
         if (msg?.type === 'unsubscribe' && typeof msg?.eventType === 'string') {
           // @ts-expect-error - filters attached in hub.addClient
           ws.__filters__?.delete(msg.eventType);

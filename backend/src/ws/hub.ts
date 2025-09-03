@@ -9,7 +9,21 @@ import type { ElectrumAdapter } from '../adapters/electrum/types';
 import type { CoreRpcAdapter } from '../adapters/core/types';
 import type { L1Cache } from '../cache/l1';
 import { keys } from '../cache/keys';
-import type { HubEvent, TipHeightEvent, NetworkFeesEvent, NetworkMempoolEvent, ChainReorgEvent, PriceCurrentEvent, FxRatesEvent } from './types';
+import type { 
+  HubEvent, 
+  TipHeightEvent, 
+  NetworkFeesEvent, 
+  NetworkMempoolEvent, 
+  ChainReorgEvent, 
+  PriceCurrentEvent, 
+  FxRatesEvent,
+  BlockchainInfoEvent,
+  BlockchainNetworkEvent,
+  BlockchainMiningEvent,
+  BlockchainInfoPayload,
+  BlockchainNetworkPayload,
+  BlockchainMiningPayload
+} from './types';
 import { recordWsBroadcastDuration, recordWsProduced, getRollingP95 } from '../metrics/metrics';
 
 export type WsClient = {
@@ -41,6 +55,11 @@ export function createWebSocketHub(params: { adapter: ElectrumAdapter; core?: Co
   let lastMempool: { pendingTransactions: number; vsize?: number } | null = null;
   let lastPriceUSD: { currency: 'BTC'; fiat: 'USD'; value: number; asOfMs: number; provider: string } | null = null;
   let lastFx: { base: 'USD'; rates: Record<string, number>; asOfMs: number; provider: string } | null = null;
+  
+  // New blockchain data state
+  let lastBlockchainInfo: BlockchainInfoPayload | null = null;
+  let lastNetworkInfo: BlockchainNetworkPayload | null = null;
+  let lastMiningInfo: BlockchainMiningPayload | null = null;
   let lastErrorLogMs: number = 0;
   const ERROR_LOG_THROTTLE_MS = 30_000; // avoid noisy logs when electrs is down
 
@@ -184,6 +203,69 @@ export function createWebSocketHub(params: { adapter: ElectrumAdapter; core?: Co
       } catch { /* Ignore FX polling errors */ }
     }, 3600_000);
     allIntervals.push(fxInterval);
+
+    // Poll blockchain info every 30 seconds from Bitcoin Core
+    const blockchainInterval = setInterval(async () => {
+      try {
+        if (core) {
+          const blockchainInfo = await core.getBlockchainInfo();
+          if (!lastBlockchainInfo || JSON.stringify(blockchainInfo) !== JSON.stringify(lastBlockchainInfo)) {
+            lastBlockchainInfo = blockchainInfo;
+            const evt: BlockchainInfoEvent = { type: 'blockchain.info', data: blockchainInfo, timestamp: Date.now() };
+            broadcast(evt);
+          }
+        }
+      } catch (err) {
+        const now = Date.now();
+        if (now - lastErrorLogMs >= ERROR_LOG_THROTTLE_MS) {
+          lastErrorLogMs = now;
+          console.warn('Bitcoin Core blockchain info poll failed. Retrying...');
+        }
+      }
+    }, 30000);
+    allIntervals.push(blockchainInterval);
+
+    // Poll network info every 60 seconds from Bitcoin Core
+    const networkInterval = setInterval(async () => {
+      try {
+        if (core) {
+          const networkInfo = await core.getNetworkInfo();
+          if (!lastNetworkInfo || JSON.stringify(networkInfo) !== JSON.stringify(lastNetworkInfo)) {
+            lastNetworkInfo = networkInfo;
+            const evt: BlockchainNetworkEvent = { type: 'blockchain.network', data: networkInfo, timestamp: Date.now() };
+            broadcast(evt);
+          }
+        }
+      } catch (err) {
+        const now = Date.now();
+        if (now - lastErrorLogMs >= ERROR_LOG_THROTTLE_MS) {
+          lastErrorLogMs = now;
+          console.warn('Bitcoin Core network info poll failed. Retrying...');
+        }
+      }
+    }, 60000);
+    allIntervals.push(networkInterval);
+
+    // Poll mining info every 120 seconds from Bitcoin Core
+    const miningInterval = setInterval(async () => {
+      try {
+        if (core) {
+          const miningInfo = await core.getMiningInfo();
+          if (!lastMiningInfo || JSON.stringify(miningInfo) !== JSON.stringify(lastMiningInfo)) {
+            lastMiningInfo = miningInfo;
+            const evt: BlockchainMiningEvent = { type: 'blockchain.mining', data: miningInfo, timestamp: Date.now() };
+            broadcast(evt);
+          }
+        }
+      } catch (err) {
+        const now = Date.now();
+        if (now - lastErrorLogMs >= ERROR_LOG_THROTTLE_MS) {
+          lastErrorLogMs = now;
+          console.warn('Bitcoin Core mining info poll failed. Retrying...');
+        }
+      }
+    }, 120000);
+    allIntervals.push(miningInterval);
   };
 
   const stop = () => {
@@ -229,6 +311,28 @@ export function createWebSocketHub(params: { adapter: ElectrumAdapter; core?: Co
     if (lastFx) {
       try {
         const evt: FxRatesEvent = { type: 'fx.rates', data: lastFx, timestamp: Date.now() };
+        client.send(JSON.stringify(evt));
+      } catch { /* Ignore client send errors */ }
+    }
+    
+    // Send blockchain data snapshot if available
+    if (lastBlockchainInfo) {
+      try {
+        const evt: BlockchainInfoEvent = { type: 'blockchain.info', data: lastBlockchainInfo, timestamp: Date.now() };
+        client.send(JSON.stringify(evt));
+      } catch { /* Ignore client send errors */ }
+    }
+    
+    if (lastNetworkInfo) {
+      try {
+        const evt: BlockchainNetworkEvent = { type: 'blockchain.network', data: lastNetworkInfo, timestamp: Date.now() };
+        client.send(JSON.stringify(evt));
+      } catch { /* Ignore client send errors */ }
+    }
+    
+    if (lastMiningInfo) {
+      try {
+        const evt: BlockchainMiningEvent = { type: 'blockchain.mining', data: lastMiningInfo, timestamp: Date.now() };
         client.send(JSON.stringify(evt));
       } catch { /* Ignore client send errors */ }
     }

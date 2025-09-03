@@ -5,36 +5,62 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useBitcoin } from '../contexts/BitcoinContext'
-import { useBitcoinAPI } from '../hooks/useBitcoinAPI'
+import { useMainOrchestrator } from '../contexts/MainOrchestrator'
 
 type ChipColor = 'green' | 'amber' | 'red'
 
 export const HealthChip: React.FC = () => {
   const { t } = useTranslation()
-  const { state } = useBitcoin()
-  const { checkHealth } = useBitcoinAPI()
+  const { state } = useMainOrchestrator()
   const [apiHealthy, setApiHealthy] = useState<boolean>(false)
   const [wsLatencyMs, setWsLatencyMs] = useState<number | null>(null)
   const [electrumStatus, setElectrumStatus] = useState<'ok' | 'degraded' | 'disabled'>('degraded')
   const [coreStatus, setCoreStatus] = useState<'ok' | 'degraded' | 'disabled'>('disabled')
   const wsRef = useRef<WebSocket | null>(null)
 
-  // Periodically check REST health
+  // Real health check - ping backend services directly
   useEffect(() => {
     let mounted = true
-    const tick = async () => {
-      const res = await checkHealth()
+    const checkBackendHealth = async () => {
       if (!mounted) return
-      setApiHealthy(res.healthy)
-      const details: { electrum?: string; core?: string } = (res as { details?: { electrum?: string; core?: string } }).details || {}
-      if (details.electrum) setElectrumStatus(details.electrum as 'ok' | 'degraded' | 'disabled')
-      if (details.core) setCoreStatus(details.core as 'ok' | 'degraded' | 'disabled')
+      
+      try {
+        // Check backend health endpoint with timeout using AbortController
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 5000)
+        
+        const response = await fetch('/api/v1/health', {
+          method: 'GET',
+          signal: controller.signal
+        })
+        
+        clearTimeout(timeoutId)
+        
+        if (response.ok) {
+          const healthData = await response.json()
+          const coreHealthy = healthData.core?.status === 'ok'
+          const electrumHealthy = healthData.electrum?.status === 'ok'
+          
+          setApiHealthy(coreHealthy && electrumHealthy)
+          setCoreStatus(coreHealthy ? 'ok' : 'degraded')
+          setElectrumStatus(electrumHealthy ? 'ok' : 'degraded')
+        } else {
+          setApiHealthy(false)
+          setCoreStatus('degraded')
+          setElectrumStatus('degraded')
+        }
+      } catch (error) {
+        // Backend not reachable
+        setApiHealthy(false)
+        setCoreStatus('disabled')
+        setElectrumStatus('disabled')
+      }
     }
-    tick()
-    const id = setInterval(tick, 15000)
+    
+    checkBackendHealth()
+    const id = setInterval(checkBackendHealth, 10000) // Check every 10 seconds
     return () => { mounted = false; clearInterval(id) }
-  }, [checkHealth])
+  }, [])
 
   // WS ping/pong latency – open a lightweight ad-hoc socket for precise timing
   useEffect(() => {
@@ -70,12 +96,12 @@ export const HealthChip: React.FC = () => {
   const color: ChipColor = useMemo(() => {
     // Only green when REST is healthy AND WS has opened at least once
     if (!apiHealthy) return 'red'
-    if (!state.networkStatus.isOnline) return 'amber'
+    if (!state.websocket.connected) return 'amber'
     if (wsLatencyMs === null) return 'amber'
     if (wsLatencyMs < 300) return 'green'
     if (wsLatencyMs <= 1500) return 'amber'
     return 'red'
-  }, [apiHealthy, state.networkStatus.isOnline, wsLatencyMs])
+  }, [apiHealthy, state.websocket.connected, wsLatencyMs])
 
   const style: React.CSSProperties = useMemo(() => ({
     padding: '2px 8px',

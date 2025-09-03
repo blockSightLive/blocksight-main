@@ -14,7 +14,8 @@
  * - React 18 with StrictMode
  * - BrowserRouter for routing context
  * - ThemeProvider for theme switching
- * - BitcoinProvider for Bitcoin data
+ * - MainOrchestratorProvider for centralized state management
+ * - Context plugins for domain-specific state (Blockchain, Electrum, ExternalAPI, System)
  * - CosmicCanvas for cosmic background
  * - App component for main application
  * 
@@ -50,7 +51,8 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { ThemeProvider } from './contexts/ThemeContext'
-import { BitcoinProvider } from './contexts/BitcoinContext'
+import { MainOrchestratorProvider } from './contexts/MainOrchestrator'
+import { BlockchainVisualizationProvider } from './contexts/BlockchainVisualizationContext'
 import CosmicCanvas from './components/CosmicCanvas'
 import App from './App'
 import './i18n' // Initialize i18n before app renders
@@ -64,9 +66,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     {/* MAIN APPLICATION */}
     <BrowserRouter>
       <ThemeProvider>
-        <BitcoinProvider>
-          <App />
-        </BitcoinProvider>
+        <MainOrchestratorProvider>
+          <BlockchainVisualizationProvider>
+            <App />
+          </BlockchainVisualizationProvider>
+        </MainOrchestratorProvider>
       </ThemeProvider>
     </BrowserRouter>
   </React.StrictMode>,

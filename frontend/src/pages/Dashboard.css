@@ -119,15 +119,15 @@
   /* Background - Completely transparent for ThreeJS */
   background: transparent;
   
-  /* Border - Subtle border that matches theme */
-  border: var(--border-width-thin) solid var(--color-border);
-  border-radius: var(--radius-md); /* Reduced from var(--radius-lg) for more refined appearance */
+  /* Border - Remove border for clean visualization */
+  border: none;
+  border-radius: 0;
   
   /* Spacing */
-  padding: var(--spacing-4); /* Reduced from var(--spacing-6) for more compact layout */
+  padding: 0;
   
-  /* Effects */
-  backdrop-filter: blur(8px);
+  /* Effects - Remove all effects for clean visualization */
+  backdrop-filter: none;
   
   /* Content */
   overflow: hidden;
@@ -235,10 +235,13 @@
    ======================================== */
 
 /* Light theme adjustments */
-[data-theme="light"] .dashboard-left,
-[data-theme="light"] .dashboard-center {
+[data-theme="light"] .dashboard-left {
   border-color: var(--color-border);
   background: transparent; /* Keep transparent for ThreeJS and search */
+}
+
+[data-theme="light"] .dashboard-center {
+  background: transparent; /* Keep transparent for ThreeJS visualization */
 }
 
 [data-theme="light"] .dashboard-right {
@@ -247,10 +250,13 @@
 }
 
 /* Dark theme adjustments */
-[data-theme="dark"] .dashboard-left,
-[data-theme="dark"] .dashboard-center {
+[data-theme="dark"] .dashboard-left {
   border-color: var(--color-border);
   background: transparent; /* Keep transparent for ThreeJS and search */
+}
+
+[data-theme="dark"] .dashboard-center {
+  background: transparent; /* Keep transparent for ThreeJS visualization */
 }
 
 [data-theme="dark"] .dashboard-right {
@@ -264,7 +270,6 @@
 
 /* Focus states */
 .dashboard-left:focus-within,
-.dashboard-center:focus-within,
 .dashboard-right:focus-within {
   outline: var(--border-width-md) solid var(--color-border-focus);
   outline-offset: var(--spacing-1);
@@ -273,7 +278,6 @@
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   .dashboard-left,
-  .dashboard-center,
   .dashboard-right {
     backdrop-filter: none;
   }
@@ -282,7 +286,6 @@
 /* High contrast mode */
 @media (prefers-contrast: more) {
   .dashboard-left,
-  .dashboard-center,
   .dashboard-right {
     border-width: var(--border-width-md);
     background: var(--color-grey-light);

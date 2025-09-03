@@ -92,17 +92,12 @@ export default defineConfig({
           // Internationalization
           i18n: ['i18next', 'react-i18next'],
           
-          // Three.js core (essential 3D functionality)
-          threejs: ['three'],
+          // CRITICAL FIX: Keep Three.js ecosystem together to prevent shader compilation issues
+          // Three.js core + React Three Fiber + Drei must be in same chunk
+          threejs: ['three', '@react-three/fiber', '@react-three/drei'],
           
           // Three.js standard library (additional features)
           threeStdlib: ['three-stdlib'],
-          
-          // React Three Fiber (3D React renderer)
-          reactThreeFiber: ['@react-three/fiber'],
-          
-          // React Three Drei (3D React utilities)
-          reactThreeDrei: ['@react-three/drei'],
           
           // Route-based chunks for Phase 2 optimization
           pages: [
@@ -117,10 +112,10 @@ export default defineConfig({
           
           // Blockchain 3D components (lazy loaded)
           blockchain3d: [
-            './src/components/dashboard-columns/blockchain/BlockchainScene',
-            './src/components/dashboard-columns/blockchain/Scene',
+            './src/components/dashboard-columns/blockchain/ThreeDBlockchain',
+            './src/components/dashboard-columns/blockchain/TwoDBlockchain',
             './src/components/dashboard-columns/blockchain/Block',
-            './src/components/dashboard-columns/blockchain/PerformanceMonitor'
+            './src/components/dashboard-columns/blockchain/WebSocketHandler'
           ],
           
           // Individual lazy-loaded components
@@ -135,8 +130,14 @@ export default defineConfig({
           // Shared components and utilities
           shared: [
             './src/components/shared/LoadingBlocks',
-            './src/components/shared/ErrorBoundary',
             './src/components/shared/ErrorDisplay'
+          ],
+          
+          // Error handling components
+          errorHandling: [
+            './src/components/error-handling/ErrorBoundary',
+            './src/components/error-handling/ThreeJSErrorBoundary',
+            './src/components/error-handling/RouterErrorBoundary'
           ]
         }
       }
@@ -146,5 +147,14 @@ export default defineConfig({
   define: {
     __APP_VERSION__: JSON.stringify(process.env.npm_package_version || '1.0.0'),
     __BUILD_TIME__: JSON.stringify(new Date().toISOString())
+  },
+
+  optimizeDeps: {
+    include: [
+      'three',
+      '@react-three/fiber',
+      '@react-three/drei'
+    ],
+    exclude: []
   }
 })

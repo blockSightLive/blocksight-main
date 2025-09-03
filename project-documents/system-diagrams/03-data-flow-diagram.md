@@ -40,7 +40,18 @@
 
 ## Overview
 
-This Data Flow Diagram shows how data moves through the BlockSight.live system, including real-time data streaming, caching strategies, and frontend-backend communication. It reflects our current implementation status with CoreRpcAdapter, completed frontend, and Vercel staging deployment.
+This Data Flow Diagram shows how data moves through the BlockSight.live system, including real-time data streaming, caching strategies, and frontend-backend communication. It reflects our current implementation status with CoreRpcAdapter, completed frontend, Vercel staging deployment, and **Phase 1 ThreeJS implementation**.
+
+## 🚨 **CRITICAL ARCHITECTURAL PRINCIPLE**
+
+**ALL DATA SOURCES FEED PARALLEL INTO THE BACKEND WEBSOCKET HUB**
+
+- ✅ **Bitcoin Core**: Direct RPC calls via CoreRpcAdapter
+- ✅ **Electrum**: TCP protocol via ElectrumAdapter  
+- ✅ **External APIs**: HTTP calls via PriceDataAdapter
+- ✅ **NO SEQUENTIAL PROCESSING**: All sources operate independently
+- ✅ **WebSocket Hub**: Centralized data aggregation and event broadcasting
+- ✅ **Frontend**: Receives unified events via MainOrchestrator
 
 ## Data Flow Diagram
 
@@ -91,6 +102,23 @@ This Data Flow Diagram shows how data moves through the BlockSight.live system, 
 │  │  │   Changes       │    │ • Error         │    │ • Failover Strategy    │  │ │
 │  │  └─────────────────┘    └─────────────────┘    └────────────────────────┘  │ │
 │  └────────────────────────────────────────────────────────────────────────────┘ │
+│                                    │                                            │
+│                                    ▼                                            │
+│  ┌────────────────────────────────────────────────────────────────────────────┐ │
+│  │                    THREEJS BLOCKCHAIN VISUALIZATION                       │ │
+│  │                              (PHASE 1)                                    │ │
+│  │                                                                            │ │
+│  │  ┌─────────────────┐    ┌─────────────────┐    ┌────────────────────────┐  │ │
+│  │  │ useBlockchain   │    │   WebSocket     │    │   Performance          │  │ │
+│  │  │ Data Hook       │    │   Handler       │    │   Baseline             │  │ │
+│  │  │                 │    │                 │    │                        │  │ │
+│  │  │ • Real-time     │    │ • Event-driven  │    │ • Performance          │  │ │
+│  │  │   Blockchain    │    │   Architecture  │    │   Targets              │  │ │
+│  │  │   Data          │    │ • block.new     │    │ • FPS Monitoring      │  │ │
+│  │  │ • 15s Polling   │    │ • mempool.update│    │ • Memory Tracking     │  │ │
+│  │  │ • Error         │    │ • network.status│    │ • Alert System        │  │ │
+│  │  │   Handling      │    │ • fee.update    │    │ • Optimization        │  │ │
+│  │  └─────────────────┘    └─────────────────┘    └────────────────────────┘  │ │
 │                                    │                                            │
 │                                    ▼                                            │
 │  ┌────────────────────────────────────────────────────────────────────────────┐ │

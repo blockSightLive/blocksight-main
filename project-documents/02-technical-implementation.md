@@ -1864,7 +1864,17 @@ class BalanceHistoryTracker {
 - **React 18+**: Latest React features with concurrent rendering
 - **TypeScript**: Strict mode with comprehensive type safety
 - **Vite**: Fast development server and optimized production builds
-- **State Management**: React Context + Reducer pattern for global state
+- **State Management**: Context Orchestration System with MainOrchestrator and plugin-based contexts
+
+#### **Context Orchestration System**
+- **MainOrchestrator**: Centralized state coordination, WebSocket management, and plugin registry
+- **Context Plugins**: 
+  - **BlockchainContext**: Bitcoin Core RPC data and blockchain state
+  - **ElectrumContext**: Electrum server connections and data
+  - **ExternalAPIContext**: Price data, FX rates, and market information
+  - **SystemContext**: System health, performance metrics, and service status
+- **Architecture Benefits**: Single source of truth, unified caching, centralized error handling
+- **Performance**: Eliminates redundant API calls, improves WebSocket efficiency, better state synchronization
 
 #### **Styling Architecture**
 **Three-Tier CSS Architecture for Optimal Performance and Maintainability**

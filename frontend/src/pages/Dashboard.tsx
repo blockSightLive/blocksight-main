@@ -1,20 +1,14 @@
 /**
- * @fileoverview Simplified Dashboard page component for BlockSight.live
+ * @fileoverview Dashboard component for BlockSight.live
  * @version 1.0.0
  * @author Development Team
  * @since 2025-08-25
- * @lastModified 2025-08-30
+ * @lastModified 2025-08-31
  * 
  * @description
- * Simplified dashboard with three equal columns:
- * - Left: Search Results (mostly transparent)
- * - Center: Blockchain Visualizer (mostly transparent) 
- * - Right: Dashboard Data (mostly transparent)
- * All columns are responsive and fill the screen without overflow.
- * 
- * This component is now lazy loaded from App.tsx for bundle optimization.
- * Internal heavy components (BlockchainVisualizer, DashboardData) are now lazy loaded
- * for further bundle optimization and improved initial load performance.
+ * Main dashboard with three-column layout: Search, Blockchain Visualizer, and Dashboard Data.
+ * Implements lazy loading for performance optimization.
+ * ThreeJS visualizations are now properly integrated within BlockchainVisualizer.
  * 
  * @dependencies
  * - React with lazy loading and Suspense
@@ -26,7 +20,7 @@
  * 
  * @state
  * ✅ Lazy Loaded - Component is now lazy loaded for bundle optimization
- * ✅ Internal Lazy Loading - Heavy 3D components are lazy loaded
+ * ✅ ThreeJS Integrated - 3D visualizations properly integrated in BlockchainVisualizer
  * 
  * @bugs
  * - None currently identified
@@ -35,6 +29,7 @@
  * - [MEDIUM] Add real data integration
  * - [LOW] Enhance column interactions
  * - [COMPLETED] Implement lazy loading for internal 3D components
+ * - [COMPLETED] Integrate ThreeJS visualizations in BlockchainVisualizer
  * 
  * @styling
  * - CSS Modules: Layout and grid structure
@@ -46,7 +41,7 @@
  * - Minimal re-renders
  * - Responsive breakpoints
  * - Lazy loaded for bundle optimization
- * - Internal components lazy loaded for further optimization
+ * - ThreeJS components properly integrated
  * 
  * @security
  * - No external data yet
@@ -56,11 +51,11 @@
 import React, { lazy, Suspense } from 'react'
 import './Dashboard.css'
 import { LoadingBlocks } from '../components/shared'
+import { ErrorBoundary } from '../components/error-handling'
 
-// Lazy load heavy 3D components for bundle optimization
+// Lazy load heavy components for bundle optimization
 const DashboardData = lazy(() => import('../components/dashboard-columns/DashboardData').then(module => ({ default: module.DashboardData })))
 const BlockchainVisualizer = lazy(() => import('../components/dashboard-columns/BlockchainVisualizer').then(module => ({ default: module.BlockchainVisualizer })))
-const BlockchainScene = lazy(() => import('../components/dashboard-columns/blockchain/BlockchainScene').then(module => ({ default: module.BlockchainScene })))
 
 export const Dashboard: React.FC = () => {
   return (
@@ -68,50 +63,31 @@ export const Dashboard: React.FC = () => {
       {/* Left Column - Search Results */}
       <div className="dashboard-left">
         <div className="column-content">
-          <p>Search functionality coming soon...</p>
+          <ErrorBoundary componentName="SearchColumn" maxRetries={2}>
+            <p>Search functionality coming soon...</p>
+          </ErrorBoundary>
         </div>
       </div>
       
-      {/* Center Column - Blockchain Visualizer */}
+      {/* Center Column - Blockchain Visualizer with integrated 3D scenes */}
       <div className="dashboard-center">
         <div className="column-content">
-          <Suspense fallback={<LoadingBlocks />}>
-            <BlockchainVisualizer />
-          </Suspense>          
-          {/* 3D Visualizations - Lazy loaded for performance */}
-          <div className="dashboard-3d-visualizations">
-            {/* Memory Pool 3D Visualization */}
-            <div className="visualization-section">
-              <h4>Memory Pool</h4>
-              <Suspense fallback={<LoadingBlocks />}>
-                <BlockchainScene />
-              </Suspense>
-            </div>
-            
-            {/* Current Blocks 3D Visualization */}
-            <div className="visualization-section">
-              <h4>Current Blocks</h4>
-              <Suspense fallback={<LoadingBlocks />}>
-                <BlockchainScene />
-              </Suspense>
-            </div>
-            
-            {/* Built Blockchain 3D Visualization */}
-            <div className="visualization-section">
-              <h4>Built Blockchain</h4>
-              <Suspense fallback={<LoadingBlocks />}>
-                <BlockchainScene />
-              </Suspense>
-            </div>
-          </div>
+          {/* Use generic boundary here so blockchain visualization can manage WebGL fallback */}
+          <ErrorBoundary componentName="BlockchainVisualizer" maxRetries={1}>
+            <Suspense fallback={<LoadingBlocks />}>
+              <BlockchainVisualizer />
+            </Suspense>
+          </ErrorBoundary>
         </div>
       </div>
       
       {/* Right Column - Dashboard Data */}
       <div className="dashboard-right">
-        <Suspense fallback={<LoadingBlocks />}>
-          <DashboardData />
-        </Suspense>
+        <ErrorBoundary componentName="DashboardData" maxRetries={2}>
+          <Suspense fallback={<LoadingBlocks />}>
+            <DashboardData />
+          </Suspense>
+        </ErrorBoundary>
       </div>
     </div>
   );

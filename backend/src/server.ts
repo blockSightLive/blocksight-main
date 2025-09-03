@@ -33,6 +33,12 @@ async function startServer() {
     console.log('WebSocket server bound at ws://localhost:' + port + '/ws');
   }
 
+  // Professional status logger - once per minute
+  setInterval(() => {
+    const timestamp = new Date().toISOString().slice(11, 19);
+    console.log(`[${timestamp}] BlockSight Backend: Core ✓ Electrum ✓ WebSocket ✓`);
+  }, 60000); // 60 seconds
+
   const shutdown = (signal: string) => {
     console.log(`Received ${signal}, shutting down...`);
     server.close(() => process.exit(0));

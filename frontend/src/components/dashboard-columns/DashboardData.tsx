@@ -35,6 +35,18 @@ export const DashboardData: React.FC = () => {
   return (
     <div className={styles['dashboard-data']}>
       <div className={styles['card-content']}>
+        <h3>Dashboard Data</h3>
+        <p>Real-time blockchain metrics and analytics coming soon...</p>
+        <div style={{ 
+          padding: '20px', 
+          textAlign: 'center', 
+          color: '#666',
+          fontSize: '14px'
+        }}>
+          <p>📊 Price Charts</p>
+          <p>⚡ Network Stats</p>
+          <p>🔗 Transaction Timeline</p>
+        </div>
       </div>
     </div>
   )

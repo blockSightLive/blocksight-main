@@ -43,7 +43,11 @@
 
 import React, { lazy, Suspense } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
-import { LoadingBlocks } from '../components/shared'
+import LoadingBlocks from '../components/shared/LoadingBlocks'
+import { RouterErrorBoundary, ErrorBoundary, ThreeJSErrorInterceptor } from '../components/error-handling'
+
+// Initialize Three.js error interception globally
+ThreeJSErrorInterceptor.getInstance().startInterception()
 
 // Lazy load all pages for route-based code splitting
 const Dashboard = lazy(() => import('../pages/Dashboard').then(module => ({ default: module.Dashboard })))
@@ -55,60 +59,66 @@ const Dashboard = lazy(() => import('../pages/Dashboard').then(module => ({ defa
 
 export const AppRouter: React.FC = () => {
   return (
-    <Routes>
-      {/* Main Dashboard Route - Lazy loaded */}
-      <Route 
-        path="/" 
-        element={
-          <Suspense fallback={<LoadingBlocks />}>
-            <Dashboard />
-          </Suspense>
-        } 
-      />
+    <RouterErrorBoundary>
+      <Routes>
+        {/* Main Dashboard Route - Lazy loaded */}
+        <Route 
+          path="/" 
+          element={
+            <ErrorBoundary componentName="Dashboard" maxRetries={2}>
+              <Suspense fallback={<LoadingBlocks />}>
+                <Dashboard />
+              </Suspense>
+            </ErrorBoundary>
+          } 
+        />
+        
+        {/* Dashboard Route - Explicit path */}
+        <Route 
+          path="/dashboard" 
+          element={
+            <ErrorBoundary componentName="Dashboard" maxRetries={2}>
+              <Suspense fallback={<LoadingBlocks />}>
+                <Dashboard />
+              </Suspense>
+            </ErrorBoundary>
+          } 
+        />
       
-      {/* Dashboard Route - Explicit path */}
-      <Route 
-        path="/dashboard" 
-        element={
-          <Suspense fallback={<LoadingBlocks />}>
-            <Dashboard />
-          </Suspense>
-        } 
-      />
-      
-      {/* Future Routes - Ready for implementation */}
-      {/* 
-      <Route 
-        path="/settings" 
-        element={
-          <Suspense fallback={<LoadingBlocks />}>
-            <Settings />
-          </Suspense>
-        } 
-      />
-      
-      <Route 
-        path="/analytics" 
-        element={
-          <Suspense fallback={<LoadingBlocks />}>
-            <Analytics />
-          </Suspense>
-        } 
-      />
-      
-      <Route 
-        path="/profile" 
-        element={
-          <Suspense fallback={<LoadingBlocks />}>
-            <Profile />
-          </Suspense>
-        } 
-      />
-      */}
-      
-      {/* Catch-all route - Redirect to dashboard */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+        {/* Future Routes - Ready for implementation */}
+        {/* 
+        <Route 
+          path="/settings" 
+          element={
+            <Suspense fallback={<LoadingBlocks />}>
+              <Settings />
+            </Suspense>
+          } 
+        />
+        
+        <Route 
+          path="/analytics" 
+          element={
+            <Suspense fallback={<LoadingBlocks />}>
+              <Analytics />
+            </Suspense>
+          } 
+        />
+        
+        <Route 
+          path="/profile" 
+          element={
+            <Suspense fallback={<LoadingBlocks />}>
+              <Profile />
+            </Suspense>
+          } 
+        />
+        */}
+        
+        {/* Catch-all route - Redirect to dashboard */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </RouterErrorBoundary>
   )
 }
 

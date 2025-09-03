@@ -1,213 +1,109 @@
-/* Co-located styles for BlockchainVisualizer */
-
-.block-visualizer {
-	padding: var(--spacing-3); /* Reduced from var(--spacing-4) for less bloated appearance */
-	background: var(--color-background);
-	border-radius: var(--radius-md);
-	box-shadow: var(--shadow);
+/* Blockchain Visualizer Container */
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: transparent; /* Transparent to show cosmic background */
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.block-visualizer--empty {
-	text-align: center;
-	color: var(--color-text-secondary);
-	padding: var(--spacing-8);
+/* Status bar removed - WebSocket state now handled by MainOrchestrator */
+
+/* Performance Alerts */
+.performanceAlerts {
+  padding: 12px 16px;
+  background: transparent; /* Transparent to show cosmic background */
+  border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
 }
 
-.block-visualizer__header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: var(--spacing-4);
-	padding-bottom: var(--spacing-2);
-	border-bottom: var(--border-width-thin) solid var(--color-border);
+.performanceAlerts h4 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary, #000);
 }
 
-.block-visualizer__header h3 {
-	margin: var(--spacing-none);
-	color: var(--color-text-primary);
-	font-size: var(--font-size-lg); /* Reduced from var(--font-size-xl) for less bloated appearance */
-	font-weight: var(--font-weight-medium); /* Reduced from var(--font-weight-semibold) for refinement */
+.alert {
+  padding: 6px 12px;
+  margin: 4px 0;
+  border-radius: 4px;
+  font-size: 11px;
+  font-family: monospace;
 }
 
-.block-count {
-	color: var(--color-text-secondary);
-	font-size: var(--font-size-xs); /* Reduced from var(--font-size-sm) for refinement */
-	background: var(--color-background-secondary);
-	padding: var(--spacing-1) var(--spacing-1); /* Reduced from var(--spacing-2) for less bloated appearance */
-	border-radius: var(--radius-sm);
+.alert.warning {
+  background: rgba(255, 193, 7, 0.2);
+  color: #856404;
+  border-left: 3px solid #ffc107;
 }
 
-.block-visualizer__grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(var(--block-card-min-width), var(--grid-1fr)));
-	gap: var(--spacing-4);
-	margin-bottom: var(--spacing-4);
+.alert.critical {
+  background: rgba(220, 53, 69, 0.2);
+  color: #721c24;
+  border-left: 3px solid #dc3545;
 }
 
-.block-card {
-	background: var(--color-background-secondary);
-	border: var(--border-width-thin) solid var(--color-border);
-	border-radius: var(--radius-md);
-	padding: var(--spacing-4);
-	cursor: pointer;
-	transition: all var(--transition);
-	position: relative;
-	overflow: hidden;
+.alert.info {
+  background: rgba(13, 202, 240, 0.2);
+  color: #0c5460;
+  border-left: 3px solid #0dcaf0;
 }
 
-.block-card:hover {
-	transform: translateY(var(--translate-y-neg-2));
-	box-shadow: var(--shadow-hover);
-	border-color: var(--color-primary);
+/* Visualization Container - Continuous Blockchain */
+.visualizationContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: transparent; /* Transparent to show cosmic background */
+  height: 100%;
+  padding: 0;
 }
 
-.block-card--selected {
-	border-color: var(--color-primary);
-	background: var(--color-primary-light);
-	box-shadow: var(--shadow-ring-primary);
-}
+/* Continuous Blockchain Styling - No sections needed */
 
-.block-card__header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: var(--spacing-3);
-}
-
-.block-height {
-	font-weight: var(--font-weight-medium); /* Reduced from var(--font-weight-semibold) for refinement */
-	color: var(--color-text-primary);
-	font-size: var(--font-size-base); /* Reduced from var(--font-size-lg) for less bloated appearance */
-}
-
-.block-status {
-	padding: var(--spacing-1) var(--spacing-2);
-	border-radius: var(--radius-sm);
-	font-size: var(--font-size-xs);
-	font-weight: var(--font-weight-medium);
-	text-transform: uppercase;
-	letter-spacing: var(--letter-spacing-wide);
-}
-
-.block-status--confirmed {
-	background: var(--color-success-light);
-	color: var(--color-success);
-}
-
-.block-status--pending {
-	background: var(--color-warning-light);
-	color: var(--color-warning);
-}
-
-.block-status--orphaned {
-	background: var(--color-error-light);
-	color: var(--color-error);
-}
-
-.block-card__content {
-	margin-bottom: var(--spacing-3);
-}
-
-.block-hash {
-	font-family: var(--font-mono);
-	font-size: var(--font-size-sm);
-	color: var(--color-text-secondary);
-	margin-bottom: var(--spacing-2);
-	word-break: break-all;
-}
-
-.block-info {
-	display: flex;
-	justify-content: space-between;
-	margin-bottom: var(--spacing-2);
-	font-size: var(--font-size-sm);
-}
-
-.tx-count {
-	color: var(--color-text-secondary);
-}
-
-.block-size {
-	color: var(--color-text-secondary);
-}
-
-.block-fees {
-	margin-bottom: var(--spacing-2);
-}
-
-.fee-range {
-	font-size: var(--font-size-sm);
-	color: var(--color-primary);
-	font-weight: var(--font-weight-medium);
-}
-
-.block-card__footer {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	font-size: var(--font-size-xs);
-	color: var(--color-text-secondary);
-}
-
-.block-time {
-	font-weight: var(--font-weight-medium);
-}
-
-.block-difficulty {
-	font-weight: var(--font-weight-medium);
-}
-
-/* 3D Container Styles */
-.block-visualizer__3d-container {
-	width: 100%;
-	height: 300px; /* Fixed height for 3D scenes */
-	min-height: 300px;
-	border-radius: var(--radius-md);
-	overflow: hidden;
-	background: var(--color-background-secondary);
-	border: var(--border-width-thin) solid var(--color-border);
-	position: relative;
-}
-
-/* Responsive 3D container adjustments */
+/* Responsive Design */
 @media (max-width: 768px) {
-	.block-visualizer__3d-container {
-		height: 250px;
-		min-height: 250px;
-	}
+  /* Status bar removed */
+  
+  .visualizationContainer {
+    padding: 0;
+  }
 }
 
-@media (max-width: 480px) {
-	.block-visualizer__3d-container {
-		height: 200px;
-		min-height: 200px;
-	}
-}
-
-@media (max-width: 768px) {
-	.block-visualizer__grid {
-		grid-template-columns: var(--grid-1fr);
-	}
-
-	.block-card {
-		padding: var(--spacing-3);
-	}
-
-	.block-visualizer__header {
-		flex-direction: column;
-		align-items: flex-start;
-		gap: var(--spacing-2);
-	}
-}
-
-@media (max-width: 480px) {
-	.block-visualizer {
-		padding: var(--spacing-3);
-	}
-
-	.block-card {
-		padding: var(--spacing-2);
-	}
+/* Dark Theme Support */
+@media (prefers-color-scheme: dark) {
+  .container {
+    background: transparent; /* Keep transparent to show cosmic background */
+  }
+  
+  /* Status bar removed */
+  
+  .label {
+    color: var(--text-muted-dark, #aaa);
+  }
+  
+  .value {
+    color: var(--text-primary-dark, #fff);
+  }
+  
+  /* Blockchain visualization styling */
+  
+  .alert.warning {
+    background: rgba(255, 193, 7, 0.15);
+    color: #ffd54f;
+  }
+  
+  .alert.critical {
+    background: rgba(220, 53, 69, 0.15);
+    color: #ff6b6b;
+  }
+  
+  .alert.info {
+    background: rgba(13, 202, 240, 0.15);
+    color: #4dd0e1;
+  }
 }
 
 

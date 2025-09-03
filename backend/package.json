@@ -47,6 +47,7 @@
     "test:bootstrap": "jest --runInBand --config ./jest.config.js --testPathPattern=bootstrap --detectOpenHandles",
     "test:bootstrap:unit": "jest --runInBand --config ./jest.config.js --testPathPattern=bootstrap.controller.test.ts --detectOpenHandles",
     "test:bootstrap:integration": "jest --runInBand --config ./jest.config.js --testPathPattern=bootstrap.integration.test.ts --detectOpenHandles",
+    "test:bootstrap:real-connections": "jest --runInBand --config ./jest.config.js --testPathPattern=bootstrap.real-connections.test.ts --detectOpenHandles",
     "test:bootstrap:performance": "jest --runInBand --config ./jest.config.js --testPathPattern=bootstrap.performance.test.ts --detectOpenHandles",
     "test:bootstrap:coverage": "jest --runInBand --config ./jest.config.js --testPathPattern=bootstrap --coverage --detectOpenHandles"
   }

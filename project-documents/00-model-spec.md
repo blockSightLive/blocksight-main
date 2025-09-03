@@ -29,8 +29,38 @@ BlockSight.live is a cutting-edge Bitcoin-exclusive blockchain analysis platform
 
 ### High-Level Architecture
 ```
-Bitcoin Core → electrs (Indexer) → HTTP REST API → NodeJS Backend → Multi-Tier Cache → WebSocket Events → BlockSight Frontend
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Bitcoin Core  │    │    Electrum     │    │  External APIs  │
+│   (Full Node)   │    │   (Indexer)     │    │  (Price Feeds)  │
+│                 │    │                 │    │                 │
+│ • RPC Commands  │    │ • TCP Protocol  │    │ • HTTP APIs     │
+│ • .blk Files    │    │ • Block Index   │    │ • Rate Limited  │
+│ • P2P Network   │    │ • UTXO Set      │    │ • JSON Data     │
+│ • Chain State   │    │ • Address Index │    │ • Market Data   │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         ▼                       ▼                       ▼
+         ┌─────────────────────────────────────────────────────┐
+         │              BACKEND WEBSOCKET HUB                  │
+         │                                                     │
+         │ • Centralized Data Ingestion                       │
+         │ • Real-time Event Broadcasting                      │
+         │ • Multi-source Data Aggregation                     │
+         │ • WebSocket Event Management                        │
+         └─────────────────────────────────────────────────────┘
+                                │
+                                ▼
+         ┌─────────────────────────────────────────────────────┐
+         │              FRONTEND MAINORCHESTRATOR              │
+         │                                                     │
+         │ • Context Plugin Management                         │
+         │ • WebSocket Event Processing                        │
+         │ • State Orchestration                               │
+         │ • Performance Optimization                          │
+         └─────────────────────────────────────────────────────┘
 ```
+
+**⚠️ CRITICAL ARCHITECTURAL PRINCIPLE**: All data sources feed **PARALLEL** into the backend WebSocket Hub, which then streams unified events to the frontend. **NO sequential processing** - Bitcoin Core and Electrum operate independently.
 
 **⚠️ CRITICAL SECURITY MODEL**: This system is **100% PASSIVE** and **READ-ONLY**. No user can ever write data to the Bitcoin blockchain through our platform. All data flows are inbound only - from blockchain to user interface.
 
@@ -97,6 +127,14 @@ Bitcoin Core → electrs (Indexer) → HTTP REST API → NodeJS Backend → Mult
 - **Base URL**: `http://localhost:8000/api/v1/`
 - **Versioning**: v1 (current), breaking changes increment major version
 - **Authentication**: Core RPC endpoints require Bitcoin Core credentials, others public
+
+#### 5. Frontend Context Orchestration System
+- **MainOrchestrator**: Central coordination context managing all specialized contexts
+- **Context Plugins**: Modular, swappable contexts (Blockchain, Electrum, External API, System)
+- **Architecture Benefits**: Single source of truth, unified caching, centralized error handling
+- **Performance Improvements**: Reduced API calls, optimized state updates, efficient data flow
+- **Advanced Features**: Real instanced rendering, frustum culling, LOD system, particle optimization, morphing system
+- **Performance Monitoring**: Real-time metrics, alerts, optimization recommendations, advanced performance tracking
 
 ##### **Current API Endpoints (IMPLEMENTED ✅)**
 
@@ -539,9 +577,22 @@ struct CircuitBreaker {
 
 ### Development Phases
 - **Phase 1** (Weeks 1-4): Foundation - API integration, caching, WebSocket ✅ **COMPLETED**
-- **Phase 2** (Weeks 5-8): Frontend - React app, ThreeJS integration, dashboard widgets (CURRENT)
+- **Phase 2** (Weeks 5-8): Frontend - React app, ThreeJS integration, dashboard widgets ✅ **PHASE 1 COMPLETED - READY FOR PHASE 2**
 - **Phase 3** (Weeks 9-12): Performance - Connection pooling, optimization, testing
 - **Phase 4** (Weeks 13-16): Production - Monitoring, security, deployment
+
+#### **Phase 1 ThreeJS Implementation Status (COMPLETED - 2025-08-31)**
+- **✅ Real Blockchain Data Integration**: Enhanced useBlockHeight hook with comprehensive blockchain data fetching
+- **✅ WebSocket Event Structure**: Event-driven architecture ready for Phase 2 real-time integration
+- **✅ Performance Baseline Establishment**: Performance targets and monitoring for optimization strategies
+- **✅ Section-Specific 3D Visualization**: Mempool, Current, and Historical blockchain sections with real data
+- **✅ Enhanced Component Architecture**: BlockchainVisualizer, BlockchainScene, Block components with real-time integration
+- **✅ Performance Monitoring**: FPS (45-60), Render Time (16-22ms), Memory (100-200MB), Block Count (15-30) targets
+
+#### **Phase 2 ThreeJS Foundation (CURRENT - READY TO START)**
+- **Full WebSocket Integration**: Real-time blockchain data updates and mempool visualization
+- **Advanced Theme System**: Complete integration with existing light/dark/cosmic theme switching
+- **Real-Time Blockchain Updates**: Live blockchain data visualization with WebSocket events
 
 ---
 

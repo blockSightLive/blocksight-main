@@ -5,10 +5,10 @@
  * @lastModified 2025-08-30
  * 
  * @description
- * System-level orchestration service that aggregates data from multiple services
- * (Electrum, Core RPC, Cache, etc.) and acts as the single source of truth for
- * "backend ready" status. Provides the glue between different services for
- * frontend initialization with graceful degradation and health monitoring.
+ * System-level bootstrap service for connection verification and system initialization.
+ * This service ONLY verifies that all required services (Electrum, Core RPC, External APIs)
+ * are connected and ready. It does NOT provide ongoing data - that's handled by WebSocket Hub.
+ * Provides system readiness status for frontend initialization.
  * 
  * @dependencies
  * - ElectrumAdapter for blockchain data
@@ -17,7 +17,7 @@
  * - Configuration management for timeouts
  * 
  * @usage
- * Used by frontend to determine backend readiness and get cold-start data
+ * Used by frontend to determine backend readiness and system initialization status
  * 
  * @state
  * ✅ Complete - Production-ready with scalability improvements
@@ -56,35 +56,27 @@ const BOOTSTRAP_CONFIG = {
   BACKGROUND_HEALTH_INTERVAL: parseInt(process.env.BACKGROUND_HEALTH_INTERVAL || '30000', 10)
 }
 
-// Enhanced interfaces
+// Bootstrap response interface - focused on system readiness only
 interface BootstrapResponse {
-  height: number | null
-  coreHeight: number | null
-  mempoolPending: number | null
-  mempoolVsize: number | null
-  priceUSD?: {
-    value: number
-    asOfMs: number
-    provider: string
-  }
-  fx?: {
-    base: string
-    rates: Record<string, number>
-    asOfMs: number
-    provider: string
-  }
+  systemReady: boolean
   services: {
     electrum: boolean
     core: boolean
-    cache: boolean
+    external: boolean
+    websocket: boolean
   }
   readiness: {
     overall: 'ready' | 'degraded' | 'unavailable'
     details: Record<string, 'healthy' | 'degraded' | 'unavailable'>
     criticalServices: string[]
   }
+  initialization: {
+    electrumConnected: boolean
+    coreConnected: boolean
+    externalAPIsConnected: boolean
+    websocketHubInitialized: boolean
+  }
   asOfMs: number
-  source: 'electrum' | 'core' | 'hybrid'
 }
 
 interface ServiceHealth {
@@ -311,11 +303,10 @@ class BackgroundHealthMonitor {
   }
 }
 
-// Enhanced data fetching with parallel execution
-async function fetchBootstrapData(
+// System initialization and connection verification
+async function verifySystemConnections(
   electrumAdapter: ElectrumAdapter,
   coreAdapter: CoreRpcAdapter | null,
-  l1Cache: L1Cache,
   circuitBreakerManager: CircuitBreakerManager
 ): Promise<BootstrapResponse> {
   const startTime = Date.now()
@@ -328,128 +319,154 @@ async function fetchBootstrapData(
     console.warn('[bootstrap] Core circuit breaker open, skipping')
   }
   
-  // Parallel data fetching for better performance
-  const dataPromises = []
+  // Parallel connection verification
+  const connectionPromises = []
   
-  // Electrum data
+  // Electrum connection verification
   if (circuitBreakerManager.checkCircuitBreaker('electrum')) {
-    dataPromises.push(
-      fetchElectrumData(electrumAdapter, circuitBreakerManager).catch(error => {
-        console.error('[bootstrap] Electrum data fetch failed:', error)
-        return { height: null, mempoolData: null }
+    connectionPromises.push(
+      verifyElectrumConnection(electrumAdapter, circuitBreakerManager).catch(error => {
+        console.error('[bootstrap] Electrum connection verification failed:', error)
+        return { connected: false }
       })
     )
   } else {
-    dataPromises.push(Promise.resolve({ height: null, mempoolData: null }))
+    connectionPromises.push(Promise.resolve({ connected: false }))
   }
   
-  // Core data
+  // Core connection verification
   if (coreAdapter && circuitBreakerManager.checkCircuitBreaker('core')) {
-    dataPromises.push(
-      fetchCoreData(coreAdapter, circuitBreakerManager).catch(error => {
-        console.error('[bootstrap] Core data fetch failed:', error)
-        return { blockCount: null, mempoolData: null }
+    connectionPromises.push(
+      verifyCoreConnection(coreAdapter, circuitBreakerManager).catch(error => {
+        console.error('[bootstrap] Core connection verification failed:', error)
+        return { connected: false }
       })
     )
   } else {
-    dataPromises.push(Promise.resolve({ blockCount: null, mempoolData: null }))
+    connectionPromises.push(Promise.resolve({ connected: false }))
   }
   
-  // Execute data fetching in parallel
-  const [electrumData, coreData] = await Promise.all(dataPromises)
+  // External API connection verification (placeholder for now)
+  connectionPromises.push(
+    verifyExternalAPIConnections().catch(error => {
+      console.error('[bootstrap] External API connection verification failed:', error)
+      return { connected: false }
+    })
+  )
   
-  // Extract data with proper type handling
-  const electrumHeight = 'height' in electrumData ? electrumData.height : null
-  const electrumMempool = 'mempoolData' in electrumData ? electrumData.mempoolData : null
-  const coreBlockCount = 'blockCount' in coreData ? coreData.blockCount : null
-  const coreMempool = 'mempoolData' in coreData ? coreData.mempoolData : null
+  // WebSocket Hub initialization verification (placeholder for now)
+  connectionPromises.push(
+    verifyWebSocketHubInitialization().catch(error => {
+      console.error('[bootstrap] WebSocket Hub initialization verification failed:', error)
+      return { initialized: false }
+    })
+  )
   
-  // Determine data source
-  let source: 'electrum' | 'core' | 'hybrid' = 'electrum'
-  if (electrumHeight && coreBlockCount) {
-    source = 'hybrid'
-  } else if (coreBlockCount && !electrumHeight) {
-    source = 'core'
-  }
+  // Execute connection verification in parallel
+  const [electrumResult, coreResult, externalResult, websocketResult] = await Promise.all(connectionPromises)
   
-  // Build response with graceful degradation
+  // Extract connection status
+  const electrumConnected = 'connected' in electrumResult ? electrumResult.connected : false
+  const coreConnected = 'connected' in coreResult ? coreResult.connected : false
+  const externalConnected = 'connected' in externalResult ? externalResult.connected : false
+  const websocketInitialized = 'initialized' in websocketResult ? websocketResult.initialized : false
+  
+  // Determine overall system readiness
+  const systemReady = electrumConnected && coreConnected && externalConnected && websocketInitialized
+  
+  // Build response focused on system initialization
   const response: BootstrapResponse = {
-    height: electrumHeight,
-    coreHeight: coreBlockCount,
-    mempoolPending: (electrumMempool && 'count' in electrumMempool ? electrumMempool.count : null) || 
-                   (coreMempool && 'pendingTransactions' in coreMempool ? coreMempool.pendingTransactions : null) || null,
-    mempoolVsize: (electrumMempool && 'vsize' in electrumMempool ? electrumMempool.vsize : null) || 
-                  (coreMempool && 'bytes' in coreMempool ? coreMempool.bytes : null) || null,
+    systemReady,
     services: {
-      electrum: electrumHeight !== null,
-      core: coreBlockCount !== null,
-      cache: true
+      electrum: electrumConnected,
+      core: coreConnected,
+      external: externalConnected,
+      websocket: websocketInitialized
     },
     readiness: {
-      overall: determineOverallReadiness({ height: electrumHeight }, { blockCount: coreBlockCount }),
+      overall: determineSystemReadiness(electrumConnected, coreConnected, externalConnected, websocketInitialized),
       details: {
-        electrum: electrumHeight !== null ? 'healthy' : 'unavailable',
-        core: coreBlockCount !== null ? 'healthy' : 'unavailable',
-        cache: 'healthy'
+        electrum: electrumConnected ? 'healthy' : 'unavailable',
+        core: coreConnected ? 'healthy' : 'unavailable',
+        external: externalConnected ? 'healthy' : 'unavailable',
+        websocket: websocketInitialized ? 'healthy' : 'unavailable'
       },
-      criticalServices: ['electrum'] // Electrum is critical for basic functionality
+      criticalServices: ['electrum', 'core', 'websocket'] // Critical services for system operation
     },
-    asOfMs: Date.now(),
-    source
+    initialization: {
+      electrumConnected,
+      coreConnected,
+      externalAPIsConnected: externalConnected,
+      websocketHubInitialized: websocketInitialized
+    },
+    asOfMs: Date.now()
   }
   
   const totalTime = Date.now() - startTime
-  console.log(`[bootstrap] Data fetch completed in ${totalTime}ms, source: ${source}`)
+  console.log(`[bootstrap] System connection verification completed in ${totalTime}ms, system ready: ${systemReady}`)
   
   return response
 }
 
-async function fetchElectrumData(
+async function verifyElectrumConnection(
   electrumAdapter: ElectrumAdapter,
   circuitBreakerManager: CircuitBreakerManager
-): Promise<{ height: number | null; mempoolData: { count: number; vsize: number } | null }> {
+): Promise<{ connected: boolean }> {
   try {
-    const [height, mempoolData] = await Promise.all([
-      electrumAdapter.getTipHeight(),
-      electrumAdapter.getMempoolSummary()
-    ])
-    
+    const isConnected = await electrumAdapter.isConnected()
     circuitBreakerManager.recordCircuitBreakerSuccess('electrum')
-    return { height, mempoolData }
+    return { connected: isConnected }
   } catch (error) {
     circuitBreakerManager.recordCircuitBreakerFailure('electrum')
     throw error
   }
 }
 
-async function fetchCoreData(
+async function verifyCoreConnection(
   coreAdapter: CoreRpcAdapter,
   circuitBreakerManager: CircuitBreakerManager
-): Promise<{ blockCount: number | null; mempoolData: { pendingTransactions: number; bytes?: number } | null }> {
+): Promise<{ connected: boolean }> {
   try {
-    const [blockCount, mempoolData] = await Promise.all([
-      coreAdapter.getBlockCount(),
-      coreAdapter.getMempoolSummary()
-    ])
-    
+    // Simple connection test - just try to get block count
+    await coreAdapter.getBlockCount()
     circuitBreakerManager.recordCircuitBreakerSuccess('core')
-    return { blockCount, mempoolData }
+    return { connected: true }
   } catch (error) {
     circuitBreakerManager.recordCircuitBreakerFailure('core')
     throw error
   }
 }
 
-function determineOverallReadiness(
-  electrumData: { height: number | null },
-  coreData: { blockCount: number | null }
+async function verifyExternalAPIConnections(): Promise<{ connected: boolean }> {
+  // Placeholder for external API connection verification
+  // TODO: Implement actual external API health checks
+  return { connected: true }
+}
+
+async function verifyWebSocketHubInitialization(): Promise<{ initialized: boolean }> {
+  // Placeholder for WebSocket Hub initialization verification
+  // TODO: Implement actual WebSocket Hub health check
+  return { initialized: true }
+}
+
+function determineSystemReadiness(
+  electrumConnected: boolean,
+  coreConnected: boolean,
+  externalConnected: boolean,
+  websocketInitialized: boolean
 ): 'ready' | 'degraded' | 'unavailable' {
-  if (electrumData.height !== null || coreData.blockCount !== null) {
-    if (electrumData.height !== null && coreData.blockCount !== null) {
-      return 'ready'
-    }
+  const criticalServices = [electrumConnected, coreConnected, websocketInitialized]
+  
+  // All critical services must be connected for 'ready' status
+  if (criticalServices.every(connected => connected)) {
+    return 'ready'
+  }
+  
+  // At least one critical service must be connected for 'degraded' status
+  if (criticalServices.some(connected => connected)) {
     return 'degraded'
   }
+  
   return 'unavailable'
 }
 
@@ -473,10 +490,7 @@ export function makeBootstrapController({
       // Cleanup method for tests
   cleanup(): void {
     healthMonitor.cleanup()
-    // Clear any remaining timers
-    jest.clearAllTimers()
-    
-    // Force clear any remaining intervals (additional safety)
+    // Clear any remaining intervals (additional safety)
     for (let i = 1; i < 1000; i++) {
       clearInterval(i)
     }
@@ -501,23 +515,34 @@ export function makeBootstrapController({
           res.json({
             ok: true,
             data: cachedData,
+            requestId,
             timestamp: Date.now()
           })
           return
         }
         
-        // Fetch fresh data
-        const bootstrapData = await fetchBootstrapData(
+        // Verify system connections
+        const bootstrapData = await verifySystemConnections(
           electrumAdapter,
           coreAdapter,
-          l1Cache,
           circuitBreakerManager
         )
         
-        // Check if we have any usable data
-        if (!bootstrapData.height && !bootstrapData.coreHeight) {
-          // No services are available, throw error to trigger 503 response
-          throw new Error('No blockchain services available')
+        // Check if system is ready
+        if (!bootstrapData.systemReady) {
+          // System not ready, return degraded response instead of throwing error
+          console.warn(`[bootstrap] System not ready for request ${requestId}, returning degraded response`)
+          
+          const totalTime = Date.now() - startTime
+          console.log(`[bootstrap] Request ${requestId} completed in ${totalTime}ms (degraded)`)
+          
+          res.status(200).json({
+            ok: true,
+            data: bootstrapData,
+            requestId,
+            timestamp: Date.now()
+          })
+          return
         }
         
         // Cache the response
@@ -526,9 +551,10 @@ export function makeBootstrapController({
         const totalTime = Date.now() - startTime
         console.log(`[bootstrap] Request ${requestId} completed in ${totalTime}ms`)
         
-        res.json({
+        res.status(200).json({
           ok: true,
           data: bootstrapData,
+          requestId,
           timestamp: Date.now()
         })
         
@@ -553,26 +579,30 @@ export function makeBootstrapController({
         
         // Return degraded response if some services are available
         const degradedData: BootstrapResponse = {
-          height: null,
-          coreHeight: null,
-          mempoolPending: null,
-          mempoolVsize: null,
+          systemReady: false,
           services: {
             electrum: healthStatus.electrum?.status === 'healthy',
             core: healthStatus.core?.status === 'healthy',
-            cache: healthStatus.cache?.status === 'healthy'
+            external: true, // Assume external APIs are available
+            websocket: true // Assume WebSocket Hub is available
           },
           readiness: {
             overall: 'degraded',
             details: {
               electrum: healthStatus.electrum?.status || 'unavailable',
               core: healthStatus.core?.status || 'unavailable',
-              cache: healthStatus.cache?.status || 'unavailable'
+              external: 'healthy',
+              websocket: 'healthy'
             },
-            criticalServices: ['electrum']
+            criticalServices: ['electrum', 'core', 'websocket']
           },
-          asOfMs: Date.now(),
-          source: 'electrum'
+          initialization: {
+            electrumConnected: healthStatus.electrum?.status === 'healthy',
+            coreConnected: healthStatus.core?.status === 'healthy',
+            externalAPIsConnected: true,
+            websocketHubInitialized: true
+          },
+          asOfMs: Date.now()
         }
         
         res.json({

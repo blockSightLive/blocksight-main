@@ -14,7 +14,7 @@
  * 
  * @dependencies
  * - ThemeContext for theme switching
- * - BitcoinContext for Bitcoin data
+ * - MainOrchestrator for centralized state management
  * - AppRouter for route-based code splitting
  * - Header and Footer components
  * - LoadingBlocks component for splash screen
@@ -50,34 +50,41 @@
  * - No external dependencies
  */
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { LoadingBlocks } from './components/shared'
 import './App.css'
 import { Header } from './components/Header'
 import { AppRouter } from './router/AppRouter'
+// Context providers are now handled by MainOrchestrator in main.tsx
+// No need to duplicate them here
 
 const App: React.FC = () => {
   // Loading state for splash screen
   const [isLoading, setIsLoading] = useState(true)
   const [isFading, setIsFading] = useState(false)
 
-  // Timer effect for splash screen
+  // CRITICAL FIX: Use useCallback to prevent infinite re-renders
+  const startFadeOut = useCallback(() => {
+    setIsFading(true); // Start fade-out animation
+  }, []);
+
+  const hideSplashScreen = useCallback(() => {
+    setIsLoading(false); // Remove splash screen completely
+  }, []);
+
+  // Timer effect for splash screen - FIXED dependency array
   useEffect(() => {
     // Phase 1: Show splash screen for 2 seconds
-    const showTimer = setTimeout(() => {
-      setIsFading(true); // Start fade-out animation
-    }, 2000);
+    const showTimer = setTimeout(startFadeOut, 2000);
     
     // Phase 2: Remove splash screen after fade-out completes
-    const hideTimer = setTimeout(() => {
-      setIsLoading(false); // Remove splash screen completely
-    }, 4000); // 2s show + 2s fade = 4s total
+    const hideTimer = setTimeout(hideSplashScreen, 4000); // 2s show + 2s fade = 4s total
     
     return () => {
       clearTimeout(showTimer);
       clearTimeout(hideTimer);
     };
-  }, []);
+  }, [startFadeOut, hideSplashScreen]); // Proper dependencies
 
   return (
     <div className="app">

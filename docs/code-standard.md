@@ -5,7 +5,7 @@
 **Audience:** Lead software engineer  
 **Usage:** Review before every coding session and during code reviews  
 **Version:** 1.0.0  
-**Last Updated:** 2025-08-30  
+**Last Updated:** 2025-September-03  
 **Level:** Expert/Production-Ready
 
 **Core Responsibility:** I am the software engineer of this system and it is my sole responsibility that it works fully as stated by the Model Spec file.
@@ -27,7 +27,9 @@
 5. **Singleton Pattern** - Unique resources (use carefully)
 6. **Abstract Factory** - Related object families
 
-### **🚨 MANDATORY DEVELOPMENT REQUIREMENTS (CRITICAL)**
+---
+
+## 🚨 MANDATORY DEVELOPMENT REQUIREMENTS (CRITICAL)
 
 **Before ANY development work, I MUST:**
 
@@ -48,6 +50,7 @@
 - Automate repeatable work; measure to improve (DORA, P50/P95/P99)
 - Fail safely: timeouts, retries, circuit breakers, rollbacks designed first
 - Single source of truth for commands/processes is `README.md`
+- **Bitcoin RPC compliance**: All blockchain data must use official Bitcoin Core RPC methods with proper type safety
 
 ---
 
@@ -56,6 +59,7 @@
 ### Documentation Review
 - Read `project-documents/00-model-spec.md`, roadmap, and `01-execution-checklists.md`
 - **MANDATORY API REVIEW**: For any API work, read `docs/API-ENDPOINTS.md` and `docs/API-STANDARDS.md`
+- **MANDATORY BITCOIN RPC REVIEW**: For any blockchain work, read `docs/bitcoin-rpc-reference.md` and `frontend/src/types/bitcoin-rpc.ts`
 - **MANDATORY SYSTEM DIAGRAM REVIEW**: For any API changes, review and update relevant system diagrams
 
 ### Task Planning
@@ -83,80 +87,33 @@ I never leave:
 - Debug console.log statements
 - TODO comments without dates
 
-### Systematic Development
-I always:
-1. Identify all affected files
-2. Implement changes across all necessary levels
-3. Update types, interfaces, and tests
-4. Verify complete integration
-5. Document changes in all files
+### Console Logging Standards (MANDATORY)
+- **PRODUCTION**: Zero console.log statements allowed
+- **DEVELOPMENT**: Maximum 3 console.log per file
+- **CRITICAL ONLY**: Log only errors, warnings, and essential state changes
+- **NO DEBUG LOGS**: Remove all debug/development console.log before commit
+- **PERFORMANCE**: Console spam creates browser performance issues
 
-I never:
-- Make partial changes
-- Leave incomplete implementations
-- Leave files unupdated
-
----
-
-## 📝 File Header Structure
-
-Every file I create must have this header:
-
-```typescript
-/**
- * @fileoverview [Clear description of file responsibility]
- * @version [X.Y.Z]
- * @author [My name]
- * @since [YYYY-MM-DD]
- * @lastModified [YYYY-MM-DD]
- * 
- * @description
- * [Detailed explanation of what this file does]
- * 
- * @dependencies
- * - [List of critical dependencies]
- * 
- * @usage
- * [Basic usage example]
- * 
- * @state
- * ✅ [Current state: Functional, In Development, Known Bug]
- * 
- * @bugs
- * - [List of known bugs or limitations]
- * 
- * @todo
- * - [Pending tasks with priority]
- * - [Future improvements]
- * 
- * @performance
- * - [Critical performance notes]
- * 
- * @security
- * - [Security considerations]
- */
-```
+### Comment Quality Standards (MANDATORY)
+- **SMART COMMENTS ONLY**: Explain WHY, not WHAT
+- **NO DELETION COMMENTS**: Never write `//DELETED THIS AND THAT`
+- **NO OBVIOUS COMMENTS**: Don't comment self-explanatory code
+- **BUSINESS LOGIC**: Comment complex business rules and algorithms
+- **ARCHITECTURE**: Document design decisions and trade-offs
+- **MAINTENANCE**: Comment workarounds and technical debt
 
 ---
 
-## ⚡ State & Error Management
+## 📝 File Header Structure (MANDATORY)
+
+Every file I create must have complete header with fileoverview, version, author, dates, description, dependencies, usage, state, bugs, todo, performance, and security sections.
+
+---
+
+## ⚡ State & Error Management (MANDATORY)
 
 ### Mandatory Error Handling
-I implement this pattern for all critical operations:
-
-```typescript
-try {
-  const result = await criticalOperation();
-  return { success: true, data: result };
-} catch (error) {
-  console.error('Critical operation failed:', error);
-  return { 
-    success: false, 
-    error: error.message,
-    fallback: getFallbackData()
-  };
-}
-```
+I implement success/error pattern for all critical operations with fallback data.
 
 ### Loading States
 I always implement:
@@ -172,7 +129,7 @@ I always implement:
 
 ---
 
-## 🔒 Code Integrity Rules
+## 🔒 Code Integrity Rules (MANDATORY)
 
 ### Functionality Preservation
 Before any change, I:
@@ -190,34 +147,26 @@ Before any change, I:
 
 ---
 
-## 🚨 CRITICAL GIT WORKFLOW PROTECTION (MANDATORY)
+## 🚨 CRITICAL LESSONS LEARNED
 
-**I MUST check Git status before ANY development work:**
+### **BUILD OPTIMIZATION DISASTER PREVENTION (CRITICAL)**
+**NEVER change external packages for "optimization" without thorough testing. Package changes can break the entire build and cost days of debugging.**
 
-**Before Every Development Session:**
-1. **Confirm current branch** - Are you on the correct feature branch?
-2. **Check remote sync** - Is your local branch up-to-date with remote?
-3. **Verify recent commits** - Are your latest changes committed locally?
+**What NOT to do:**
+- ❌ **Don't replace packages** with "lighter alternatives" without testing
+- ❌ **Don't minify/optimize external dependencies** without understanding impact
+- ❌ **Don't change build tools** without comprehensive testing
+- ❌ **Don't assume package swaps are safe** - they often break compatibility
 
-**During Development:**
-- **Commit frequently** - Every logical change should be committed
-- **Push to remote** - Push to your feature branch after every 2-3 commits
-- **Never lose progress** - Remote branch is your backup
+**What TO do instead:**
+- ✅ **Test package changes in isolation** before integration
+- ✅ **Use bundle analyzers** to identify real optimization opportunities
+- ✅ **Optimize your own code first** before changing external packages
+- ✅ **Create rollback plans** for any build system changes
 
-**Git Commands to Run Frequently:**
-```bash
-git status                    # Check current state
-git add . && git commit -m "description"  # Commit changes
-git push origin <branch>     # Push to remote
-git log --oneline -5         # Verify recent commits
-```
+**Remember**: A "small optimization" can cost a full day of debugging. Optimize your own code, not external packages.
 
-**REMINDER**: I will ask for Git status before proceeding with any development work.
-
----
-
-## 🚨 OVER-ENGINEERING PREVENTION (CRITICAL LESSON LEARNED)
-
+### **OVER-ENGINEERING PREVENTION (CRITICAL)**
 **NEVER over-engineer simple fixes. The goal is to solve the immediate problem with minimal changes.**
 
 **What NOT to do:**
@@ -233,6 +182,70 @@ git log --oneline -5         # Verify recent commits
 - ✅ **Question whether new files/abstractions are needed**
 
 **Remember**: The best code is the code that solves the problem with the least complexity. Don't let "perfect" be the enemy of "working."
+
+---
+
+## 🎯 **FRONTEND STATE ORCHESTRATION RULE (MANDATORY)**
+
+**All frontend state MUST go through the centralized orchestrator system:**
+
+1. **NO direct API calls** from individual components
+2. **NO isolated state management** outside the orchestrator
+3. **ALL data flows** through the main orchestrator context
+4. **WebSocket connections** managed centrally
+5. **Caching strategy** unified across all data sources
+6. **Error handling** coordinated at orchestrator level
+
+**See `project-documents/system-diagrams/13-context-orchestration-diagram.md` for complete implementation details.**
+
+### **Available Context Plugins:**
+1. **BlockchainContext** - Manages blockchain data, height, mempool, and block information
+2. **ElectrumContext** - Handles Electrum server connections and historical data
+3. **ExternalAPIContext** - Manages external API data (prices, FX rates)
+4. **SystemContext** - Handles system health, performance metrics, and service status
+
+
+
+---
+
+## 🚨 **ERROR BOUNDARY RULE (MANDATORY)**
+
+**ALL critical components MUST be wrapped with error boundaries:**
+
+1. **NO white screens** - Every component crash must have a fallback UI
+2. **NO infinite error loops** - Implement circuit breaker patterns
+3. **ALWAYS provide user feedback** - Clear error messages with actionable steps
+4. **IMPLEMENT graceful degradation** - System continues functioning despite failures
+
+**Required Error Boundaries:**
+- **RouterErrorBoundary**: For React Router navigation errors
+- **ErrorBoundary**: For component crashes and runtime errors
+- **ThreeJSErrorBoundary**: For WebGL/Three.js components
+- **useErrorBoundary Hook**: For functional component error handling
+
+**Error Classification System:**
+- **ErrorCategory**: RENDER, LIFECYCLE, EVENT_HANDLER, ASYNC_OPERATION, WEBGL_THREEJS, WEBSOCKET, STATE_MANAGEMENT, ROUTING
+- **ErrorSeverity**: LOW, MEDIUM, HIGH, CRITICAL
+- **Auto-Recovery**: Enabled for LOW/MEDIUM severity errors
+- **Error Thresholds**: Configurable limits per component type
+
+---
+
+## 🚨 CRITICAL GIT WORKFLOW PROTECTION (MANDATORY)
+
+**I MUST check Git status before ANY development work:**
+
+**Before Every Development Session:**
+1. **Confirm current branch** - Are you on the correct feature branch?
+2. **Check remote sync** - Is your local branch up-to-date with remote?
+3. **Verify recent commits** - Are your latest changes committed locally?
+
+**During Development:**
+- **Commit frequently** - Every logical change should be committed
+- **Push to remote** - Push to your feature branch after every 2-3 commits
+- **Never lose progress** - Remote branch is your backup
+
+**REMINDER**: I will ask for Git status before proceeding with any development work.
 
 ---
 
@@ -254,15 +267,6 @@ My methodology:
 - **ALWAYS place new files alongside files with similar responsibility** - never create files randomly throughout the codebase
 - **Use folder names as guidance** - if you need to find where similar files are located, use `grep` to search folder names and existing file patterns
 - **Group by responsibility, not by type** - e.g., all Bitcoin Core setup docs go together, all electrs docs go together, all system diagrams go together
-- If a new location is chosen (e.g., `docs/` for developer guides), move older files to align and update all references.
-- Keep diagrams and documentation references up to date whenever files move.
-- Root should remain lean (e.g., `README.md` as entry point). Consolidate developer guides under `docs/`.
-
-### Runtime Standardization (Containers First)
-- Prefer Docker images as the authoritative runtime specification (OS, Node, tools).
-- `.nvmrc` is advisory only; Dockerfile/compose define the canonical versions.
-- Provide a single, multi-stage Dockerfile at repo root building backend and frontend artifacts.
-- Use `docker-compose.dev.yml` to orchestrate dev services (e.g., Redis) and run the backend.
 
 ---
 
@@ -276,40 +280,18 @@ My methodology:
 3. **Implement Error Handling**: Use `docs/API-STANDARDS.md` error codes and formats
 4. **Add Input Validation**: Implement Zod schemas for all endpoints
 5. **Update System Diagrams**: Ensure diagrams reflect current API structure
-6. **Document Changes**: Update API documentation for any new endpoints
-7. **Update Model-Spec**: Ensure `project-documents/00-model-spec.md` reflects current API structure
 
-**API Response Standards (MANDATORY):**
-```typescript
-// Success Response
-interface ApiSuccessResponse<T> {
-  ok: true;
-  data: T;
-  timestamp: number;
-}
+**See `docs/API-STANDARDS.md` for complete implementation details.**
 
-// Error Response  
-interface ApiErrorResponse {
-  ok: false;
-  error: string;
-  message: string;
-  timestamp: number;
-}
-```
+### **Bitcoin RPC Standards**
+- **NEVER call Bitcoin RPC methods directly** from components or hooks
+- **ALWAYS go through MainOrchestrator** and context plugins
+- **Use typed RPC methods** from `frontend/src/types/bitcoin-rpc.ts`
+- **Follow rate limiting**: Maximum 1 RPC request per second per method
 
-**API Endpoint Naming (MANDATORY):**
-- Use `/api/v1/{service}/*` pattern
-- Service names: `electrum`, `core`, `network`, `ws`
-- Resource names: kebab-case (e.g., `/network/height`)
-
-**API Documentation Standards (MANDATORY):**
-- All new endpoints must be documented in `docs/API-ENDPOINTS.md`
-- All API standards must be updated in `docs/API-STANDARDS.md`
-- All system diagrams must reflect current API structure
-- All API changes must be reflected in `project-documents/00-model-spec.md`
+**See `docs/bitcoin-rpc-reference.md` for complete implementation details.**
 
 ### **🔧 MIDDLEWARE ARCHITECTURE (MANDATORY)**
-
 **See `docs/middleware-patterns.md` for complete implementation details**
 
 **Critical Reminders:**
@@ -320,7 +302,6 @@ interface ApiErrorResponse {
 - **Test middleware in isolation and integration**
 
 ### **🧪 TESTING ARCHITECTURE (MANDATORY)**
-
 **See `project-documents/system-diagrams/12-testing-architecture-diagram.md` for complete testing architecture, patterns, and standards.**
 
 **Critical Reminders:**
@@ -331,7 +312,6 @@ interface ApiErrorResponse {
 - **Test cleanup methods** to ensure they work correctly
 
 ### **📊 MONITORING & OBSERVABILITY (MANDATORY)**
-
 **Available Endpoints:**
 - **`/metrics`** - Prometheus metrics
 - **`/api/v1/metrics/health`** - System health
@@ -343,29 +323,6 @@ interface ApiErrorResponse {
 - **Cache Hit Rate**: > 80%
 - **Error Rate**: < 1%
 - **Memory**: < 512MB
-
-### **Modern React Patterns**
-I use:
-- Custom hooks with optimizations
-- Memoization for expensive calculations
-- Debouncing with cleanup
-- Error boundaries
-- Suspense and concurrent features
-- Server components when appropriate
-
-### Advanced TypeScript
-I implement:
-- Strict types with validation
-- Utility types and conditional types
-- Template literal types
-- Mapped types with transformations
-- Branded types for type safety
-- Discriminated unions
-
-### Observability
-- Structured logs with correlation/request IDs; no PII in logs
-- Useful log levels (debug/info/warn/error); no noisy loops
-- Tracing spans around external calls; propagate context across services
 
 ---
 
@@ -398,47 +355,6 @@ I implement:
 
 ---
 
-## 🔄 Development Workflow
-
-### Before Writing Code
-1. Review this guide
-2. Understand file context
-3. Plan implementation
-4. Verify dependencies
-5. Architecture alignment: confirm the change matches `00-model-spec.md` scope and current diagrams; identify any diagram/doc updates required
-6. **🔒 MANDATORY CHECKS**:
-   - [ ] **Terminal Commands**: I will NOT run commands myself
-   - [ ] **Lazy Loading**: Plan lazy loading for heavy components
-   - [ ] **API Standards**: Review `docs/API-STANDARDS.md` if API work
-   - [ ] **System Diagrams**: Identify diagram updates needed
-   - [ ] **Styles Library**: Plan to use established styles system
-
-### During Development
-1. Follow established patterns
-2. Implement error handling
-3. Write tests in parallel
-4. Document changes
-5. Guard alignment continuously: ensure no feature is inadvertently disabled; verify interactions stay consistent with the diagrams and model-spec
-
-### After Development
-1. Verify no breadcrumbs
-2. Update file header
-3. Run complete tests
-4. **README Alignment Check** - Reason whether changes affect README.md and update if necessary
-5. **Checklist Alignment** - Mark corresponding items complete in `project-documents/01-execution-checklists.md` and adjust future tasks if scope shifted
-6. Mandatory code review
-7. Architecture Alignment Gate:
-   - Compare implementation against `project-documents/system-diagrams/*` and `00-model-spec.md`
-   - If behavior or boundaries changed, update diagrams and specs in the same PR
-   - Confirm no regression to previously documented features; explicitly note any de-scoped items
-
-### PR & Commit Standards
-- Conventional commits; one logical change per PR; link the issue
-- Keep diffs small (< ~400 LOC when possible); include tests and docs
-- No red CI; all legend gates satisfied (see `01-execution-checklists.md`)
-
----
-
 ## 🚨 Quick Checklist
 
 ### Before Commit
@@ -446,18 +362,22 @@ I implement:
 - [ ] No unused variables
 - [ ] Error handling implemented
 - [ ] Loading states configured
-- [ ] **File header updated with current date (2025-08-30)**
+- [ ] **File header updated with current date**
 - [ ] Tests passing
 - [ ] Existing functionality intact
 - [ ] Documentation updated
 - [ ] **Performance impact assessed**
-- [ ] **🧪 Background Process Cleanup**: All tests properly clean up intervals/timeouts
+- [ ] **Console Logging Checked**: Maximum 3 logs per file, no debug logs
+- [ ] **Comment Quality Verified**: Smart comments only, no deletion comments
+- [ ] **Error Boundaries Verified**: All critical components wrapped with appropriate ErrorBoundary
 - [ ] **🔒 MANDATORY REQUIREMENTS CHECKED**:
   - [ ] **Terminal Commands**: No commands run by AI
   - [ ] **Lazy Loading**: Implemented for heavy components
   - [ ] **API Standards**: Followed if API work involved
   - [ ] **System Diagrams**: Updated if architecture changed
   - [ ] **Styles Library**: Used established styles system
+  - [ ] **Context Orchestration**: Updated if MainOrchestrator/context plugins changed
+  - [ ] **Error Boundary Coverage**: All components that might crash are protected
 
 ### Before Merge
 - [ ] Code review approved
@@ -465,39 +385,10 @@ I implement:
 - [ ] Performance validated
 - [ ] Accessibility verified
 - [ ] Security review completed
-- [ ] **CSS quality validated**
 
 ---
 
-## 🎨 **CSS QUALITY STANDARDS (MANDATORY)**
-
-**See `docs/css-quality-standards.md` for complete implementation details**
-
-**Critical Reminders:**
-- **Run stylelint before commit**: `npm run stylelint`
-- **Use CSS Modules** for component isolation
-- **Implement design tokens** via CSS Custom Properties
-- **Follow BEM methodology** for complex components
-- **Mobile-first responsive design** approach
-- **Ensure accessibility compliance** (WCAG 2.1 AA)
-
----
-
-## 🚀 **FRONTEND BUNDLE OPTIMIZATION & CODE SPLITTING STRATEGY (MANDATORY)**
-
-**See `docs/frontend-bundle-strategy.md` for complete implementation details**
-
-**Critical Reminders:**
-- **Bundle Size Targets**: Main < 1MB, Chunks < 500KB, Total < 2MB
-- **Always implement lazy loading** for heavy components
-- **Use React.lazy() with Suspense** for code splitting
-- **Implement error boundaries** around lazy components
-- **Run `npm run build`** to check bundle size warnings
-- **Monitor chunk sizes** and optimize with Vite manual chunks
-
----
-
-## 🔧 TypeScript Error Resolution
+## 🔧 TypeScript Error Resolution (MANDATORY)
 
 **Critical Rule:** I NEVER commit with TypeScript errors. Use `npm run typecheck` systematically.
 
@@ -509,7 +400,7 @@ I implement:
 
 ---
 
-## 📚 Documentation Maintenance
+## 📚 Documentation Maintenance (MANDATORY)
 
 **README Alignment:** Always check if changes affect project structure, commands, or configuration.
 
@@ -520,9 +411,18 @@ I implement:
 
 **Version Management:** NEVER increment versions unless explicitly required by development phases.
 
+**🚨 CRITICAL: Context Orchestration Diagram Updates**
+- **ALWAYS update** `project-documents/system-diagrams/13-context-orchestration-diagram.md` when:
+  - New context plugins are added/removed
+  - WebSocket event types change
+  - MainOrchestrator architecture evolves
+  - Context relationships change
+- **This diagram is the single source of truth** for frontend context orchestration
+- **Update frequency**: Every development session that touches context architecture
+
 ---
 
-## ⚡ Performance Considerations
+## ⚡ Performance Considerations (MANDATORY)
 
 **Always assess impact before changes:**
 - **Memory**: No leaks, efficient data structures
@@ -543,10 +443,10 @@ I implement:
 - **`docs/ENVIRONMENT-SETUP.md`** - Environment configuration
 
 ### Implementation Guides
-- **`project-documents/system-diagrams/12-testing-architecture-diagram.md`** - Complete testing architecture, patterns, and standards
 - **`docs/middleware-patterns.md`** - Middleware architecture and implementation
 - **`docs/frontend-bundle-strategy.md`** - Frontend optimization and code splitting
 - **`docs/css-quality-standards.md`** - CSS architecture and quality standards
+- **`docs/bitcoin-rpc-reference.md`** - Bitcoin RPC implementation guide
 
 ### System Diagrams
 **📊 `project-documents/system-diagrams/` - ALL system architecture diagrams**
@@ -554,6 +454,7 @@ I implement:
 - **`02-component-architecture-diagram.md`** - Component relationships and data flow
 - **`03-data-flow-diagram.md`** - Data flow patterns and API interactions
 - **`12-testing-architecture-diagram.md`** - Testing patterns and background process management
+- **`13-context-orchestration-diagram.md`** - Frontend context orchestration architecture
 
 ### Development Tools
 - **`README.md`** - Single source of truth for commands and setup
@@ -563,6 +464,11 @@ I implement:
 ---
 
 ## 💡 Remember
+
+This file is for rules only, not for summaries, state, or comments.
+I do not add things to this file myself.
+I do not run commands unless explicitly told to.
+I do not create more markdown files.
 
 This guide is my single source of truth for high-quality, high-performance code. I consult it before every programming session to maintain consistency, excellence, and meet modern expert programming standards.
 
