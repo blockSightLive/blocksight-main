@@ -343,6 +343,11 @@ export function createWebSocketHub(params: { adapter: ElectrumAdapter; core?: Co
   };
 
   const broadcast = (event: HubEvent) => {
+    // Skip broadcasting if no clients connected
+    if (clients.size === 0) {
+      return;
+    }
+    
     const started = Date.now();
     // Stamp producer-side time for latency visibility
     const anyEvent = event as { meta?: { producedInMs?: number }; timestamp?: number };
@@ -364,12 +369,14 @@ export function createWebSocketHub(params: { adapter: ElectrumAdapter; core?: Co
     }
     const dur = Date.now() - started;
     // record producer + broadcast metrics
-          try {
-        const producedInMs = (event as { meta?: { producedInMs?: number } }).meta?.producedInMs ?? 0;
-        recordWsProduced(event.type, producedInMs);
-        recordWsBroadcastDuration(event.type, dur, delivered);
-      } catch { /* Ignore metrics recording errors */ }
-    if (dur > 50 || event.type === 'tip.height') {
+    try {
+      const producedInMs = (event as { meta?: { producedInMs?: number } }).meta?.producedInMs ?? 0;
+      recordWsProduced(event.type, producedInMs);
+      recordWsBroadcastDuration(event.type, dur, delivered);
+    } catch { /* Ignore metrics recording errors */ }
+    
+    // Only log if there are clients and significant events
+    if (delivered > 0 && (dur > 50 || event.type === 'tip.height')) {
       // Periodically log rolling P95 for visibility
       try {
         const p95 = getRollingP95();

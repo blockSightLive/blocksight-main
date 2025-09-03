@@ -27,9 +27,9 @@ export const HealthChip: React.FC = () => {
       try {
         // Check backend health endpoint with timeout using AbortController
         const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 5000)
+        const timeoutId = setTimeout(() => controller.abort(), 3000) // Reduced timeout for staging
         
-        const response = await fetch('/api/v1/health', {
+        const response = await fetch('/api/v1/bootstrap', {
           method: 'GET',
           signal: controller.signal
         })
@@ -37,20 +37,31 @@ export const HealthChip: React.FC = () => {
         clearTimeout(timeoutId)
         
         if (response.ok) {
-          const healthData = await response.json()
-          const coreHealthy = healthData.core?.status === 'ok'
-          const electrumHealthy = healthData.electrum?.status === 'ok'
-          
-          setApiHealthy(coreHealthy && electrumHealthy)
-          setCoreStatus(coreHealthy ? 'ok' : 'degraded')
-          setElectrumStatus(electrumHealthy ? 'ok' : 'degraded')
+          const bootstrapData = await response.json()
+          // Bootstrap endpoint returns: { ok: true, data: { services: { electrum: boolean, core: boolean }, readiness: { details: { electrum: string, core: string } } } }
+          if (bootstrapData.ok && bootstrapData.data) {
+            const services = bootstrapData.data.services
+            const readiness = bootstrapData.data.readiness?.details
+            
+            const electrumHealthy = services?.electrum === true
+            const coreHealthy = services?.core === true
+            const systemReady = bootstrapData.data.systemReady === true
+            
+            setApiHealthy(systemReady && electrumHealthy && coreHealthy)
+            setCoreStatus(coreHealthy ? 'ok' : (readiness?.core === 'unavailable' ? 'disabled' : 'degraded'))
+            setElectrumStatus(electrumHealthy ? 'ok' : (readiness?.electrum === 'unavailable' ? 'disabled' : 'degraded'))
+          } else {
+            setApiHealthy(false)
+            setCoreStatus('degraded')
+            setElectrumStatus('degraded')
+          }
         } else {
           setApiHealthy(false)
           setCoreStatus('degraded')
           setElectrumStatus('degraded')
         }
       } catch (error) {
-        // Backend not reachable
+        // Backend not reachable - set to disabled for staging environment
         setApiHealthy(false)
         setCoreStatus('disabled')
         setElectrumStatus('disabled')
@@ -58,27 +69,36 @@ export const HealthChip: React.FC = () => {
     }
     
     checkBackendHealth()
-    const id = setInterval(checkBackendHealth, 10000) // Check every 10 seconds
+    const id = setInterval(checkBackendHealth, 15000) // Check every 15 seconds (less frequent for staging)
     return () => { mounted = false; clearInterval(id) }
   }, [])
 
   // WS ping/pong latency – open a lightweight ad-hoc socket for precise timing
   useEffect(() => {
     // Only measure if backend is reachable; avoid interfering with main context socket
+    if (!apiHealthy) {
+      setWsLatencyMs(null)
+      return
+    }
+    
     try {
       wsRef.current = new WebSocket((import.meta as { env?: { VITE_WEBSOCKET_URL?: string } }).env?.VITE_WEBSOCKET_URL || 'ws://localhost:8000/ws')
       const ws = wsRef.current
       let lastPing = 0
+      let pingInterval: NodeJS.Timeout | null = null
+      
       const ping = () => {
         if (ws.readyState === WebSocket.OPEN) {
           lastPing = Date.now()
           ws.send(JSON.stringify({ type: 'ping' }))
         }
       }
+      
       ws.onopen = () => {
         ping()
-        setInterval(ping, 10000)
+        pingInterval = setInterval(ping, 10000)
       }
+      
       ws.onmessage = (ev) => {
         try {
           const msg = JSON.parse(ev.data)
@@ -87,11 +107,28 @@ export const HealthChip: React.FC = () => {
           }
         } catch { /* Ignore message parsing errors */ }
       }
-      return () => { try { ws.close(1000, 'cleanup') } catch { /* Ignore close errors */ } }
+      
+      ws.onerror = () => {
+        setWsLatencyMs(null)
+      }
+      
+      ws.onclose = () => {
+        setWsLatencyMs(null)
+        if (pingInterval) {
+          clearInterval(pingInterval)
+        }
+      }
+      
+      return () => { 
+        try { 
+          if (pingInterval) clearInterval(pingInterval)
+          ws.close(1000, 'cleanup') 
+        } catch { /* Ignore close errors */ } 
+      }
     } catch {
       setWsLatencyMs(null)
     }
-  }, [])
+  }, [apiHealthy])
 
   const color: ChipColor = useMemo(() => {
     // Only green when REST is healthy AND WS has opened at least once
